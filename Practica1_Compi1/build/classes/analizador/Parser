@@ -1,0 +1,397 @@
+package analizador; 
+
+import java.util.LinkedList;
+import java.util.ArrayList;
+import java_cup.runtime.*;
+import recursos.*;
+import java.util.Iterator;
+
+parser code 
+{:    
+    /* Variable que guarda la lista de variables globales*/
+    public LinkedList<Variable> global;
+    public LinkedList<Galeria> galeria;
+    public LinkedList<Grafica> grafica;
+     
+    /**
+     * Método al que se llama automáticamente ante algún error sintactico.
+     **/ 
+    public void syntax_error(Symbol s){ 
+            System.err.println("Error Sintáctico en la Línea " + (s.left) +" Columna "+s.right+ ". No se esperaba este componente: " +s.value+"."); 
+    } 
+    /**
+     * Método al que se llama en el momento en que ya no es posible una recuperación de errores.
+     **/ 
+    public void unrecovered_syntax_error(Symbol s) throws java.lang.Exception{ 
+            System.err.println("Error síntactico irrecuperable en la Línea " + (s.left)+ " Columna "+s.right+". Componente " + s.value + " no reconocido.");
+    }
+    
+    public int getVarInt(String nombre){
+        Iterator<Variable> it  = global.iterator();
+        Integer valor = 0;
+        while(it.hasNext()){
+            Variable n = it.next();
+            if(n.getNombreVariable().equals(nombre))
+                valor = n.getValorEntero();
+        }
+        if(valor==0){
+            System.err.println("Variable no declarada"); 
+            return 0;
+        }
+        return valor;
+    }
+    
+    public String getVarString(String nombre){
+        Iterator<Variable> it  = global.iterator();
+        String valor = "";
+        while(it.hasNext()){
+            Variable n = it.next();
+            if(n.getNombreVariable().equals(nombre))
+                valor = n.getValorString();
+        }
+        if(valor.equals("")) {
+            System.err.println("Variable no declarada");
+            return "";
+        }
+        return valor;
+    }
+
+:} 
+
+terminal String cadena, varglo,grabar,ejex,ejey,puntosxy,grali,dexyli,rgaleria,dospuntos;
+terminal String puntoycoma,llaveizquierda,llavederecha,igual,corchetederecho,corcheteizquierdo,coma,signoa,signoc,abre,cierra,id,num;
+terminal mas,menos,por,div,menos1;
+
+non terminal Integer expr;
+
+non terminal S,DEF_GR;
+non terminal String BARXX;
+non terminal Integer BARYY;
+
+non terminal LinkedList<Variable> DEF_GL,LIST_GL;
+non terminal Variable VAR_GL;
+
+non terminal LinkedList<Galeria> LIST_GA,DEF_GA;
+non terminal Galeria CAR_GA;
+non terminal LinkedList<String> LCAR_GA;
+
+non terminal GraficaBarras BAR;
+non terminal ArrayList<Object> BAR1;
+non terminal Object CAR_BAR;
+non terminal ArrayList<String> BARX;
+non terminal ArrayList<Integer> BARY;
+non terminal ArrayList<Punto> BARXY;
+
+non terminal GraficaLineas LIN;
+non terminal ArrayList<Object> LIN1;
+non terminal Object CAR_LIN,CAR_XY;
+non terminal ArrayList<Object> DEF_XY;
+non terminal ArrayList<Punto> CAR1_XY;
+
+non terminal Grafica GRA;
+
+precedence left mas,menos;
+precedence left por,div;
+precedence left menos1;
+
+
+start with S; 
+
+S::= DEF_GL:a DEF_GR DEF_GA:b{:
+    //agregar la lista de variables globales
+    //parser.global = a;
+    //agregar la lista de galerias
+    parser.galeria = b;
+    :}
+;
+
+/*-----------------BLOQUE VARIABLES GLOBALES----------------------*/
+DEF_GL::= varglo llaveizquierda LIST_GL:a llavederecha
+    {:
+        RESULT = a; parser.global = a;
+    :}
+    | /*epsilon*/ {:
+      
+    :}
+;
+
+LIST_GL::= LIST_GL:a VAR_GL:b
+    {:
+        RESULT = a; RESULT.add(b);
+    :}
+    | VAR_GL:a
+    {:
+        RESULT = new LinkedList<>();
+        RESULT.add(a);
+    :}
+;
+
+VAR_GL::= id:a id:b igual cadena:c puntoycoma
+    {:
+        RESULT = new Variable(a,b,c.replace("\"", ""),0);
+    :}
+    | id:a id:b igual expr:c puntoycoma
+    {:
+        System.out.println(c);
+        RESULT = new Variable(a,b,"",c);
+    :}
+;
+
+
+
+/* ------------------ BLOQUE GRAFICAS -----------------*/
+DEF_GR::= DEF_GR GRA:a
+    {:
+        parser.grafica.add(a);
+    :}
+    | GRA:a
+    {:
+        parser.grafica = new LinkedList<>(); parser.grafica.add(a);
+    :}
+;
+
+GRA::= BAR:a
+    {:
+        RESULT = a;
+    :}
+    | LIN:a
+    {:
+        RESULT = a;
+    :}
+;
+
+BAR::= grabar llaveizquierda BAR1:a llavederecha
+    {:
+       RESULT = new GraficaBarras(a);
+    :}
+;
+
+BAR1::= BAR1:a CAR_BAR:b
+    {:
+        RESULT = a; RESULT.add(b);
+    :}
+    | CAR_BAR:a
+    {:
+        RESULT = new ArrayList<>(); RESULT.add(a);
+    :}
+;
+
+
+CAR_BAR::= id:a dospuntos cadena:b puntoycoma
+    {:
+        RESULT = new Caracteristica(a,b.replace("\"",""),0);
+    :}
+    | id:a dospuntos id:b puntoycoma
+    {:
+        RESULT = new Caracteristica(a,b,1);
+    :}
+    | ejex dospuntos corchetederecho BARX:a corcheteizquierdo puntoycoma
+    {:
+        RESULT = a;
+    :}
+    | ejey dospuntos corchetederecho BARY:a corcheteizquierdo puntoycoma
+    {:
+        RESULT = a;
+    :}
+    | puntosxy dospuntos corchetederecho BARXY:a corcheteizquierdo puntoycoma
+    {:
+        RESULT = a;
+    :}
+;
+
+BARX::= BARX:a coma BARXX:b
+    {:
+        RESULT = a; RESULT.add(b);
+    :}
+    |BARXX:a
+    {:
+        RESULT = new ArrayList<>(); RESULT.add(a);  
+    :}
+;
+
+BARXX::= cadena:a
+    {:
+        RESULT = a.replace("\"", "");
+    :}
+    | id:a
+    {:
+        RESULT = parser.getVarString(a);
+    :}
+;
+
+BARY::= BARY:a coma BARYY:b
+    {:
+        RESULT = a; RESULT.add(b);
+    :}
+    |BARYY:a
+    {:
+        RESULT = new ArrayList<>(); RESULT.add(a);
+    :}
+;
+
+BARYY::= expr:a
+    {:
+        RESULT = a;
+    :}
+    | id:a
+    {:
+        RESULT = parser.getVarInt(a);
+    :}
+;
+
+BARXY::= BARXY:a coma llaveizquierda BARYY:b coma BARYY:c llavederecha
+    {:
+        RESULT = a; RESULT.add(new Punto(b,c));
+    :}
+    | llaveizquierda BARYY:a coma BARYY:b llavederecha
+    {:
+        RESULT = new ArrayList<>(); RESULT.add(new Punto(a,b));
+    :}
+;
+
+
+LIN::= grali llaveizquierda LIN1:a llavederecha
+    {:
+        RESULT = new GraficaLineas(a);
+    :}
+;
+
+
+LIN1::= LIN1:a CAR_LIN:b
+    {:
+        RESULT = a; RESULT.add(b);
+    :}
+    | CAR_LIN:a
+    {:
+        RESULT = new ArrayList<>(); RESULT.add(a);
+    :}
+;
+
+
+CAR_LIN::= id:a dospuntos cadena:b puntoycoma
+    {:
+        RESULT = new Caracteristica(a,b.replace("\"",""),0);
+    :}
+    |   id:a dospuntos id:b puntoycoma
+    {:
+        RESULT = new Caracteristica(a,b,1);
+    :}
+    | dexyli signoa DEF_XY:a signoa
+    {:
+        RESULT = a;
+    :}
+;
+
+DEF_XY::= DEF_XY:a CAR_XY:b
+    {:
+        RESULT = a; RESULT.add(b);
+    :}
+    | CAR_XY:a
+    {:
+        RESULT = new ArrayList<>(); RESULT.add(a);
+    :}
+;
+
+CAR_XY::= id:a dospuntos cadena:b puntoycoma
+    {:
+        RESULT = new Caracteristica(a,b.replace("\"",""),0);
+    :}
+    | id:a dospuntos id:b puntoycoma
+    {:
+        RESULT = new Caracteristica(a,b,1);
+    :}
+    | id:a dospuntos num:b puntoycoma
+    {:
+        RESULT = new Caracteristica(a,b,0);
+    :}
+    | id:a dospuntos corchetederecho CAR1_XY:b corcheteizquierdo puntoycoma
+    {:
+        RESULT = b;
+    :}
+;
+
+
+CAR1_XY::= CAR1_XY:a coma llaveizquierda BARYY:b coma BARYY:c llavederecha
+    {:
+        RESULT = a; RESULT.add(new Punto(b,c));
+    :}
+    | llaveizquierda BARYY:a coma BARYY:b llavederecha
+    {:
+        RESULT = new ArrayList<>(); RESULT.add(new Punto(a,b));
+    :}
+;
+
+
+/*-------------------BLOQUE GALERIAS----------------*/
+DEF_GA::= rgaleria llaveizquierda LIST_GA:a llavederecha
+    {:
+        RESULT = a;
+    :}
+    | /*epsilon*/
+    {:
+        
+    :}
+;
+
+LIST_GA::= LIST_GA:a CAR_GA:b
+    {:
+        RESULT = a; RESULT.add(b);
+    :}
+    | CAR_GA:a
+    {:
+        RESULT = new LinkedList<>(); RESULT.add(a);
+    :}
+;
+
+CAR_GA::= rgaleria abre cadena:a coma LCAR_GA:b cierra puntoycoma
+    {:
+        RESULT = new Galeria(b,a.replace("\"", ""));
+    :}
+    | rgaleria abre id:a coma LCAR_GA:b cierra puntoycoma
+    {:
+        RESULT = new Galeria(b,a);
+    :}
+;
+
+LCAR_GA::= LCAR_GA:a coma cadena:b
+    {:
+        RESULT = a; RESULT.add(b);
+    :}
+    | cadena:a
+    {:
+        RESULT = new LinkedList<>(); RESULT.add(a.replace("\"", ""));
+    :}
+;
+
+expr ::= expr:a mas expr:b
+    {: 
+        RESULT = a+b;
+    :}
+    | expr:a menos expr:b
+    {: 
+        RESULT = a-b;
+    :}
+    | expr:a por expr:b
+    {: 
+        RESULT = a*b;
+    :}
+    | expr:a div expr:b
+    {: 
+        RESULT = a/b;
+    :}
+    | menos expr:a
+    {: 
+        RESULT = -a;
+    :}
+    %prec menos1
+    |abre expr:a cierra
+    {:
+        RESULT = a;
+    :}
+    | num:n
+    {:
+        RESULT = Integer.parseInt(n);
+    :}
+;
+    
+

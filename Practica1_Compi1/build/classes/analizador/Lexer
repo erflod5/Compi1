@@ -1,0 +1,67 @@
+package analizador;
+import java_cup.runtime.Symbol; 
+
+%% 
+%class Lexer
+%public 
+%line 
+%char 
+%cup 
+%unicode
+%ignorecase
+
+%init{ 
+    yyline = 0; 
+    yychar = 0; 
+%init} 
+ 
+BLANCOS=[ \r\t]+
+id=[A-Za-z]+["_"0-9A-Za-z]*
+num = [0-9]+
+cadena = [\"]([^\"\n]|(\\\"))*[\"]
+comentario_linea =("//".*\r\n)|("//".*\n)|("//".*\r)
+comentario_multi = "/*"((.*)|\r\n|\n|\r)*"*/"
+
+%%
+
+
+"DefinirGlobales" {return new Symbol(sym.varglo,yyline,yychar,yytext());}
+"graficabarras" {return new Symbol(sym.grabar,yyline,yychar,yytext());}
+"ejex" {return new Symbol(sym.ejex,yyline,yychar,yytext());}
+"ejey" {return new Symbol(sym.ejey,yyline,yychar,yytext());}
+"puntosxy" {return new Symbol(sym.puntosxy,yyline,yychar,yytext());}
+"graficalineas" {return new Symbol(sym.grali,yyline,yychar,yytext());}
+"definirxyline" {return new Symbol(sym.dexyli,yyline,yychar,yytext());}
+"galeria" {return new Symbol(sym.rgaleria,yyline,yychar,yytext());}
+
+":" {return new Symbol(sym.dospuntos,yyline,yychar, yytext());} 
+";" {return new Symbol(sym.puntoycoma,yyline,yychar, yytext());} 
+"{" {return new Symbol(sym.llaveizquierda,yyline,yychar, yytext());} 
+"}" {return new Symbol(sym.llavederecha,yyline,yychar, yytext());}
+"=" {return new Symbol(sym.igual,yyline,yychar, yytext());}
+"[" {return new Symbol(sym.corchetederecho,yyline,yychar, yytext());}
+"]" {return new Symbol(sym.corcheteizquierdo,yyline,yychar, yytext());}
+"," {return new Symbol(sym.coma,yyline,yychar, yytext());}
+"#" {return new Symbol(sym.signoa,yyline,yychar, yytext());}
+"¡" {return new Symbol(sym.signoc,yyline,yychar, yytext());}
+"+" {return new Symbol(sym.mas,yyline,yychar, yytext());}
+"-" {return new Symbol(sym.menos,yyline,yychar, yytext());}
+"*" {return new Symbol(sym.por,yyline,yychar, yytext());}
+"/" {return new Symbol(sym.div,yyline,yychar, yytext());}
+"(" {return new Symbol(sym.abre,yyline,yychar, yytext());}
+")" {return new Symbol(sym.cierra,yyline,yychar, yytext());}
+" ﻿" {}
+
+\n {yychar=1;}
+
+{BLANCOS} {}
+{comentario_linea} {}
+{comentario_multi} {}
+{id} {return new Symbol(sym.id,yyline,yychar,yytext());}
+{cadena} {return new Symbol(sym.cadena,yyline,yychar, yytext());}
+{num} {return new Symbol(sym.num,yyline,yychar, yytext());}
+
+
+. {
+    System.err.println("Este es un error lexico: "+yytext()+", en la linea: "+yyline+", en la columna: "+yychar);
+}

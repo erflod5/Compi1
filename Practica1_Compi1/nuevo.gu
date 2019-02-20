@@ -1,0 +1,60 @@
+graficalineas{
+	titulo:"Algo";
+}
+
++ + ++ 
+
+graficalineas{
+	titulo:"Algo";
+}
+
+graficabarras{
+	ID: "GraficaResultados"; // Nombre del archivo a guardar
+	Titulo: "var1"; 
+	ejeX: ["Compi 1", "VarStr_1", "Teo 2", "Lógica"];
+	TituloX: "Clases";
+	EjeY: [1, 2, 35, 5, 3];
+	TituloY: "varString1"; // varString1 = “Dificultad”
+	Puntosxy: [{0,0}, {2,3}, {3, 5}];
+}
+
+graficabarras{
+	ID: "GraficaResultados"; // Nombre del archivo a guardar
+	Titulo: "var1"; 
+	ejeX: ["Compi 1", "VarStr_1", "Teo 2", "Lógica"];
+	TituloX: "Clases";
+	EjeY: [1, 2, 35, 5, 3];
+	TituloY: "varString1"; // varString1 = “Dificultad”
+	Puntosxy: [{0,0}, {2,3}, {3, 5}];
+}
+
+graficabarras{
+	ID: "GraficaResultados"; // Nombre del archivo a guardar
+	Titulo: "var1"; 
+	ejeX: ["Compi 1", "VarStr_1", "Teo 2", "Lógica"];
+	TituloX: "Clases";
+	EjeY: [1, 2, 35, 5, 3];
+	TituloY: "varString1"; // varString1 = “Dificultad”
+	Puntosxy: [{0,0}, {2,3}, {3, 5}];
+}
+
+graficalineas{
+	titulo:"Algo";
+}
+
+graficabarras{
+	ID: "GraficaResultados"; // Nombre del archivo a guardar
+	Titulo: "var1"; 
+	ejeX: ["Compi 1", "VarStr_1", "Teo 2", "Lógica"];
+	TituloX: "Clases";
+	EjeY: [1, 2, 35, 5, 3];
+	TituloY: "varString1"; // varString1 = “Dificultad”
+	Puntosxy: [{0,0}, {2,3}, {3, 5}];
+}
+
+galeria{
+	galeria("algo","algo2");
+	galeria("algo","algo2");
+	galeria("algo","algo2");
+	galeria("algo","algo2");
+}
