@@ -359,7 +359,7 @@ CAR_GA::= rgaleria abre cadena:a coma LCAR_GA:b cierra puntoycoma
 
 LCAR_GA::= LCAR_GA:a coma cadena:b
     {:
-        RESULT = a; RESULT.add(b);
+        RESULT = a; RESULT.add(b.replace("\"","");
     :}
     | cadena:a
     {:

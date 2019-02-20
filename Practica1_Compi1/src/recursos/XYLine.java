@@ -1,11 +1,13 @@
 
 package recursos;
 
+import java.awt.Color;
 import java.util.ArrayList;
 
 public class XYLine {
 
-    private String nombre, color;
+    private String nombre;
+    private Color color;
     private int grosor;
     private ArrayList<Punto> punto;
     private ArrayList<Object> caracteristica;
@@ -14,7 +16,7 @@ public class XYLine {
         this.caracteristica = caracteristica;
     }
     
-    public XYLine(String nombre, String color, int grosor, ArrayList<Punto> punto) {
+    public XYLine(String nombre, Color color, int grosor, ArrayList<Punto> punto) {
         this.nombre = nombre;
         this.color = color;
         this.grosor = grosor;
@@ -22,7 +24,7 @@ public class XYLine {
     }
     
     public XYLine(){
-        this("","",0,null);
+        this("",null,0,null);
     }
 
     public String getNombre() {
@@ -33,11 +35,11 @@ public class XYLine {
         this.nombre = nombre;
     }
 
-    public String getColor() {
+    public Color getColor() {
         return color;
     }
 
-    public void setColor(String color) {
+    public void setColor(Color color) {
         this.color = color;
     }
 

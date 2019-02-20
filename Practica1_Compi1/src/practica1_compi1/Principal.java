@@ -333,10 +333,15 @@ public class Principal extends javax.swing.JFrame {
             else if(n instanceof GraficaLineas){
                 GraficaLineas gl = (GraficaLineas)n; 
                 gl.validar_caracteristicas();
+                JFreeChart gr = gl.graficar();
+                if(gr!=null){
+                    graph.put(gl.getId(), gr);
+                }
             }
         }
     }
-    
+
+
     public void crearDirectorio(){
         if(analizador.galeria!=null){
             for(Galeria g: analizador.galeria){
@@ -358,7 +363,6 @@ public class Principal extends javax.swing.JFrame {
             }            
         }
     }
-    
     
     public static void main(String args[]) {
         java.awt.EventQueue.invokeLater(new Runnable() {

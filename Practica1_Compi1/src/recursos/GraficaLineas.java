@@ -1,10 +1,14 @@
 
 package recursos;
 
+import java.awt.BasicStroke;
+import java.awt.Color;
 import java.util.ArrayList;
 import org.jfree.chart.ChartFactory;
 import org.jfree.chart.JFreeChart;
 import org.jfree.chart.plot.PlotOrientation;
+import org.jfree.chart.plot.XYPlot;
+import org.jfree.chart.renderer.xy.XYLineAndShapeRenderer;
 import org.jfree.data.xy.XYSeries;
 import org.jfree.data.xy.XYSeriesCollection;
 import static practica1_compi1.Principal.error;
@@ -17,6 +21,7 @@ public class GraficaLineas extends Grafica{
 
     public GraficaLineas(ArrayList<Object> caracteristica) {
         this.caracteristica = caracteristica;
+        graph = new ArrayList<>();
     }
     
     public GraficaLineas(String id, String titulo, String tituloX, String tituloY, ArrayList<XYLine> graph){
@@ -81,7 +86,7 @@ public class GraficaLineas extends Grafica{
                                 x.setNombre(c.getValor());
                                 break;
                             case "color":
-                                x.setColor(c.getValor());
+                                x.setColor(getColor(c.getValor()));
                                 break;
                             case "grosor":
                                 x.setGrosor(Integer.parseInt(c.getValor()));
@@ -93,44 +98,56 @@ public class GraficaLineas extends Grafica{
                     }
                     else if (p instanceof ArrayList<?>){
                         x.setPunto((ArrayList<Punto>) p);
-                        /*for(Object o1: (ArrayList<Object>)p){
-                            Punto pt = (Punto)o1;
-                        }*/
                     }
                 });
+                this.graph.add(x);
             }
         }  
     }
     
+    private Color getColor(String nombre){
+        switch(nombre.toLowerCase()){
+            case "rojo":
+                return Color.RED;
+            case "amarillo":
+                return Color.YELLOW;
+            case "naranja":
+                return Color.ORANGE;
+            case "azul":
+                return Color.BLUE;
+            case "negro":
+                return Color.BLACK;
+            case "verde":
+                return Color.GREEN;
+            default:                
+                return Color.WHITE;
+        }
+    }
+    
     public JFreeChart graficar(){
-        final XYSeries firefox = new XYSeries( "Firefox" );
-        firefox.add( 1.0 , 1.0 );
-        firefox.add( 2.0 , 4.0 );
-        firefox.add( 3.0 , 3.0 );
-
-        final XYSeries chrome = new XYSeries( "Chrome" );
-        chrome.add( 1.0 , 4.0 );
-        chrome.add( 2.0 , 5.0 );
-        chrome.add( 3.0 , 6.0 );
-
-        final XYSeries iexplorer = new XYSeries( "InternetExplorer" );
-        iexplorer.add( 3.0 , 4.0 );
-        iexplorer.add( 4.0 , 5.0 );
-        iexplorer.add( 5.0 , 4.0 );
-
-        final XYSeriesCollection dataset1 = new XYSeriesCollection( );
-        dataset1.addSeries( firefox );
-        dataset1.addSeries( chrome );
-        dataset1.addSeries( iexplorer );
-
+        final XYSeriesCollection ds = new XYSeriesCollection();
+        XYLineAndShapeRenderer renderer = new XYLineAndShapeRenderer();
+        int c=0;
+        for(XYLine xyl: graph){
+            final XYSeries n = new XYSeries(xyl.getNombre());
+            for(Punto p: xyl.getPunto()){
+                n.add(p.getPuntox(),p.getPuntoy());
+            }
+            renderer.setSeriesPaint(c, xyl.getColor());
+            renderer.setSeriesStroke(c, new BasicStroke(xyl.getGrosor()));
+            c++;
+            ds.addSeries(n);
+        }
+        
         JFreeChart xylineChart = ChartFactory.createXYLineChart(
-           "titulo", 
-           "titulo x",
-           "titulo y", 
-           dataset1,
+           this.getTitulo(), 
+           this.getTituloX(),
+           this.getTituloY(), 
+           ds,
            PlotOrientation.VERTICAL, 
            true, true, false);
-
+        XYPlot plot = xylineChart.getXYPlot();
+        plot.setRenderer(renderer);
         return xylineChart;
     }
 }

@@ -158,7 +158,5 @@ public class GraficaBarras extends Grafica{
            dataset,PlotOrientation.VERTICAL, 
            true, true, false); 
         return barChart;
-        //File BarChart = new File( "nombreArchivo.jpeg" ); 
-        //ChartUtilities.saveChartAsJPEG( BarChart , barChart , width , height );
     }
 }
