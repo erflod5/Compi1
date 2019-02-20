@@ -1,5 +1,6 @@
 package analizador;
-import java_cup.runtime.Symbol; 
+import java_cup.runtime.Symbol;
+import static practica1_compi1.Principal.error; 
 
 %% 
 %class Lexer
@@ -9,6 +10,8 @@ import java_cup.runtime.Symbol;
 %cup 
 %unicode
 %ignorecase
+%8bit
+%full
 
 %init{ 
     yyline = 0; 
@@ -42,8 +45,8 @@ comentario_multi = "/*"((.*)|\r\n|\n|\r)*"*/"
 "[" {return new Symbol(sym.corchetederecho,yyline,yychar, yytext());}
 "]" {return new Symbol(sym.corcheteizquierdo,yyline,yychar, yytext());}
 "," {return new Symbol(sym.coma,yyline,yychar, yytext());}
-"#" {return new Symbol(sym.signoa,yyline,yychar, yytext());}
-"¡" {return new Symbol(sym.signoc,yyline,yychar, yytext());}
+"¿" {return new Symbol(sym.signoa,yyline,yychar, yytext());}
+"?" {return new Symbol(sym.signoc,yyline,yychar, yytext());}
 "+" {return new Symbol(sym.mas,yyline,yychar, yytext());}
 "-" {return new Symbol(sym.menos,yyline,yychar, yytext());}
 "*" {return new Symbol(sym.por,yyline,yychar, yytext());}
@@ -52,7 +55,7 @@ comentario_multi = "/*"((.*)|\r\n|\n|\r)*"*/"
 ")" {return new Symbol(sym.cierra,yyline,yychar, yytext());}
 " ﻿" {}
 
-\n {yychar=1;}
+\n {yychar=0;}
 
 {BLANCOS} {}
 {comentario_linea} {}
@@ -63,5 +66,5 @@ comentario_multi = "/*"((.*)|\r\n|\n|\r)*"*/"
 
 
 . {
-    System.err.println("Este es un error lexico: "+yytext()+", en la linea: "+yyline+", en la columna: "+yychar);
+    error.add(new recursos.Error(yyline,yychar,"Lexico",yytext()));
 }

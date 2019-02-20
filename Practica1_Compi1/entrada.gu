@@ -1,11 +1,13 @@
-DefinirGlobales
+deFINIrglobales
 {
-    int a = 4+3*2-4;
+    int a = 4*2+8;
     string var1 = "Ejemplo Compi 1";
     string varString1 = "Dificultad";
-    int Variable1 = 4;
+    int Variable1 = 4+3-1;
     string VarStr_1 = "Software avanzado";
 }
+
+
 
 GraficaBarras
 {

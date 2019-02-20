@@ -10,6 +10,7 @@ import java.util.ArrayList;
 import java_cup.runtime.*;
 import recursos.*;
 import java.util.Iterator;
+import static practica1_compi1.Principal.error; 
 import java_cup.runtime.XMLElement;
 
 /** CUP v0.11b 20160615 (GIT 4ac7450) generated parser.
@@ -74,13 +75,13 @@ public class parser extends java_cup.runtime.lr_parser {
     "\001\002\000\006\004\023\031\024\001\002\000\004\016" +
     "\026\001\002\000\004\016\025\001\002\000\010\013\uffdf" +
     "\020\uffdf\031\uffdf\001\002\000\010\013\uffe0\020\uffe0\031" +
-    "\uffe0\001\002\000\004\031\032\001\002\000\006\025\uffdc" +
-    "\031\uffdc\001\002\000\006\025\101\031\032\001\002\000" +
+    "\uffe0\001\002\000\004\031\032\001\002\000\006\026\uffdc" +
+    "\031\uffdc\001\002\000\006\026\101\031\032\001\002\000" +
     "\004\015\033\001\002\000\012\004\035\022\034\031\037" +
     "\032\036\001\002\000\004\017\044\001\002\000\004\016" +
     "\042\001\002\000\004\016\041\001\002\000\004\016\040" +
-    "\001\002\000\006\025\uffda\031\uffda\001\002\000\006\025" +
-    "\uffd9\031\uffd9\001\002\000\006\025\uffdb\031\uffdb\001\002" +
+    "\001\002\000\006\026\uffda\031\uffda\001\002\000\006\026" +
+    "\uffd9\031\uffd9\001\002\000\006\026\uffdb\031\uffdb\001\002" +
     "\000\006\023\071\024\072\001\002\000\012\027\046\031" +
     "\052\032\045\034\050\001\002\000\024\016\uffc7\020\uffc7" +
     "\023\uffc7\024\uffc7\030\uffc7\033\uffc7\034\uffc7\035\uffc7\036" +
@@ -109,8 +110,8 @@ public class parser extends java_cup.runtime.lr_parser {
     "\052\032\045\034\050\001\002\000\004\024\075\001\002" +
     "\000\012\027\046\031\052\032\045\034\050\001\002\000" +
     "\004\020\077\001\002\000\006\023\uffd7\024\uffd7\001\002" +
-    "\000\006\025\uffd8\031\uffd8\001\002\000\010\013\uffde\020" +
-    "\uffde\031\uffde\001\002\000\006\025\uffdd\031\uffdd\001\002" +
+    "\000\006\026\uffd8\031\uffd8\001\002\000\010\013\uffde\020" +
+    "\uffde\031\uffde\001\002\000\006\026\uffdd\031\uffdd\001\002" +
     "\000\010\013\uffe2\020\uffe2\031\uffe2\001\002\000\012\002" +
     "\uffe3\006\uffe3\012\uffe3\014\uffe3\001\002\000\004\017\110" +
     "\001\002\000\012\002\ufff9\006\ufff9\012\ufff9\014\ufff9\001" +
@@ -267,7 +268,6 @@ public class parser extends java_cup.runtime.lr_parser {
   public int error_sym() {return 1;}
 
 
-    
     /* Variable que guarda la lista de variables globales*/
     public LinkedList<Variable> global;
     public LinkedList<Galeria> galeria;
@@ -277,6 +277,7 @@ public class parser extends java_cup.runtime.lr_parser {
      * Método al que se llama automáticamente ante algún error sintactico.
      **/ 
     public void syntax_error(Symbol s){ 
+            error.add(new recursos.Error(s.left,s.right,"Sintactico",s.value.toString()));
             System.err.println("Error Sintáctico en la Línea " + (s.left) +" Columna "+s.right+ ". No se esperaba este componente: " +s.value+"."); 
     } 
     /**
@@ -467,7 +468,6 @@ class CUP$parser$actions {
 		int cright = ((java_cup.runtime.Symbol)CUP$parser$stack.elementAt(CUP$parser$top-1)).right;
 		Integer c = (Integer)((java_cup.runtime.Symbol) CUP$parser$stack.elementAt(CUP$parser$top-1)).value;
 		
-        System.out.println(c);
         RESULT = new Variable(a,b,"",c);
     
               CUP$parser$result = parser.getSymbolFactory().newSymbol("VAR_GL",7, ((java_cup.runtime.Symbol)CUP$parser$stack.elementAt(CUP$parser$top-4)), ((java_cup.runtime.Symbol)CUP$parser$stack.peek()), RESULT);
@@ -586,7 +586,7 @@ class CUP$parser$actions {
 		int bright = ((java_cup.runtime.Symbol)CUP$parser$stack.elementAt(CUP$parser$top-1)).right;
 		String b = (String)((java_cup.runtime.Symbol) CUP$parser$stack.elementAt(CUP$parser$top-1)).value;
 		
-        RESULT = new Caracteristica(a,b.replace("\"",""),0);
+        RESULT = new Caracteristica(a,b.replace("\"",""),0,aleft,aright);
     
               CUP$parser$result = parser.getSymbolFactory().newSymbol("CAR_BAR",14, ((java_cup.runtime.Symbol)CUP$parser$stack.elementAt(CUP$parser$top-3)), ((java_cup.runtime.Symbol)CUP$parser$stack.peek()), RESULT);
             }
@@ -603,7 +603,7 @@ class CUP$parser$actions {
 		int bright = ((java_cup.runtime.Symbol)CUP$parser$stack.elementAt(CUP$parser$top-1)).right;
 		String b = (String)((java_cup.runtime.Symbol) CUP$parser$stack.elementAt(CUP$parser$top-1)).value;
 		
-        RESULT = new Caracteristica(a,b,1);
+        RESULT = new Caracteristica(a,b,1,aleft,aright);
     
               CUP$parser$result = parser.getSymbolFactory().newSymbol("CAR_BAR",14, ((java_cup.runtime.Symbol)CUP$parser$stack.elementAt(CUP$parser$top-3)), ((java_cup.runtime.Symbol)CUP$parser$stack.peek()), RESULT);
             }
@@ -862,7 +862,7 @@ class CUP$parser$actions {
 		int bright = ((java_cup.runtime.Symbol)CUP$parser$stack.elementAt(CUP$parser$top-1)).right;
 		String b = (String)((java_cup.runtime.Symbol) CUP$parser$stack.elementAt(CUP$parser$top-1)).value;
 		
-        RESULT = new Caracteristica(a,b.replace("\"",""),0);
+        RESULT = new Caracteristica(a,b.replace("\"",""),0,aleft,aright);
     
               CUP$parser$result = parser.getSymbolFactory().newSymbol("CAR_LIN",20, ((java_cup.runtime.Symbol)CUP$parser$stack.elementAt(CUP$parser$top-3)), ((java_cup.runtime.Symbol)CUP$parser$stack.peek()), RESULT);
             }
@@ -879,14 +879,14 @@ class CUP$parser$actions {
 		int bright = ((java_cup.runtime.Symbol)CUP$parser$stack.elementAt(CUP$parser$top-1)).right;
 		String b = (String)((java_cup.runtime.Symbol) CUP$parser$stack.elementAt(CUP$parser$top-1)).value;
 		
-        RESULT = new Caracteristica(a,b,1);
+        RESULT = new Caracteristica(a,b,1,aleft,aright);
     
               CUP$parser$result = parser.getSymbolFactory().newSymbol("CAR_LIN",20, ((java_cup.runtime.Symbol)CUP$parser$stack.elementAt(CUP$parser$top-3)), ((java_cup.runtime.Symbol)CUP$parser$stack.peek()), RESULT);
             }
           return CUP$parser$result;
 
           /*. . . . . . . . . . . . . . . . . . . .*/
-          case 35: // CAR_LIN ::= dexyli signoa DEF_XY signoa 
+          case 35: // CAR_LIN ::= dexyli signoa DEF_XY signoc 
             {
               Object RESULT =null;
 		int aleft = ((java_cup.runtime.Symbol)CUP$parser$stack.elementAt(CUP$parser$top-1)).left;
@@ -941,7 +941,8 @@ class CUP$parser$actions {
 		int bright = ((java_cup.runtime.Symbol)CUP$parser$stack.elementAt(CUP$parser$top-1)).right;
 		String b = (String)((java_cup.runtime.Symbol) CUP$parser$stack.elementAt(CUP$parser$top-1)).value;
 		
-        RESULT = new Caracteristica(a,b.replace("\"",""),0);
+        RESULT = new Caracteristica(a,b.replace("\"",""),0,aleft,aright);
+        
     
               CUP$parser$result = parser.getSymbolFactory().newSymbol("CAR_XY",21, ((java_cup.runtime.Symbol)CUP$parser$stack.elementAt(CUP$parser$top-3)), ((java_cup.runtime.Symbol)CUP$parser$stack.peek()), RESULT);
             }
@@ -958,7 +959,7 @@ class CUP$parser$actions {
 		int bright = ((java_cup.runtime.Symbol)CUP$parser$stack.elementAt(CUP$parser$top-1)).right;
 		String b = (String)((java_cup.runtime.Symbol) CUP$parser$stack.elementAt(CUP$parser$top-1)).value;
 		
-        RESULT = new Caracteristica(a,b,1);
+        RESULT = new Caracteristica(a,b,1,aleft,aright);
     
               CUP$parser$result = parser.getSymbolFactory().newSymbol("CAR_XY",21, ((java_cup.runtime.Symbol)CUP$parser$stack.elementAt(CUP$parser$top-3)), ((java_cup.runtime.Symbol)CUP$parser$stack.peek()), RESULT);
             }
@@ -975,7 +976,7 @@ class CUP$parser$actions {
 		int bright = ((java_cup.runtime.Symbol)CUP$parser$stack.elementAt(CUP$parser$top-1)).right;
 		String b = (String)((java_cup.runtime.Symbol) CUP$parser$stack.elementAt(CUP$parser$top-1)).value;
 		
-        RESULT = new Caracteristica(a,b,0);
+        RESULT = new Caracteristica(a,b,0,aleft,aright);
     
               CUP$parser$result = parser.getSymbolFactory().newSymbol("CAR_XY",21, ((java_cup.runtime.Symbol)CUP$parser$stack.elementAt(CUP$parser$top-3)), ((java_cup.runtime.Symbol)CUP$parser$stack.peek()), RESULT);
             }
@@ -1054,7 +1055,7 @@ class CUP$parser$actions {
             {
               LinkedList<Galeria> RESULT =null;
 		
-        
+
     
               CUP$parser$result = parser.getSymbolFactory().newSymbol("DEF_GA",9, ((java_cup.runtime.Symbol)CUP$parser$stack.peek()), RESULT);
             }

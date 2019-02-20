@@ -2,12 +2,15 @@ package practica1_compi1;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.StringReader;
+import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.LinkedList;
 import java.util.Scanner;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -18,9 +21,20 @@ import recursos.Grafica;
 import recursos.GraficaBarras;
 import recursos.GraficaLineas;
 import recursos.Variable;
+import java.util.HashMap;
+import org.jfree.chart.ChartUtilities;
+import org.jfree.chart.JFreeChart;
+import recursos.Galeria;
 
 public class Principal extends javax.swing.JFrame {
 
+    private analizador.Lexer lexico;
+    private analizador.parser analizador;
+    private HashMap<String,JFreeChart> graph;
+    public static ArrayList<recursos.Error> error;
+    public static LinkedList<recursos.Variable> vGlobal;
+    
+    
     java.io.File archivo;
     public Principal() {
         initComponents();
@@ -86,19 +100,20 @@ public class Principal extends javax.swing.JFrame {
         jPanel1Layout.setHorizontalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel1Layout.createSequentialGroup()
-                .addGap(194, 194, 194)
-                .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 218, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(jPanel1Layout.createSequentialGroup()
+                        .addGap(37, 37, 37)
+                        .addComponent(btn_Abrir)
+                        .addGap(18, 18, 18)
+                        .addComponent(btn_Guardar)
+                        .addGap(18, 18, 18)
+                        .addComponent(btn_GuardarComo)
+                        .addGap(18, 18, 18)
+                        .addComponent(btn_Reporte))
+                    .addGroup(jPanel1Layout.createSequentialGroup()
+                        .addGap(352, 352, 352)
+                        .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 218, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
-                .addContainerGap(75, Short.MAX_VALUE)
-                .addComponent(btn_Abrir)
-                .addGap(18, 18, 18)
-                .addComponent(btn_Guardar)
-                .addGap(18, 18, 18)
-                .addComponent(btn_GuardarComo)
-                .addGap(18, 18, 18)
-                .addComponent(btn_Reporte)
-                .addGap(75, 75, 75))
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -131,22 +146,21 @@ public class Principal extends javax.swing.JFrame {
         jPanel2Layout.setHorizontalGroup(
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel2Layout.createSequentialGroup()
-                .addContainerGap()
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jScrollPane2)
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel2Layout.createSequentialGroup()
-                        .addGap(0, 0, Short.MAX_VALUE)
-                        .addComponent(btn_Analizar)))
+                    .addGroup(jPanel2Layout.createSequentialGroup()
+                        .addContainerGap(823, Short.MAX_VALUE)
+                        .addComponent(btn_Analizar))
+                    .addComponent(jScrollPane2))
                 .addContainerGap())
         );
         jPanel2Layout.setVerticalGroup(
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel2Layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 302, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(18, 18, 18)
+                .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 592, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(btn_Analizar)
-                .addContainerGap(18, Short.MAX_VALUE))
+                .addGap(32, 32, 32))
         );
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
@@ -270,25 +284,37 @@ public class Principal extends javax.swing.JFrame {
             System.out.println(ex.getMessage());
         }
     }//GEN-LAST:event_btn_AnalizarActionPerformed
-    private analizador.Lexer lexico;
-    private analizador.parser analizador;
+
     public  void analizar(){
-        /*String input = txt_Console.getText();
+        String input = txt_Console.getText();
+        error = new ArrayList<>();
+        vGlobal = new LinkedList<>();
         lexico = new analizador.Lexer(new BufferedReader(new StringReader(input)));
-        parser = new analizador.parser(lexico);
+        analizador = new analizador.parser(lexico);
+        graph = new HashMap<>();
         try {
-            parser.parse();
-            imprimirGlobales();
+            analizador.parse();
+            vGlobal = analizador.global;
+            imprimirGrafica();
+            if(error.isEmpty()){
+                JOptionPane.showMessageDialog(null, "Analisis Finalizado", "Correcto", JOptionPane.INFORMATION_MESSAGE);
+                crearDirectorio();
+            }
+            else{                               
+                JOptionPane.showMessageDialog(null, "Errores encontrados", "Error", JOptionPane.ERROR_MESSAGE);
+                error.stream().forEach((e) -> {
+                    System.out.println(e.getTipo() + "-" + e.getFila() + "-" + e.getColumna() + "-" + e.getError());
+                });   
+            }
         } catch (Exception ex) {
             System.out.println("Error fatal en la compilación");
-        }*/
-        interpretar("entrada.gu");
+        }
     }
     public void imprimirGlobales(){
-        Iterator<Variable> it  = analizador.global.iterator();
+        
+        Iterator<Variable> it  = vGlobal.iterator();
         while(it.hasNext()){
             Variable n = it.next();
-            System.out.println("Nombre: " + n.getNombreVariable() + " Tipo: " + n.getTipoVariable());
         }
     }
     
@@ -299,25 +325,40 @@ public class Principal extends javax.swing.JFrame {
             if(n instanceof GraficaBarras){
                 GraficaBarras gb = (GraficaBarras)n;
                 gb.validar_caracteristicas();
-                gb.mostrar_caracteristicas();
+                JFreeChart gr = gb.graficar();
+                if(gr!=null){
+                    graph.put(gb.getId(), gr);
+                }
             }
             else if(n instanceof GraficaLineas){
-                GraficaLineas gl = (GraficaLineas)n;
+                GraficaLineas gl = (GraficaLineas)n; 
+                gl.validar_caracteristicas();
             }
         }
     }
     
-    private void interpretar(String path) {
-        try {
-            analizador = new analizador.parser(new analizador.Lexer(new FileInputStream(path)));
-            analizador.parse();
-            imprimirGlobales();
-            imprimirGrafica();
-        } 
-        catch (Exception ex) {
-            System.out.println("Error fatal en la compilación");
+    public void crearDirectorio(){
+        if(analizador.galeria!=null){
+            for(Galeria g: analizador.galeria){
+                try{
+                    File folder = new File(g.getName());
+                    if(!folder.exists()){
+                        folder.mkdirs();
+                    }
+                    for(String name: g.getListaGraph()){
+                        if(graph.get(name)!=null){
+                            File BarChart = new File(g.getName()+ "/" + name + ".jpeg");
+                            ChartUtilities.saveChartAsJPEG(BarChart,graph.get(name),640,480);
+                        }
+                    }
+                }
+                catch(Exception e){
+                    
+                }
+            }            
         }
     }
+    
     
     public static void main(String args[]) {
         java.awt.EventQueue.invokeLater(new Runnable() {

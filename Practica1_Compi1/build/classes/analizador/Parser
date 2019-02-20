@@ -6,8 +6,11 @@ import java_cup.runtime.*;
 import recursos.*;
 import java.util.Iterator;
 
+
 parser code 
-{:    
+{:
+import static practica1_compi1.Principal.error; 
+
     /* Variable que guarda la lista de variables globales*/
     public LinkedList<Variable> global;
     public LinkedList<Galeria> galeria;
@@ -17,6 +20,7 @@ parser code
      * Método al que se llama automáticamente ante algún error sintactico.
      **/ 
     public void syntax_error(Symbol s){ 
+            error.add(new recursos.Error(s.left,s.right,"Sintactico",s.value.toString()));
             System.err.println("Error Sintáctico en la Línea " + (s.left) +" Columna "+s.right+ ". No se esperaba este componente: " +s.value+"."); 
     } 
     /**
@@ -132,7 +136,6 @@ VAR_GL::= id:a id:b igual cadena:c puntoycoma
     :}
     | id:a id:b igual expr:c puntoycoma
     {:
-        System.out.println(c);
         RESULT = new Variable(a,b,"",c);
     :}
 ;
@@ -276,7 +279,7 @@ CAR_LIN::= id:a dospuntos cadena:b puntoycoma
     {:
         RESULT = new Caracteristica(a,b,1);
     :}
-    | dexyli signoa DEF_XY:a signoa
+    | dexyli signoa DEF_XY:a signoc
     {:
         RESULT = a;
     :}
@@ -295,6 +298,7 @@ DEF_XY::= DEF_XY:a CAR_XY:b
 CAR_XY::= id:a dospuntos cadena:b puntoycoma
     {:
         RESULT = new Caracteristica(a,b.replace("\"",""),0);
+        
     :}
     | id:a dospuntos id:b puntoycoma
     {:
@@ -329,7 +333,7 @@ DEF_GA::= rgaleria llaveizquierda LIST_GA:a llavederecha
     :}
     | /*epsilon*/
     {:
-        
+
     :}
 ;
 

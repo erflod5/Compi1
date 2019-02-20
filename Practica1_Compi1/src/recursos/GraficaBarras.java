@@ -1,5 +1,11 @@
 package recursos;
 import java.util.ArrayList;
+import org.jfree.chart.ChartFactory;
+import org.jfree.chart.JFreeChart;
+import org.jfree.chart.plot.PlotOrientation;
+import org.jfree.data.category.DefaultCategoryDataset;
+import static practica1_compi1.Principal.error;
+import static practica1_compi1.Principal.vGlobal;
 
 public class GraficaBarras extends Grafica{
     
@@ -68,11 +74,33 @@ public class GraficaBarras extends Grafica{
         System.out.println("Grafica de Barras");
     }
     
+    public String buscarGlobalS(String id,int fila, int columna){
+        for(Variable v: vGlobal){
+            if(v.getNombreVariable().equalsIgnoreCase(id)){
+                return v.getValorString();
+            }
+        }
+        error.add(new Error(fila,columna,"Sintactico","Variable: " + id + " no existe"));
+        return "";
+    }
+    
+    public int buscarGlobalI(String id,int fila,int columna){
+        for(Variable v: vGlobal){
+            if(v.getNombreVariable().equalsIgnoreCase(id)){
+                return v.getValorEntero();
+            }
+        }
+        error.add(new Error(fila,columna,"Sintactico","Variable: " + id + " no existe"));
+        return 0;
+    }
+    
     public void validar_caracteristicas() {
-
         for (Object o : caracteristica) {
             if(o instanceof Caracteristica){
                 Caracteristica c = (Caracteristica)o;
+                if(c.getGlobal()==1){
+                    c.setValor(buscarGlobalS(c.getValor(),c.getFila(),c.getColumna()));
+                }
                 switch (c.getNombre().toLowerCase()) {    
                     case "id":
                         this.setId(c.getValor());
@@ -87,7 +115,7 @@ public class GraficaBarras extends Grafica{
                         this.setTituloY(c.getValor());
                         break;
                     default:
-                        System.err.println("ERROR: la característica '" + c.getNombre() + "' es inválida");
+                        error.add(new recursos.Error(c.getFila(),c.getColumna(),"Sintactico","Caracteristia: " + c.getNombre() + " no reconocida"));
                         break;
                 }
             }
@@ -95,27 +123,42 @@ public class GraficaBarras extends Grafica{
                 try{
                     if(((ArrayList<?>)o).get(0) instanceof Integer)
                     {
-                        
+                        this.ejeY = (ArrayList<Integer>)o;
                     }
                     else if(((ArrayList<?>)o).get(0) instanceof String)
                     {
-                    
+                        this.ejeX = (ArrayList<String>)o;
                     }
-                    if(((ArrayList<?>)o).get(0) instanceof Punto)
+                    else if(((ArrayList<?>)o).get(0) instanceof Punto)
                     {
-                    
+                        this.puntos = (ArrayList<Punto>)o;
                     }
                 }
                 catch(NullPointerException ex){
-                    System.out.println("NO METAS UN ARRAYLIST VACIO");
+                    error.add(new recursos.Error(0,0,"Sintactico","Lista vacia"));
                 }
-                System.out.println(o);
             }
         }
     }
-
-    public void mostrar_caracteristicas() {
-        System.out.println("********** " + this.getTitulo() + " **********");
-    }
     
+    public JFreeChart graficar(){
+        final DefaultCategoryDataset dataset = new DefaultCategoryDataset( );
+        try{
+            puntos.stream().forEach((p) -> {
+                dataset.addValue(ejeY.get(p.getPuntoy()), ejeX.get(p.getPuntox()), ejeX.get(p.getPuntox()));
+            });
+        }
+        catch(NullPointerException ex){
+            error.add(new Error(0,0,"Sintactico","Valor fuera del intervalo"));
+            return null;
+        }
+        JFreeChart barChart = ChartFactory.createBarChart(
+           this.getTitulo(), 
+           this.getTituloX(), this.getTituloY(), 
+           dataset,PlotOrientation.VERTICAL, 
+           true, true, false); 
+        return barChart;
+        //File BarChart = new File( "nombreArchivo.jpeg" ); 
+        //ChartUtilities.saveChartAsJPEG( BarChart , barChart , width , height );
+    }
 }
