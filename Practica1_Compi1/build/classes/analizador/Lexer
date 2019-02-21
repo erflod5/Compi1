@@ -1,6 +1,6 @@
 package analizador;
 import java_cup.runtime.Symbol;
-import static practica1_compi1.Principal.error; 
+import static practica1_compi1.Principal.errorLexico; 
 
 %% 
 %class Lexer
@@ -66,5 +66,5 @@ comentario_multi = "/*"((.*)|\r\n|\n|\r)*"*/"
 
 
 . {
-    error.add(new recursos.Error(yyline,yychar,"Lexico",yytext()));
+    errorLexico.add(new recursos.Error(yyline,yychar,"Lexico",yytext()));
 }

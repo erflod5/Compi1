@@ -2,7 +2,7 @@
 
 package analizador;
 import java_cup.runtime.Symbol;
-import static practica1_compi1.Principal.error; 
+import static practica1_compi1.Principal.errorLexico; 
 
 
 /**
@@ -716,7 +716,7 @@ public class Lexer implements java_cup.runtime.Scanner {
       else {
         switch (zzAction < 0 ? zzAction : ZZ_ACTION[zzAction]) {
           case 1: 
-            { error.add(new recursos.Error(yyline,yychar,"Lexico",yytext()));
+            { errorLexico.add(new recursos.Error(yyline,yychar,"Lexico",yytext()));
             } 
             // fall through
           case 31: break;

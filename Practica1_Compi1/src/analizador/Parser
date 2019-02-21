@@ -35,7 +35,7 @@ import static practica1_compi1.Principal.error;
         Integer valor = 0;
         while(it.hasNext()){
             Variable n = it.next();
-            if(n.getNombreVariable().equals(nombre))
+            if(n.getNombreVariable().equalsIgnoreCase(nombre))
                 valor = n.getValorEntero();
         }
         if(valor==0){
@@ -50,7 +50,7 @@ import static practica1_compi1.Principal.error;
         String valor = "";
         while(it.hasNext()){
             Variable n = it.next();
-            if(n.getNombreVariable().equals(nombre))
+            if(n.getNombreVariable().equalsIgnoreCase(nombre))
                 valor = n.getValorString();
         }
         if(valor.equals("")) {
@@ -78,6 +78,7 @@ non terminal Variable VAR_GL;
 non terminal LinkedList<Galeria> LIST_GA,DEF_GA;
 non terminal Galeria CAR_GA;
 non terminal LinkedList<String> LCAR_GA;
+non terminal String LCAR_GA1;
 
 non terminal GraficaBarras BAR;
 non terminal ArrayList<Object> BAR1;
@@ -357,15 +358,25 @@ CAR_GA::= rgaleria abre cadena:a coma LCAR_GA:b cierra puntoycoma
     :}
 ;
 
-LCAR_GA::= LCAR_GA:a coma cadena:b
+LCAR_GA::= LCAR_GA:a coma LCAR_GA1:b
     {:
-        RESULT = a; RESULT.add(b.replace("\"","");
+        RESULT = a; RESULT.add(b);
     :}
-    | cadena:a
+    | LCAR_GA1:a
     {:
-        RESULT = new LinkedList<>(); RESULT.add(a.replace("\"", ""));
+        RESULT = new LinkedList<>(); RESULT.add(a);
     :}
 ;
+
+LCAR_GA1::= cadena:a
+    {:
+        RESULT = a.replace("\"","");
+    :}
+    | id:a
+    {:
+        RESULT = parser.getVarString(a);
+    :}
+;   
 
 expr ::= expr:a mas expr:b
     {: 

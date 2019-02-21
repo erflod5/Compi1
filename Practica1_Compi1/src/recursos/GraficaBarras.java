@@ -5,6 +5,7 @@ import org.jfree.chart.JFreeChart;
 import org.jfree.chart.plot.PlotOrientation;
 import org.jfree.data.category.DefaultCategoryDataset;
 import static practica1_compi1.Principal.error;
+import static practica1_compi1.Principal.errorR;
 import static practica1_compi1.Principal.vGlobal;
 
 public class GraficaBarras extends Grafica{
@@ -115,7 +116,7 @@ public class GraficaBarras extends Grafica{
                         this.setTituloY(c.getValor());
                         break;
                     default:
-                        error.add(new recursos.Error(c.getFila(),c.getColumna(),"Sintactico","Caracteristia: " + c.getNombre() + " no reconocida"));
+                        errorR.add(new recursos.Error(c.getFila(),c.getColumna(),"Sintactico","Caracteristica: " + c.getNombre() + " no reconocida"));
                         break;
                 }
             }
@@ -138,6 +139,26 @@ public class GraficaBarras extends Grafica{
                     error.add(new recursos.Error(0,0,"Sintactico","Lista vacia"));
                 }
             }
+        }
+    validarC();
+    }
+    
+    private void validarC(){
+        if(this.getTitulo().equals("")){
+            errorR.add(new Error(0,0,"Sintactico","Titulo no definido"));
+            this.setTitulo("Default");
+        }
+        if(this.getTituloX().equals("")){                        
+            errorR.add(new Error(0,0,"Sintactico","Titulo X no definido"));
+            this.setTituloX("Default");
+        }
+        if(this.getTituloY().equals("")){
+            errorR.add(new Error(0,0,"Sintactico","Titulo Y no definido"));
+            this.setTituloY("Default");
+        }
+        if(this.getId().equals("")){
+            errorR.add(new Error(0,0,"Sintactico","Id no definido"));            
+            this.setId("Default");
         }
     }
     

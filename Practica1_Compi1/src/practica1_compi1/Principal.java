@@ -1,9 +1,9 @@
 package practica1_compi1;
 
+import java.awt.Desktop;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -20,7 +20,6 @@ import javax.swing.filechooser.FileNameExtensionFilter;
 import recursos.Grafica;
 import recursos.GraficaBarras;
 import recursos.GraficaLineas;
-import recursos.Variable;
 import java.util.HashMap;
 import org.jfree.chart.ChartUtilities;
 import org.jfree.chart.JFreeChart;
@@ -32,7 +31,9 @@ public class Principal extends javax.swing.JFrame {
     private analizador.parser analizador;
     private HashMap<String,JFreeChart> graph;
     public static ArrayList<recursos.Error> error;
+    public static ArrayList<recursos.Error> errorLexico;
     public static LinkedList<recursos.Variable> vGlobal;
+    public static ArrayList<recursos.Error> errorR;
     
     
     java.io.File archivo;
@@ -273,7 +274,11 @@ public class Principal extends javax.swing.JFrame {
 
     /*------------------ BOTON REPORTE ---------------------- */
     private void btn_ReporteActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_ReporteActionPerformed
-        System.out.println("REPORTE");
+        try {
+            imprimirErrores();
+        } catch (IOException ex) {
+            Logger.getLogger(Principal.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }//GEN-LAST:event_btn_ReporteActionPerformed
 
     /*------------------ BOTON ABRIR ---------------------- */    
@@ -288,6 +293,8 @@ public class Principal extends javax.swing.JFrame {
     public  void analizar(){
         String input = txt_Console.getText();
         error = new ArrayList<>();
+        errorLexico = new ArrayList<>();
+        errorR = new ArrayList<>();
         vGlobal = new LinkedList<>();
         lexico = new analizador.Lexer(new BufferedReader(new StringReader(input)));
         analizador = new analizador.parser(lexico);
@@ -310,13 +317,107 @@ public class Principal extends javax.swing.JFrame {
             System.out.println("Error fatal en la compilación");
         }
     }
-    public void imprimirGlobales(){
-        
-        Iterator<Variable> it  = vGlobal.iterator();
-        while(it.hasNext()){
-            Variable n = it.next();
+    
+    public String erroresLexicos(){
+        StringBuilder n = new StringBuilder();
+        n.append("<table style=\"widht:100%\"> ");
+        try{
+            n.append("<tr>");
+                n.append("<td>Error</td>");
+                n.append("<td>Fila</td>");
+                n.append("<td>Columna</td>");
+            n.append("</tr>");
+        for(recursos.Error e: errorLexico){
+            n.append("<tr>");
+                n.append("<td>" + e.getError() + "</td>");
+                n.append("<td>" + e.getFila() + "</td>");
+                n.append("<td>" + e.getColumna() + "</td>");
+            n.append("</tr>");            
+        }
+        n.append("</table>");
+        return n.toString();}
+        catch(NullPointerException ex){
+         return "";   
         }
     }
+    
+    public String erroresRecuperados(){
+        StringBuilder n = new StringBuilder();
+        n.append("<table style=\"widht:100%\"> ");
+        try{
+            n.append("<tr>");
+                n.append("<td>Error</td>");
+                n.append("<td>Fila</td>");
+                n.append("<td>Columna</td>");
+            n.append("</tr>");
+            for(recursos.Error e: errorR){
+                n.append("<tr>");
+                    n.append("<td>" + e.getError() + "</td>");
+                    n.append("<td>" + e.getFila() + "</td>");
+                    n.append("<td>" + e.getColumna() + "</td>");
+                n.append("</tr>");            
+            }
+            n.append("</table>");
+            return n.toString();
+        }
+        catch(NullPointerException ex){
+            return "";   
+        }
+    }
+    
+    public String erroresSintacticos(){
+        StringBuilder n = new StringBuilder();
+        n.append("<table style=\"widht:100%\"> ");
+        try{
+            n.append("<tr>");
+                n.append("<td>Error</td>");
+                n.append("<td>Fila</td>");
+                n.append("<td>Columna</td>");
+            n.append("</tr>");
+            for(recursos.Error e: error){
+                n.append("<tr>");
+                    n.append("<td>" + e.getError() + "</td>");
+                    n.append("<td>" + e.getFila() + "</td>");
+                    n.append("<td>" + e.getColumna() + "</td>");
+                n.append("</tr>");            
+            }
+            n.append("</table>");
+            return n.toString();
+        }
+        catch(NullPointerException ex){
+            return "";   
+        }
+    }
+    
+    public void imprimirErrores() throws IOException{
+        BufferedWriter bw;
+        File archivo = new File("reporte.html");
+        if(!archivo.exists()){
+            archivo.createNewFile();
+        }
+        bw = new BufferedWriter(new FileWriter(archivo));
+        bw.write("<html> <h1>Errores Lexicos</h1>");
+        bw.write(erroresLexicos());
+        bw.write("<h1>Errores Sintacticos</h1>");
+        bw.write(erroresSintacticos());
+        bw.write("<h1>Errores Recuperados</h1>");
+        bw.write(erroresRecuperados());
+        bw.write("<style>\n" +
+"table, th, td {\n" +
+"  border: 1px solid black;\n" +
+"  border-collapse: collapse;\n" +
+"}\n" +
+"th, td {\n" +
+"  padding: 5px;\n" +
+"  text-align: left;\n" +
+"}\n" +
+"</style>");
+        bw.write("</html>");
+        bw.close();
+        Desktop.getDesktop().open(archivo);
+    }
+    
+
     
     public void imprimirGrafica(){
         Iterator<Grafica> it  = analizador.grafica.iterator();
@@ -340,7 +441,6 @@ public class Principal extends javax.swing.JFrame {
             }
         }
     }
-
 
     public void crearDirectorio(){
         if(analizador.galeria!=null){

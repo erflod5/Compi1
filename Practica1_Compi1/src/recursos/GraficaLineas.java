@@ -12,6 +12,7 @@ import org.jfree.chart.renderer.xy.XYLineAndShapeRenderer;
 import org.jfree.data.xy.XYSeries;
 import org.jfree.data.xy.XYSeriesCollection;
 import static practica1_compi1.Principal.error;
+import static practica1_compi1.Principal.errorR;
 
 
 public class GraficaLineas extends Grafica{
@@ -71,7 +72,7 @@ public class GraficaLineas extends Grafica{
                         this.setTituloY(c.getValor());
                         break;
                     default:
-                        error.add(new recursos.Error(c.getFila(),c.getColumna(),"Sintactico","Caracteristia: " + c.getNombre() + " no reconocida"));
+                        errorR.add(new recursos.Error(c.getFila(),c.getColumna(),"Sintactico","Caracteristica: " + c.getNombre() + " no reconocida"));
                         break;
                 }
             }
@@ -92,7 +93,7 @@ public class GraficaLineas extends Grafica{
                                 x.setGrosor(Integer.parseInt(c.getValor()));
                                 break;
                             default:
-                                error.add(new recursos.Error(c.getFila(),c.getColumna(),"Sintactico","Caracteristia: " + c.getNombre() + " no reconocida"));
+                                errorR.add(new recursos.Error(c.getFila(),c.getColumna(),"Sintactico","Caracteristica: " + c.getNombre() + " no reconocida"));
                                 break;
                         }
                     }
@@ -102,7 +103,41 @@ public class GraficaLineas extends Grafica{
                 });
                 this.graph.add(x);
             }
-        }  
+        }
+        validarC();
+    }
+    
+    private void validarC(){
+        if(this.getTitulo().equals("")){
+            errorR.add(new Error(0,0,"Sintactico","Titulo no definido"));
+            this.setTitulo("Default");
+        }
+        if(this.getTituloX().equals("")){                        
+            errorR.add(new Error(0,0,"Sintactico","Titulo X no definido"));
+            this.setTituloX("Default");
+        }
+        if(this.getTituloY().equals("")){
+            errorR.add(new Error(0,0,"Sintactico","Titulo Y no definido"));
+            this.setTituloY("Default");
+        }
+        if(this.getId().equals("")){
+            errorR.add(new Error(0,0,"Sintactico","Id no definido"));            
+            this.setId("Default");
+        }
+        for(XYLine xyl: graph){
+            if(xyl.getNombre().equals("")){
+                errorR.add(new Error(0,0,"Sintactico","Nombre no definido"));
+                xyl.setNombre("Default");
+            }
+            if(xyl.getGrosor()==0){
+                errorR.add(new Error(0,0,"Sintactico","Grosor no definido"));
+                xyl.setGrosor(1);
+            }
+            if(xyl.getColor()==null){
+                errorR.add(new Error(0,0,"sintactico","color no definido"));
+                xyl.setColor(Color.WHITE);
+            }
+        }
     }
     
     private Color getColor(String nombre){
@@ -119,12 +154,14 @@ public class GraficaLineas extends Grafica{
                 return Color.BLACK;
             case "verde":
                 return Color.GREEN;
-            default:                
+            default:
+                errorR.add(new Error(0,0,"Sintactico","Color no reconocido"));
                 return Color.WHITE;
         }
     }
     
     public JFreeChart graficar(){
+        
         final XYSeriesCollection ds = new XYSeriesCollection();
         XYLineAndShapeRenderer renderer = new XYLineAndShapeRenderer();
         int c=0;
