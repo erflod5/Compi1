@@ -254,159 +254,159 @@ BARXY::= BARXY:a coma llaveizquierda BARYY:b coma BARYY:c llavederecha
 ;
 
 
-LIN::= grali llaveizquierda LIN1:a llavederecha
-    {:
-        RESULT = new GraficaLineas(a);
-    :}
-;
+    LIN::= grali llaveizquierda LIN1:a llavederecha
+        {:
+            RESULT = new GraficaLineas(a);
+        :}
+    ;
 
 
-LIN1::= LIN1:a CAR_LIN:b
-    {:
-        RESULT = a; RESULT.add(b);
-    :}
-    | CAR_LIN:a
-    {:
-        RESULT = new ArrayList<>(); RESULT.add(a);
-    :}
-;
+    LIN1::= LIN1:a CAR_LIN:b
+        {:
+            RESULT = a; RESULT.add(b);
+        :}
+        | CAR_LIN:a
+        {:
+            RESULT = new ArrayList<>(); RESULT.add(a);
+        :}
+    ;
 
 
-CAR_LIN::= id:a dospuntos cadena:b puntoycoma
-    {:
-        RESULT = new Caracteristica(a,b.replace("\"",""),0);
-    :}
-    |   id:a dospuntos id:b puntoycoma
-    {:
-        RESULT = new Caracteristica(a,b,1);
-    :}
-    | dexyli signoa DEF_XY:a signoc
-    {:
-        RESULT = a;
-    :}
-;
+    CAR_LIN::= id:a dospuntos cadena:b puntoycoma
+        {:
+            RESULT = new Caracteristica(a,b.replace("\"",""),0);
+        :}
+        |   id:a dospuntos id:b puntoycoma
+        {:
+            RESULT = new Caracteristica(a,b,1);
+        :}
+        | dexyli signoa DEF_XY:a signoc
+        {:
+            RESULT = a;
+        :}
+    ;
 
-DEF_XY::= DEF_XY:a CAR_XY:b
-    {:
-        RESULT = a; RESULT.add(b);
-    :}
-    | CAR_XY:a
-    {:
-        RESULT = new ArrayList<>(); RESULT.add(a);
-    :}
-;
+    DEF_XY::= DEF_XY:a CAR_XY:b
+        {:
+            RESULT = a; RESULT.add(b);
+        :}
+        | CAR_XY:a
+        {:
+            RESULT = new ArrayList<>(); RESULT.add(a);
+        :}
+    ;
 
-CAR_XY::= id:a dospuntos cadena:b puntoycoma
-    {:
-        RESULT = new Caracteristica(a,b.replace("\"",""),0);
-        
-    :}
-    | id:a dospuntos id:b puntoycoma
-    {:
-        RESULT = new Caracteristica(a,b,1);
-    :}
-    | id:a dospuntos num:b puntoycoma
-    {:
-        RESULT = new Caracteristica(a,b,0);
-    :}
-    | id:a dospuntos corchetederecho CAR1_XY:b corcheteizquierdo puntoycoma
-    {:
-        RESULT = b;
-    :}
-;
+    CAR_XY::= id:a dospuntos cadena:b puntoycoma
+        {:
+            RESULT = new Caracteristica(a,b.replace("\"",""),0);
 
-
-CAR1_XY::= CAR1_XY:a coma llaveizquierda BARYY:b coma BARYY:c llavederecha
-    {:
-        RESULT = a; RESULT.add(new Punto(b,c));
-    :}
-    | llaveizquierda BARYY:a coma BARYY:b llavederecha
-    {:
-        RESULT = new ArrayList<>(); RESULT.add(new Punto(a,b));
-    :}
-;
+        :}
+        | id:a dospuntos id:b puntoycoma
+        {:
+            RESULT = new Caracteristica(a,b,1);
+        :}
+        | id:a dospuntos num:b puntoycoma
+        {:
+            RESULT = new Caracteristica(a,b,0);
+        :}
+        | id:a dospuntos corchetederecho CAR1_XY:b corcheteizquierdo puntoycoma
+        {:
+            RESULT = b;
+        :}
+    ;
 
 
-/*-------------------BLOQUE GALERIAS----------------*/
-DEF_GA::= rgaleria llaveizquierda LIST_GA:a llavederecha
-    {:
-        RESULT = a;
-    :}
-    | /*epsilon*/
-    {:
+    CAR1_XY::= CAR1_XY:a coma llaveizquierda BARYY:b coma BARYY:c llavederecha
+        {:
+            RESULT = a; RESULT.add(new Punto(b,c));
+        :}
+        | llaveizquierda BARYY:a coma BARYY:b llavederecha
+        {:
+            RESULT = new ArrayList<>(); RESULT.add(new Punto(a,b));
+        :}
+    ;
 
-    :}
-;
 
-LIST_GA::= LIST_GA:a CAR_GA:b
-    {:
-        RESULT = a; RESULT.add(b);
-    :}
-    | CAR_GA:a
-    {:
-        RESULT = new LinkedList<>(); RESULT.add(a);
-    :}
-;
+    /*-------------------BLOQUE GALERIAS----------------*/
+    DEF_GA::= rgaleria llaveizquierda LIST_GA:a llavederecha
+        {:
+            RESULT = a;
+        :}
+        | /*epsilon*/
+        {:
 
-CAR_GA::= rgaleria abre cadena:a coma LCAR_GA:b cierra puntoycoma
-    {:
-        RESULT = new Galeria(b,a.replace("\"", ""));
-    :}
-    | rgaleria abre id:a coma LCAR_GA:b cierra puntoycoma
-    {:
-        RESULT = new Galeria(b,a);
-    :}
-;
+        :}
+    ;
 
-LCAR_GA::= LCAR_GA:a coma LCAR_GA1:b
-    {:
-        RESULT = a; RESULT.add(b);
-    :}
-    | LCAR_GA1:a
-    {:
-        RESULT = new LinkedList<>(); RESULT.add(a);
-    :}
-;
+    LIST_GA::= LIST_GA:a CAR_GA:b
+        {:
+            RESULT = a; RESULT.add(b);
+        :}
+        | CAR_GA:a
+        {:
+            RESULT = new LinkedList<>(); RESULT.add(a);
+        :}
+    ;
 
-LCAR_GA1::= cadena:a
-    {:
-        RESULT = a.replace("\"","");
-    :}
-    | id:a
-    {:
-        RESULT = parser.getVarString(a);
-    :}
-;   
+    CAR_GA::= rgaleria abre cadena:a coma LCAR_GA:b cierra puntoycoma
+        {:
+            RESULT = new Galeria(b,a.replace("\"", ""));
+        :}
+        | rgaleria abre id:a coma LCAR_GA:b cierra puntoycoma
+        {:
+            RESULT = new Galeria(b,a);
+        :}
+    ;
 
-expr ::= expr:a mas expr:b
-    {: 
-        RESULT = a+b;
-    :}
-    | expr:a menos expr:b
-    {: 
-        RESULT = a-b;
-    :}
-    | expr:a por expr:b
-    {: 
-        RESULT = a*b;
-    :}
-    | expr:a div expr:b
-    {: 
-        RESULT = a/b;
-    :}
-    | menos expr:a
-    {: 
-        RESULT = -a;
-    :}
-    %prec menos1
-    |abre expr:a cierra
-    {:
-        RESULT = a;
-    :}
-    | num:n
-    {:
-        RESULT = Integer.parseInt(n);
-    :}
-;
-    
+    LCAR_GA::= LCAR_GA:a coma LCAR_GA1:b
+        {:
+            RESULT = a; RESULT.add(b);
+        :}
+        | LCAR_GA1:a
+        {:
+            RESULT = new LinkedList<>(); RESULT.add(a);
+        :}
+    ;
+
+    LCAR_GA1::= cadena:a
+        {:
+            RESULT = a.replace("\"","");
+        :}
+        | id:a
+        {:
+            RESULT = parser.getVarString(a);
+        :}
+    ;   
+
+    expr ::= expr:a mas expr:b
+        {: 
+            RESULT = a+b;
+        :}
+        | expr:a menos expr:b
+        {: 
+            RESULT = a-b;
+        :}
+        | expr:a por expr:b
+        {: 
+            RESULT = a*b;
+        :}
+        | expr:a div expr:b
+        {: 
+            RESULT = a/b;
+        :}
+        | menos expr:a
+        {: 
+            RESULT = -a;
+        :}
+        %prec menos1
+        |abre expr:a cierra
+        {:
+            RESULT = a;
+        :}
+        | num:n
+        {:
+            RESULT = Integer.parseInt(n);
+        :}
+    ;
+
 

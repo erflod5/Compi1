@@ -288,7 +288,7 @@ public class parser extends java_cup.runtime.lr_parser {
     /**
      * Método al que se llama en el momento en que ya no es posible una recuperación de errores.
      **/ 
-    public void unrecovered_syntax_error(Symbol s) throws java.lang.Exception{ 
+    public void unrecovered_syntax_error(Symbol s) throws java.lang.Exception{
             System.err.println("Error síntactico irrecuperable en la Línea " + (s.left)+ " Columna "+s.right+". Componente " + s.value + " no reconocido.");
     }
     

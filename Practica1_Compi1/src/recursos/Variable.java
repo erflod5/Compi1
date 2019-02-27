@@ -1,9 +1,9 @@
 package recursos;
+import static practica1_compi1.Principal.errorR;
 
 public class Variable {
     private String tipoVariable, nombreVariable, valorString;
     private int valorEntero;
-
     public Variable() {
         this("","","",0);
     }
@@ -13,8 +13,15 @@ public class Variable {
         this.nombreVariable = nombreVariable;
         this.valorString = valorString;
         this.valorEntero = valorEntero;
+        validarCaracteristica();
     }
 
+    public void validarCaracteristica(){
+        if(!this.tipoVariable.equalsIgnoreCase("string") && !this.tipoVariable.equalsIgnoreCase("int")){
+            errorR.add(new recursos.Error(0,0,"Sintactico","Tipo de dato " + this.tipoVariable + " no reconocido"));
+        }
+    }
+    
     public String getTipoVariable() {
         return tipoVariable;
     }

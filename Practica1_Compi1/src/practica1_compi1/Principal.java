@@ -309,9 +309,7 @@ public class Principal extends javax.swing.JFrame {
             }
             else{                               
                 JOptionPane.showMessageDialog(null, "Errores encontrados", "Error", JOptionPane.ERROR_MESSAGE);
-                error.stream().forEach((e) -> {
-                    System.out.println(e.getTipo() + "-" + e.getFila() + "-" + e.getColumna() + "-" + e.getError());
-                });   
+                  
             }
         } catch (Exception ex) {
             System.out.println("Error fatal en la compilación");
