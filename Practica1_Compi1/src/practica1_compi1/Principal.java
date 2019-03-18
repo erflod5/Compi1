@@ -21,6 +21,7 @@ import recursos.Grafica;
 import recursos.GraficaBarras;
 import recursos.GraficaLineas;
 import java.util.HashMap;
+import java_cup.runtime.Symbol;
 import org.jfree.chart.ChartUtilities;
 import org.jfree.chart.JFreeChart;
 import recursos.Galeria;

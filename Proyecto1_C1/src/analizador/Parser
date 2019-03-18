@@ -1,0 +1,565 @@
+package analizador; 
+
+import java_cup.runtime.*;
+import java.util.Objects;
+
+
+parser code 
+{:
+    
+    javax.swing.JTextArea txt_console;
+    public parser(java_cup.runtime.Scanner s,javax.swing.JTextArea txt_console) {super(s); this.txt_console = txt_console;}
+
+    /*Variable global que guarda el html*/
+    public StringBuilder bf = new StringBuilder();
+
+    /**
+     * Método al que se llama automáticamente ante algún error sintactico.
+     **/ 
+    public void syntax_error(Symbol s){ 
+        System.err.println("Error Sintáctico en la Línea " + (s.left) +" Columna "+s.right+ ". No se esperaba este componente: " +s.value+"."); 
+    } 
+    /**
+     * Método al que se llama en el momento en que ya no es posible una recuperación de errores.
+     **/ 
+    public void unrecovered_syntax_error(Symbol s) throws java.lang.Exception{ 
+            System.err.println("Error síntactico irrecuperable en la Línea " + (s.left)+ " Columna "+s.right+". Componente " + s.value + " no reconocido.");
+    }
+
+    /*validar fondo*/
+    public String validaFondo(String color){
+        switch (color.toLowerCase()){
+            case "rojo":
+                return "red";
+            case "azul":
+                return "blue";
+            case "verde":
+                return "green";
+            case "gris":
+                return "gray";
+            case "negro":
+                return "black";
+            case "amarillo":
+                return "yellow";
+            case "rosado":
+                return "pink";
+            default:
+                if(color.length()==7 && color.charAt(0)=='#'){
+                    try {
+                        Integer.parseInt(color.substring(1, 6), 16);
+                        return color;
+                    } 
+                    catch (NumberFormatException e) {
+                        return "#00000";
+                    }
+                }
+            return "#00000";
+        }
+    }
+    
+:} 
+
+terminal ABRE_ETIQUETA, SLASH, IGUAL, R_COMPI, R_CABECERA, R_TITULO;
+terminal R_CUERPO, R_FONDO, R_PARRAFO, R_SALTO, R_TABLA, R_IMAGEN, R_TEXTOA, R_TEXTOB;
+terminal R_BOTON, R_ESPACIO, R_ALINEACION, R_ANCHO, R_ALTO, R_PATH, R_ID, R_TEXTO, R_BORDE;
+terminal R_FILA, R_COLUMNAC, R_COLUMNA, CADENA,ID,NUM,CIERRA_ETIQUETA,TEXTO;
+terminal ABRE_HS,ENTERO,DECIMAL,R_TRUE,R_FALSE,R_SETPATH,R_SETALTO,R_SETANCHO,R_GETPATH,R_GETALTO,R_GETANCHO;
+terminal R_GETTEXTO,R_CREARBOTON,R_CREARTABLA,R_CLICKBOTON,R_CREARIMAGEN,R_CREARTEXTOA,R_CREARTEXTOB,R_SETCONTENIDO,R_GETCONTENIDO,R_SETALINEACION,R_GETALINEACION;
+terminal R_SETBORDE,R_SETTEXTO,R_CIERRAHS;
+
+terminal PUNTOYCOMA, MAS, MENOS, POR, ENTRE, CONCATENACION, ABRE, CIERRA, MENOR, MAYOR, MENOR_IGUAL,MENOS1;
+terminal MAYOR_IGUAL, DESIGUAL, IGUAL_LOGICO, LLAVEIZQUIERDA, LLAVEDERECHA;
+terminal AND, OR, NOT, R_ECHO,R_IF,R_ELSE,R_REPETIR,R_INSERTAR,R_CREARPARRAFO,VARIABLE,VAR1,VAR2;
+
+non terminal S;
+non terminal String inner, t_inner, inner_cabecera, inner_cuerpo, tipo_cuerpo, op_cuerpo;
+
+/*parrafo*/
+non terminal String op_parrafo;
+
+/*boton*/
+non terminal String op_boton;
+
+/*imagen*/
+non terminal String op_imagen,list_img;
+
+/*table*/
+non  terminal String op_tabla,lista_tabla,lista_fila,tipo_columna, op_columna,lista_columna;
+
+/*-----------------------HSCRIPT--------------------------*/
+non terminal list_hs, op_hs  ,block_if,block_echo,block_repetir;
+
+non terminal e_echo;
+non terminal expr,expr_rep,condicion;
+
+precedence left OR;
+precedence left AND;
+precedence left NOT;
+precedence left IGUAL_LOGICO,DESIGUAL,MAYOR,MAYOR_IGUAL,MENOR,MENOR_IGUAL;
+precedence left MAS,MENOS;
+precedence left POR,ENTRE;
+precedence left MENOS1;
+
+
+start with S;
+
+S::= TEXTO R_COMPI CIERRA_ETIQUETA inner:a TEXTO SLASH R_COMPI CIERRA_ETIQUETA {:
+    bf.append("<html>");
+    bf.append(a);
+    bf.append("</html>");
+    :}
+;
+
+inner::= inner:a t_inner:b{:
+        RESULT = a + b;
+    :}
+    | t_inner:a{:
+        RESULT = a;
+    :}
+;
+
+
+t_inner::= TEXTO:a R_CABECERA CIERRA_ETIQUETA inner_cabecera:b TEXTO:c SLASH R_CABECERA CIERRA_ETIQUETA {:
+        RESULT = a + "head>" + b + c + "/head>";
+    :}        
+    | TEXTO:a R_CABECERA CIERRA_ETIQUETA TEXTO:b SLASH R_CABECERA CIERRA_ETIQUETA {:
+        RESULT = a + "head>" + b + "/head>";
+    :}
+    | TEXTO:a R_CUERPO op_cuerpo:b CIERRA_ETIQUETA inner_cuerpo:c TEXTO:d SLASH R_CUERPO CIERRA_ETIQUETA {:
+        if(b==null){
+            RESULT = a + "body>" + c + d + "/body>"; 
+        }
+        else{
+            RESULT = a + "body " + b + ">" + c + d + "/body>"; 
+        }   
+    :}
+    | TEXTO:a R_CUERPO op_cuerpo:b CIERRA_ETIQUETA TEXTO:c SLASH R_CUERPO CIERRA_ETIQUETA {:
+        if(b==null){
+            RESULT = a + "body>" + c + "/body>"; 
+        }
+        else{
+            RESULT = a + "body" + b + ">" + c + "/body>"; 
+        }
+    :}
+;
+
+op_cuerpo::= R_FONDO IGUAL CADENA:a{:
+        RESULT = "bgcolor=" + validaFondo(a.toString().replaceAll("\"", ""));
+    :}
+    | {:/*epsilon*/:}
+;
+
+
+inner_cabecera::= TEXTO:a R_TITULO CIERRA_ETIQUETA TEXTO:b SLASH R_TITULO CIERRA_ETIQUETA {:
+        RESULT = a + "title>" + b + "/title>";
+    :}
+;
+
+inner_cuerpo::= inner_cuerpo:a tipo_cuerpo:b {:
+        RESULT = a + b;
+    :}
+    | tipo_cuerpo:a {:
+        RESULT = a;
+    :}
+;
+
+
+
+tipo_cuerpo::=TEXTO:a R_PARRAFO op_parrafo:b CIERRA_ETIQUETA TEXTO:c SLASH R_PARRAFO CIERRA_ETIQUETA {:
+        if(b==null){
+            RESULT = a + "p>" + c + "/p>";
+        }
+        else{
+            RESULT = a + "p " + b + ">" + c + "/p>";
+        }
+    :}
+    |TEXTO:a SLASH R_SALTO CIERRA_ETIQUETA{:
+        RESULT = a + "br>";
+    :}
+    |TEXTO:a R_TABLA op_tabla:b CIERRA_ETIQUETA lista_tabla:c TEXTO:d SLASH R_TABLA CIERRA_ETIQUETA{:
+        RESULT = a + "table " + b + ">" + c + d + "/table>";
+    :}
+    |TEXTO:a R_IMAGEN list_img:b CIERRA_ETIQUETA TEXTO:c SLASH R_IMAGEN CIERRA_ETIQUETA{:
+        RESULT = a + "image " + b + ">" + c + "/image>";
+    :}
+    |TEXTO:a R_TEXTOA CIERRA_ETIQUETA TEXTO:b SLASH R_TEXTOA CIERRA_ETIQUETA{:
+        RESULT = a + "h4>" + b + "/h4>";
+    :}
+    |TEXTO:a R_TEXTOB CIERRA_ETIQUETA TEXTO:b SLASH R_TEXTOB CIERRA_ETIQUETA{:
+        RESULT = a + "h5>" + b + "/h5>";    
+    :}
+    |TEXTO:a R_BOTON op_boton:b CIERRA_ETIQUETA TEXTO:c SLASH R_BOTON CIERRA_ETIQUETA{:
+        RESULT = a + "input type=\"button\" " + b + ">" + c.toString().replace("<"," ");
+    :}
+    |TEXTO:a R_ESPACIO CIERRA_ETIQUETA inner_cuerpo:b TEXTO:c SLASH R_ESPACIO CIERRA_ETIQUETA{:
+        RESULT = a + "div>" + b + c + "/div>";
+    :}
+    |ABRE_HS list_hs R_CIERRAHS{:
+    
+    :}
+;
+
+op_parrafo::= ID:a IGUAL CADENA:b{:
+        if(a.toString().equals("alineacion")){
+            RESULT = "align=" + b;
+        }
+        else{
+            RESULT = "";
+        }
+    :}
+    |{: /*epsilon*/ :}
+;
+
+
+//PENDIENTEEEEEEE
+op_boton::= ID:a IGUAL CADENA:b ID:c IGUAL CADENA:d{:        
+        RESULT = "id =" +  b.toString() + " value =" + d.toString();    
+    :}
+;
+
+list_img::= list_img:a op_imagen:b{:
+        RESULT = a + " " + b;
+    :}
+    | op_imagen:a {:
+        RESULT = a;
+    :}
+;
+
+op_imagen::= ID:a IGUAL CADENA:b{:
+        RESULT = a + "=" + b;
+    :}
+    | ID:a IGUAL NUM:b{:
+        RESULT = a + "=" + b;
+    :}
+;
+
+op_tabla::= ID:a IGUAL ID:b{:
+        RESULT = "border" + "=" + b;
+    :}
+    | ID:a IGUAL CADENA:b{:
+        RESULT = "border" + "=" + b;
+    :}
+    | {:/*epsilon*/:}
+;
+
+lista_tabla::= lista_tabla:a TEXTO:b R_FILA CIERRA_ETIQUETA lista_fila:c TEXTO:d SLASH R_FILA CIERRA_ETIQUETA {:
+        RESULT = a + b + "tr>" + c + d + "/tr>\n";
+    :}
+    | TEXTO:a R_FILA CIERRA_ETIQUETA lista_fila:b TEXTO:c SLASH R_FILA CIERRA_ETIQUETA {:
+        RESULT = a + "tr>"+ b + c + "/tr>\n";
+    :}
+;
+
+lista_fila::= lista_fila:a tipo_columna:b{:
+        RESULT = a + b;
+    :}
+    | tipo_columna:a{:
+        RESULT = a;
+    :}
+;
+
+tipo_columna::= TEXTO:a R_COLUMNAC CIERRA_ETIQUETA lista_columna:b TEXTO:c SLASH R_COLUMNAC CIERRA_ETIQUETA{:
+        RESULT = a + "th>" + b + c + "/th>\n";
+    :}
+    |TEXTO:a R_COLUMNA CIERRA_ETIQUETA lista_columna:b TEXTO:c SLASH R_COLUMNA CIERRA_ETIQUETA{:
+        RESULT = a + "th>" + b + c + "/th>\n";
+    :}
+
+    |TEXTO:a R_COLUMNA CIERRA_ETIQUETA TEXTO:c SLASH R_COLUMNA CIERRA_ETIQUETA{:
+        RESULT = a + "th>" + c + "/th>\n";
+    :}
+    |TEXTO:a R_COLUMNAC CIERRA_ETIQUETA TEXTO:c SLASH R_COLUMNAC CIERRA_ETIQUETA{:
+        RESULT = a + "th>" + c + "/th>\n";
+    :}
+;
+
+lista_columna::= lista_columna:a op_columna:b{:
+        RESULT = a + "\n" + b;
+    :}
+    |op_columna:a{:
+        RESULT = a + "\n";
+    :}
+;
+
+op_columna::= TEXTO:a R_PARRAFO op_parrafo:b CIERRA_ETIQUETA TEXTO:c SLASH R_PARRAFO CIERRA_ETIQUETA{:
+        if(b==null){
+            RESULT = a + "p>" + c + "/p>";
+        }
+        else{
+            RESULT = a + "p " + b + ">" + c + "/p>";
+        }
+    :}
+    |TEXTO:a SLASH R_SALTO CIERRA_ETIQUETA{:
+        RESULT = a + "br>";
+    :}
+    |TEXTO:a R_IMAGEN list_img:b CIERRA_ETIQUETA TEXTO:c SLASH R_IMAGEN CIERRA_ETIQUETA{:
+        RESULT = a + "image " + b + ">" + c + "/image>";
+    :}
+    |TEXTO:a R_BOTON op_boton:b CIERRA_ETIQUETA TEXTO:c SLASH R_BOTON CIERRA_ETIQUETA{:
+        RESULT = a + "input type=\"button\" " + b + ">" + c.toString().replace("<"," ");
+    :}
+    |ABRE_HS list_hs R_CIERRAHS{:
+        /*pendiente*/
+    :}
+;
+
+
+list_hs::= list_hs op_hs{:
+
+    :}
+    | op_hs{:
+    
+    :} 
+;
+
+
+op_hs::= VAR1 VARIABLE:a IGUAL block_echo:b PUNTOYCOMA{:
+        if(b instanceof Boolean){
+            lista_variable.put(a.toString(),new Pojos.Variable(a.toString(),"Booleano",aleft,aright,b));
+        }
+        else if(b instanceof String){
+            lista_variable.put(a.toString(),new Pojos.Variable(a.toString(),"Cadena",aleft,aright,b));
+        }
+        else if(b instanceof Integer){
+            lista_variable.put(a.toString(),new Pojos.Variable(a.toString(),"Entero",aleft,aright,b));
+        }
+        else if(b instanceof Float){
+            lista_variable.put(a.toString(),new Pojos.Variable(a.toString(),"Decimal",aleft,aright,b));
+        }
+    :}
+    | block_if{:
+    
+    :}
+    |R_ECHO block_echo:a PUNTOYCOMA{:
+        txt_console.append(a.toString()+"\n");
+    :}
+    |block_repetir{:
+    
+    :}
+
+;
+
+
+block_echo::=  block_echo:a CONCATENACION e_echo:b{:
+        RESULT = a.toString() + " " + b.toString();
+    :}
+    | e_echo:a{:
+        RESULT = a;
+    :}
+;
+
+e_echo::= expr:a{:
+        RESULT = a;
+    :}
+;
+
+block_if::= R_IF ABRE expr CIERRA LLAVEIZQUIERDA list_hs LLAVEDERECHA{:
+
+    :}
+    | R_IF ABRE expr CIERRA LLAVEIZQUIERDA list_hs LLAVEDERECHA R_ELSE LLAVEIZQUIERDA list_hs LLAVEDERECHA{:
+
+    :}
+;
+
+block_repetir::=  R_REPETIR ABRE expr_rep CIERRA LLAVEIZQUIERDA list_hs LLAVEDERECHA{:
+
+    :}
+;
+
+expr_rep::=expr_rep:a MAS expr_rep:b
+        {: 
+            RESULT = (Integer) a + (Integer) b;
+        :}
+        | expr_rep:a MENOS expr_rep:b
+        {: 
+            RESULT = (Integer) a - (Integer) b;
+        :}
+        | expr_rep:a POR expr_rep:b
+        {: 
+            RESULT = (Integer) a * (Integer) b;
+        :}
+        | expr_rep:a ENTRE expr_rep:b
+        {: 
+            RESULT = (Integer) a / (Integer) b;
+        :}
+        | MENOS1 expr_rep:a
+        {:
+            RESULT = -(Integer) a;
+        :}
+        %prec MENOS1
+        |ABRE expr_rep:a CIERRA
+        {:
+            RESULT = a;
+        :}
+        | ENTERO:n
+        {:
+            RESULT = Integer.parseInt(n.toString());
+        :}
+        |VAR1 VARIABLE:a{:
+            /*************BUSCAR VARIABLE**********/
+            Object o = lista_variable.get(a.toString()).getValue();
+            if(o instanceof Integer){
+                RESULT = (Integer) o;
+            }
+            else{
+                RESULT = 0;
+            }
+        :}
+;
+
+expr_logica::= expr_logica AND expr_logica{:
+
+    :}
+    | expr_logica OR expr_logica{:
+    
+    :}
+    |NOT expr_logica{:
+    
+    :}
+    |expr{:
+    
+    :}
+;
+
+expr ::=expr:a OR expr:b
+        {: 
+            RESULT = (boolean)a || (boolean)b;
+        :}
+        |expr:a AND expr:b
+        {: 
+            RESULT = (boolean)a && (boolean)b;
+        :}
+        |NOT expr:a 
+        {: 
+            RESULT = !(boolean)a;
+        :} 
+        |expr:a IGUAL_LOGICO expr:b
+        {: 
+            if(a instanceof String || b instanceof String){
+                RESULT = a.toString().compareTo(b.toString()) == 0;                
+            }
+            else if(a instanceof Integer && b instanceof Integer){
+                RESULT = (Integer) a == (Integer) b;                
+            }
+            else if(a instanceof Float || b instanceof Float){
+                RESULT = (float)a == (float)b;                
+            }
+        :}
+        |expr:a DESIGUAL expr:b
+        {: 
+             if(a instanceof String || b instanceof String){
+                RESULT = a.toString().compareTo(b.toString()) != 0;                
+            }
+            else if(a instanceof Integer && b instanceof Integer){
+                RESULT = (Integer) a != (Integer) b;                
+            }
+            else if(a instanceof Float || b instanceof Float){
+                RESULT = (float)a != (float)b;                
+            }             
+        :}
+        |expr:a MAYOR expr:b
+        {: 
+            if(a instanceof String || b instanceof String){
+                RESULT = a.toString().compareTo(b.toString()) > 0;
+            }
+            else if(a instanceof Integer && b instanceof Integer){
+                RESULT = (Integer) a > (Integer) b;
+            }
+            else if(a instanceof Float || b instanceof Float){
+                RESULT = (float)a > (float)b;
+            }
+        :}
+        |expr:a MAYOR_IGUAL expr:b
+        {:
+            if(a instanceof String || b instanceof String){
+                RESULT = a.toString().compareTo(b.toString()) >= 0;                
+            }
+            else if(a instanceof Integer && b instanceof Integer){
+                RESULT = (Integer) a >= (Integer) b;                
+            }
+            else if(a instanceof Float || b instanceof Float){
+                RESULT = (float)a >= (float)b;                
+            } 
+        :}
+        |expr:a MENOR expr:b
+        {:
+            if(a instanceof String || b instanceof String){
+                RESULT = a.toString().compareTo(b.toString()) < 0;                
+            }
+            else if(a instanceof Integer && b instanceof Integer){
+                RESULT = (Integer) a < (Integer) b;
+            }
+            else if(a instanceof Float || b instanceof Float){
+                RESULT = (float)a < (float)b;  
+            } 
+        :}
+        |expr:a MENOR_IGUAL expr:b
+        {: 
+            if(a instanceof String || b instanceof String){
+                RESULT = a.toString().compareTo(b.toString()) <= 0;                
+            }
+            else if(a instanceof Integer && b instanceof Integer){
+                RESULT = (Integer) a <= (Integer) b;
+            }
+            else if(a instanceof Float || b instanceof Float){
+                RESULT = (float)a <= (float)b;  
+            }
+        :}
+        |expr:a MAS expr:b
+        {: 
+            RESULT = (Integer) a + (Integer) b;
+        :}
+        | expr:a MENOS expr:b
+        {: 
+            RESULT = (Integer) a - (Integer) b;
+        :}
+        | expr:a POR expr:b
+        {: 
+            RESULT = (Integer) a * (Integer) b;
+        :}
+        | expr:a ENTRE expr:b
+        {: 
+            RESULT = (Integer) a / (Integer) b;
+        :}
+        | MENOS1 expr:a
+        {:
+            RESULT = -(Integer) a;
+        :}
+        %prec MENOS1
+        |ABRE expr:a CIERRA
+        {:
+            RESULT = a;
+        :}
+        | ENTERO:n
+        {:
+            RESULT = Integer.parseInt(n.toString());
+        :}
+        | DECIMAL:n {:
+            RESULT = Float.parseFloat(n.toString());
+        :}
+        |VAR1 VARIABLE:a{:
+            /*************BUSCAR VARIABLE**********/
+            Object o = lista_variable.get(a.toString()).getValue();
+            if(o instanceof Integer){
+                RESULT = (Integer) o;
+            }
+            else if(o instanceof String){
+                RESULT = (String) o;
+            }
+            else if(o instanceof Float){
+                RESULT = (Float) o;
+            }
+            else if(o instanceof Boolean){
+                RESULT = (Boolean) o;
+            }
+        :}
+        |R_TRUE{:
+            RESULT = true;
+        :}
+        |R_FALSE{:
+            RESULT = false;
+        :}
+        |CADENA:a{:
+        RESULT = a.toString().replaceAll("\"","");
+    :}
+;
