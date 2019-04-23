@@ -1,0 +1,3374 @@
+Terminales no usados en la gramática
+
+   r_principal
+
+
+Gramática
+
+    0 $accept: INICIO $end
+
+    1 INICIO: L
+
+    2 L: L BLOCK
+    3  | BLOCK
+
+    4 BLOCK: B_VAR
+    5      | B_IF
+    6      | B_PARA
+    7      | B_REPETIR
+    8      | B_IMPRIMIR
+    9      | B_SHOW
+
+   10 B_VAR: DECLARA_VAR
+   11      | ASIGNA_VAR
+
+   12 DECLARA_VAR: TIPO_VAR L_ID puntocoma
+   13            | TIPO_VAR L_ID igual E puntocoma
+   14            | TIPO_VAR r_arreglo L_ID L_ARRAY puntocoma
+   15            | TIPO_VAR r_arreglo L_ID L_ARRAY igual llave_i L_FILA llave_d puntocoma
+
+   16 TIPO_VAR: r_int
+   17         | r_string
+   18         | r_double
+   19         | r_char
+   20         | r_bool
+
+   21 ASIGNA_VAR: id igual E puntocoma
+   22           | id TIPO_UN puntocoma
+   23           | id cor_i E cor_d igual E puntocoma
+
+   24 L_ARRAY: cor_i E cor_d
+   25        | cor_i E cor_d cor_i E cor_d
+   26        | cor_i E cor_d cor_i E cor_d cor_i E cor_d
+
+   27 L_FILA: L_FILA coma llave_i L_COLUMNA llave_d
+   28       | llave_i L_COLUMNA llave_d
+
+   29 L_COLUMNA: L_COLUMNA coma E
+   30          | E
+
+   31 B_SHOW: r_show par_i E par_d puntocoma
+
+   32 B_IMPRIMIR: r_imprimir par_i E par_d puntocoma
+
+   33 B_REPETIR: r_repetir par_i E par_d llave_i L llave_d
+
+   34 B_PARA: r_para par_i IN_PARA par_d llave_i L llave_d
+
+   35 IN_PARA: r_int id TIPO1 E puntocoma id TIPO1 E puntocoma id TIPO_UN llave_i L llave_d
+   36        | id TIPO1 E puntocoma id TIPO1 E puntocoma id TIPO_UN llave_i L llave_d
+
+   37 TIPO1: igual
+   38      | mayor
+   39      | mayor_igual
+   40      | menor
+   41      | menor_igual
+   42      | desigual
+
+   43 TIPO_UN: aumento
+   44        | decremento
+
+   45 L_ID: L_ID coma id
+   46     | id
+
+   47 B_IF: r_si par_i E par_d llave_i L llave_d
+   48     | r_si par_i E par_d llave_i L llave_d B_ELSE
+   49     | r_si par_i E par_d llave_i L llave_d L_SINOSI
+   50     | r_si par_i E par_d llave_i L llave_d L_SINOSI B_ELSE
+
+   51 B_ELSE: r_sino llave_i L llave_d
+
+   52 L_SINOSI: L_SINOSI r_sino r_si par_i E par_d llave_i L llave_d
+   53         | r_sino r_si par_i E par_d llave_i L llave_d
+
+   54 E: E aand E
+   55  | E oor E
+   56  | noot E
+   57  | E igual_logico E
+   58  | E desigual E
+   59  | E mayor E
+   60  | E mayor_igual E
+   61  | E menor E
+   62  | E menor_igual E
+   63  | E mas E
+   64  | E menos E
+   65  | E por E
+   66  | E entre E
+   67  | E potencia E
+   68  | menos E
+   69  | entero TIPO_UN
+   70  | caracter TIPO_UN
+   71  | decimal TIPO_UN
+   72  | booleano
+   73  | cadena
+   74  | id TIPO_UN
+   75  | id
+   76  | id cor_i E cor_d
+   77  | par_i E par_d
+
+
+Terminales con las reglas donde aparecen
+
+$end (0) 0
+error (256)
+r_int (258) 16 35
+r_string (259) 17
+r_double (260) 18
+r_char (261) 19
+r_bool (262) 20
+r_arreglo (263) 14 15
+r_imprimir (264) 32
+r_show (265) 31
+r_si (266) 47 48 49 50 52 53
+r_sino (267) 51 52 53
+r_para (268) 34
+r_repetir (269) 33
+r_principal (270)
+entero (271) 69
+decimal (272) 71
+caracter (273) 70
+booleano (274) 72
+cadena (275) 73
+igual_logico (276) 57
+desigual (277) 42 58
+mayor (278) 38 59
+mayor_igual (279) 39 60
+menor (280) 40 61
+menor_igual (281) 41 62
+oor (282) 55
+aand (283) 54
+noot (284) 56
+aumento (285) 43
+decremento (286) 44
+mas (287) 63
+menos (288) 64 68
+por (289) 65
+entre (290) 66
+potencia (291) 67
+par_i (292) 31 32 33 34 47 48 49 50 52 53 77
+par_d (293) 31 32 33 34 47 48 49 50 52 53 77
+puntocoma (294) 12 13 14 15 21 22 23 31 32 35 36
+coma (295) 27 29 45
+igual (296) 13 15 21 23 37
+cor_i (297) 23 24 25 26 76
+cor_d (298) 23 24 25 26 76
+llave_i (299) 15 27 28 33 34 35 36 47 48 49 50 51 52 53
+llave_d (300) 15 27 28 33 34 35 36 47 48 49 50 51 52 53
+id (301) 21 22 23 35 36 45 46 74 75 76
+
+
+No terminales con las reglas donde aparecen
+
+$accept (47)
+    en la izquierda: 0
+INICIO (48)
+    en la izquierda: 1, en la derecha: 0
+L (49)
+    en la izquierda: 2 3, en la derecha: 1 2 33 34 35 36 47 48 49 50
+    51 52 53
+BLOCK (50)
+    en la izquierda: 4 5 6 7 8 9, en la derecha: 2 3
+B_VAR (51)
+    en la izquierda: 10 11, en la derecha: 4
+DECLARA_VAR (52)
+    en la izquierda: 12 13 14 15, en la derecha: 10
+TIPO_VAR (53)
+    en la izquierda: 16 17 18 19 20, en la derecha: 12 13 14 15
+ASIGNA_VAR (54)
+    en la izquierda: 21 22 23, en la derecha: 11
+L_ARRAY (55)
+    en la izquierda: 24 25 26, en la derecha: 14 15
+L_FILA (56)
+    en la izquierda: 27 28, en la derecha: 15 27
+L_COLUMNA (57)
+    en la izquierda: 29 30, en la derecha: 27 28 29
+B_SHOW (58)
+    en la izquierda: 31, en la derecha: 9
+B_IMPRIMIR (59)
+    en la izquierda: 32, en la derecha: 8
+B_REPETIR (60)
+    en la izquierda: 33, en la derecha: 7
+B_PARA (61)
+    en la izquierda: 34, en la derecha: 6
+IN_PARA (62)
+    en la izquierda: 35 36, en la derecha: 34
+TIPO1 (63)
+    en la izquierda: 37 38 39 40 41 42, en la derecha: 35 36
+TIPO_UN (64)
+    en la izquierda: 43 44, en la derecha: 22 35 36 69 70 71 74
+L_ID (65)
+    en la izquierda: 45 46, en la derecha: 12 13 14 15 45
+B_IF (66)
+    en la izquierda: 47 48 49 50, en la derecha: 5
+B_ELSE (67)
+    en la izquierda: 51, en la derecha: 48 50
+L_SINOSI (68)
+    en la izquierda: 52 53, en la derecha: 49 50 52
+E (69)
+    en la izquierda: 54 55 56 57 58 59 60 61 62 63 64 65 66 67 68 69
+    70 71 72 73 74 75 76 77, en la derecha: 13 21 23 24 25 26 29 30
+    31 32 33 35 36 47 48 49 50 52 53 54 55 56 57 58 59 60 61 62 63
+    64 65 66 67 68 76 77
+
+
+Estado 0
+
+    0 $accept: . INICIO $end
+
+    r_int       desplazar e ir al estado 1
+    r_string    desplazar e ir al estado 2
+    r_double    desplazar e ir al estado 3
+    r_char      desplazar e ir al estado 4
+    r_bool      desplazar e ir al estado 5
+    r_imprimir  desplazar e ir al estado 6
+    r_show      desplazar e ir al estado 7
+    r_si        desplazar e ir al estado 8
+    r_para      desplazar e ir al estado 9
+    r_repetir   desplazar e ir al estado 10
+    id          desplazar e ir al estado 11
+
+    INICIO       ir al estado 12
+    L            ir al estado 13
+    BLOCK        ir al estado 14
+    B_VAR        ir al estado 15
+    DECLARA_VAR  ir al estado 16
+    TIPO_VAR     ir al estado 17
+    ASIGNA_VAR   ir al estado 18
+    B_SHOW       ir al estado 19
+    B_IMPRIMIR   ir al estado 20
+    B_REPETIR    ir al estado 21
+    B_PARA       ir al estado 22
+    B_IF         ir al estado 23
+
+
+Estado 1
+
+   16 TIPO_VAR: r_int .
+
+    $default  reduce usando la regla 16 (TIPO_VAR)
+
+
+Estado 2
+
+   17 TIPO_VAR: r_string .
+
+    $default  reduce usando la regla 17 (TIPO_VAR)
+
+
+Estado 3
+
+   18 TIPO_VAR: r_double .
+
+    $default  reduce usando la regla 18 (TIPO_VAR)
+
+
+Estado 4
+
+   19 TIPO_VAR: r_char .
+
+    $default  reduce usando la regla 19 (TIPO_VAR)
+
+
+Estado 5
+
+   20 TIPO_VAR: r_bool .
+
+    $default  reduce usando la regla 20 (TIPO_VAR)
+
+
+Estado 6
+
+   32 B_IMPRIMIR: r_imprimir . par_i E par_d puntocoma
+
+    par_i  desplazar e ir al estado 24
+
+
+Estado 7
+
+   31 B_SHOW: r_show . par_i E par_d puntocoma
+
+    par_i  desplazar e ir al estado 25
+
+
+Estado 8
+
+   47 B_IF: r_si . par_i E par_d llave_i L llave_d
+   48     | r_si . par_i E par_d llave_i L llave_d B_ELSE
+   49     | r_si . par_i E par_d llave_i L llave_d L_SINOSI
+   50     | r_si . par_i E par_d llave_i L llave_d L_SINOSI B_ELSE
+
+    par_i  desplazar e ir al estado 26
+
+
+Estado 9
+
+   34 B_PARA: r_para . par_i IN_PARA par_d llave_i L llave_d
+
+    par_i  desplazar e ir al estado 27
+
+
+Estado 10
+
+   33 B_REPETIR: r_repetir . par_i E par_d llave_i L llave_d
+
+    par_i  desplazar e ir al estado 28
+
+
+Estado 11
+
+   21 ASIGNA_VAR: id . igual E puntocoma
+   22           | id . TIPO_UN puntocoma
+   23           | id . cor_i E cor_d igual E puntocoma
+
+    aumento     desplazar e ir al estado 29
+    decremento  desplazar e ir al estado 30
+    igual       desplazar e ir al estado 31
+    cor_i       desplazar e ir al estado 32
+
+    TIPO_UN  ir al estado 33
+
+
+Estado 12
+
+    0 $accept: INICIO . $end
+
+    $end  desplazar e ir al estado 34
+
+
+Estado 13
+
+    1 INICIO: L .
+    2 L: L . BLOCK
+
+    r_int       desplazar e ir al estado 1
+    r_string    desplazar e ir al estado 2
+    r_double    desplazar e ir al estado 3
+    r_char      desplazar e ir al estado 4
+    r_bool      desplazar e ir al estado 5
+    r_imprimir  desplazar e ir al estado 6
+    r_show      desplazar e ir al estado 7
+    r_si        desplazar e ir al estado 8
+    r_para      desplazar e ir al estado 9
+    r_repetir   desplazar e ir al estado 10
+    id          desplazar e ir al estado 11
+
+    $default  reduce usando la regla 1 (INICIO)
+
+    BLOCK        ir al estado 35
+    B_VAR        ir al estado 15
+    DECLARA_VAR  ir al estado 16
+    TIPO_VAR     ir al estado 17
+    ASIGNA_VAR   ir al estado 18
+    B_SHOW       ir al estado 19
+    B_IMPRIMIR   ir al estado 20
+    B_REPETIR    ir al estado 21
+    B_PARA       ir al estado 22
+    B_IF         ir al estado 23
+
+
+Estado 14
+
+    3 L: BLOCK .
+
+    $default  reduce usando la regla 3 (L)
+
+
+Estado 15
+
+    4 BLOCK: B_VAR .
+
+    $default  reduce usando la regla 4 (BLOCK)
+
+
+Estado 16
+
+   10 B_VAR: DECLARA_VAR .
+
+    $default  reduce usando la regla 10 (B_VAR)
+
+
+Estado 17
+
+   12 DECLARA_VAR: TIPO_VAR . L_ID puntocoma
+   13            | TIPO_VAR . L_ID igual E puntocoma
+   14            | TIPO_VAR . r_arreglo L_ID L_ARRAY puntocoma
+   15            | TIPO_VAR . r_arreglo L_ID L_ARRAY igual llave_i L_FILA llave_d puntocoma
+
+    r_arreglo  desplazar e ir al estado 36
+    id         desplazar e ir al estado 37
+
+    L_ID  ir al estado 38
+
+
+Estado 18
+
+   11 B_VAR: ASIGNA_VAR .
+
+    $default  reduce usando la regla 11 (B_VAR)
+
+
+Estado 19
+
+    9 BLOCK: B_SHOW .
+
+    $default  reduce usando la regla 9 (BLOCK)
+
+
+Estado 20
+
+    8 BLOCK: B_IMPRIMIR .
+
+    $default  reduce usando la regla 8 (BLOCK)
+
+
+Estado 21
+
+    7 BLOCK: B_REPETIR .
+
+    $default  reduce usando la regla 7 (BLOCK)
+
+
+Estado 22
+
+    6 BLOCK: B_PARA .
+
+    $default  reduce usando la regla 6 (BLOCK)
+
+
+Estado 23
+
+    5 BLOCK: B_IF .
+
+    $default  reduce usando la regla 5 (BLOCK)
+
+
+Estado 24
+
+   32 B_IMPRIMIR: r_imprimir par_i . E par_d puntocoma
+
+    entero    desplazar e ir al estado 39
+    decimal   desplazar e ir al estado 40
+    caracter  desplazar e ir al estado 41
+    booleano  desplazar e ir al estado 42
+    cadena    desplazar e ir al estado 43
+    noot      desplazar e ir al estado 44
+    menos     desplazar e ir al estado 45
+    par_i     desplazar e ir al estado 46
+    id        desplazar e ir al estado 47
+
+    E  ir al estado 48
+
+
+Estado 25
+
+   31 B_SHOW: r_show par_i . E par_d puntocoma
+
+    entero    desplazar e ir al estado 39
+    decimal   desplazar e ir al estado 40
+    caracter  desplazar e ir al estado 41
+    booleano  desplazar e ir al estado 42
+    cadena    desplazar e ir al estado 43
+    noot      desplazar e ir al estado 44
+    menos     desplazar e ir al estado 45
+    par_i     desplazar e ir al estado 46
+    id        desplazar e ir al estado 47
+
+    E  ir al estado 49
+
+
+Estado 26
+
+   47 B_IF: r_si par_i . E par_d llave_i L llave_d
+   48     | r_si par_i . E par_d llave_i L llave_d B_ELSE
+   49     | r_si par_i . E par_d llave_i L llave_d L_SINOSI
+   50     | r_si par_i . E par_d llave_i L llave_d L_SINOSI B_ELSE
+
+    entero    desplazar e ir al estado 39
+    decimal   desplazar e ir al estado 40
+    caracter  desplazar e ir al estado 41
+    booleano  desplazar e ir al estado 42
+    cadena    desplazar e ir al estado 43
+    noot      desplazar e ir al estado 44
+    menos     desplazar e ir al estado 45
+    par_i     desplazar e ir al estado 46
+    id        desplazar e ir al estado 47
+
+    E  ir al estado 50
+
+
+Estado 27
+
+   34 B_PARA: r_para par_i . IN_PARA par_d llave_i L llave_d
+
+    r_int  desplazar e ir al estado 51
+    id     desplazar e ir al estado 52
+
+    IN_PARA  ir al estado 53
+
+
+Estado 28
+
+   33 B_REPETIR: r_repetir par_i . E par_d llave_i L llave_d
+
+    entero    desplazar e ir al estado 39
+    decimal   desplazar e ir al estado 40
+    caracter  desplazar e ir al estado 41
+    booleano  desplazar e ir al estado 42
+    cadena    desplazar e ir al estado 43
+    noot      desplazar e ir al estado 44
+    menos     desplazar e ir al estado 45
+    par_i     desplazar e ir al estado 46
+    id        desplazar e ir al estado 47
+
+    E  ir al estado 54
+
+
+Estado 29
+
+   43 TIPO_UN: aumento .
+
+    $default  reduce usando la regla 43 (TIPO_UN)
+
+
+Estado 30
+
+   44 TIPO_UN: decremento .
+
+    $default  reduce usando la regla 44 (TIPO_UN)
+
+
+Estado 31
+
+   21 ASIGNA_VAR: id igual . E puntocoma
+
+    entero    desplazar e ir al estado 39
+    decimal   desplazar e ir al estado 40
+    caracter  desplazar e ir al estado 41
+    booleano  desplazar e ir al estado 42
+    cadena    desplazar e ir al estado 43
+    noot      desplazar e ir al estado 44
+    menos     desplazar e ir al estado 45
+    par_i     desplazar e ir al estado 46
+    id        desplazar e ir al estado 47
+
+    E  ir al estado 55
+
+
+Estado 32
+
+   23 ASIGNA_VAR: id cor_i . E cor_d igual E puntocoma
+
+    entero    desplazar e ir al estado 39
+    decimal   desplazar e ir al estado 40
+    caracter  desplazar e ir al estado 41
+    booleano  desplazar e ir al estado 42
+    cadena    desplazar e ir al estado 43
+    noot      desplazar e ir al estado 44
+    menos     desplazar e ir al estado 45
+    par_i     desplazar e ir al estado 46
+    id        desplazar e ir al estado 47
+
+    E  ir al estado 56
+
+
+Estado 33
+
+   22 ASIGNA_VAR: id TIPO_UN . puntocoma
+
+    puntocoma  desplazar e ir al estado 57
+
+
+Estado 34
+
+    0 $accept: INICIO $end .
+
+    $default  aceptar
+
+
+Estado 35
+
+    2 L: L BLOCK .
+
+    $default  reduce usando la regla 2 (L)
+
+
+Estado 36
+
+   14 DECLARA_VAR: TIPO_VAR r_arreglo . L_ID L_ARRAY puntocoma
+   15            | TIPO_VAR r_arreglo . L_ID L_ARRAY igual llave_i L_FILA llave_d puntocoma
+
+    id  desplazar e ir al estado 37
+
+    L_ID  ir al estado 58
+
+
+Estado 37
+
+   46 L_ID: id .
+
+    $default  reduce usando la regla 46 (L_ID)
+
+
+Estado 38
+
+   12 DECLARA_VAR: TIPO_VAR L_ID . puntocoma
+   13            | TIPO_VAR L_ID . igual E puntocoma
+   45 L_ID: L_ID . coma id
+
+    puntocoma  desplazar e ir al estado 59
+    coma       desplazar e ir al estado 60
+    igual      desplazar e ir al estado 61
+
+
+Estado 39
+
+   69 E: entero . TIPO_UN
+
+    aumento     desplazar e ir al estado 29
+    decremento  desplazar e ir al estado 30
+
+    TIPO_UN  ir al estado 62
+
+
+Estado 40
+
+   71 E: decimal . TIPO_UN
+
+    aumento     desplazar e ir al estado 29
+    decremento  desplazar e ir al estado 30
+
+    TIPO_UN  ir al estado 63
+
+
+Estado 41
+
+   70 E: caracter . TIPO_UN
+
+    aumento     desplazar e ir al estado 29
+    decremento  desplazar e ir al estado 30
+
+    TIPO_UN  ir al estado 64
+
+
+Estado 42
+
+   72 E: booleano .
+
+    $default  reduce usando la regla 72 (E)
+
+
+Estado 43
+
+   73 E: cadena .
+
+    $default  reduce usando la regla 73 (E)
+
+
+Estado 44
+
+   56 E: noot . E
+
+    entero    desplazar e ir al estado 39
+    decimal   desplazar e ir al estado 40
+    caracter  desplazar e ir al estado 41
+    booleano  desplazar e ir al estado 42
+    cadena    desplazar e ir al estado 43
+    noot      desplazar e ir al estado 44
+    menos     desplazar e ir al estado 45
+    par_i     desplazar e ir al estado 46
+    id        desplazar e ir al estado 47
+
+    E  ir al estado 65
+
+
+Estado 45
+
+   68 E: menos . E
+
+    entero    desplazar e ir al estado 39
+    decimal   desplazar e ir al estado 40
+    caracter  desplazar e ir al estado 41
+    booleano  desplazar e ir al estado 42
+    cadena    desplazar e ir al estado 43
+    noot      desplazar e ir al estado 44
+    menos     desplazar e ir al estado 45
+    par_i     desplazar e ir al estado 46
+    id        desplazar e ir al estado 47
+
+    E  ir al estado 66
+
+
+Estado 46
+
+   77 E: par_i . E par_d
+
+    entero    desplazar e ir al estado 39
+    decimal   desplazar e ir al estado 40
+    caracter  desplazar e ir al estado 41
+    booleano  desplazar e ir al estado 42
+    cadena    desplazar e ir al estado 43
+    noot      desplazar e ir al estado 44
+    menos     desplazar e ir al estado 45
+    par_i     desplazar e ir al estado 46
+    id        desplazar e ir al estado 47
+
+    E  ir al estado 67
+
+
+Estado 47
+
+   74 E: id . TIPO_UN
+   75  | id .
+   76  | id . cor_i E cor_d
+
+    aumento     desplazar e ir al estado 29
+    decremento  desplazar e ir al estado 30
+    cor_i       desplazar e ir al estado 68
+
+    $default  reduce usando la regla 75 (E)
+
+    TIPO_UN  ir al estado 69
+
+
+Estado 48
+
+   32 B_IMPRIMIR: r_imprimir par_i E . par_d puntocoma
+   54 E: E . aand E
+   55  | E . oor E
+   57  | E . igual_logico E
+   58  | E . desigual E
+   59  | E . mayor E
+   60  | E . mayor_igual E
+   61  | E . menor E
+   62  | E . menor_igual E
+   63  | E . mas E
+   64  | E . menos E
+   65  | E . por E
+   66  | E . entre E
+   67  | E . potencia E
+
+    igual_logico  desplazar e ir al estado 70
+    desigual      desplazar e ir al estado 71
+    mayor         desplazar e ir al estado 72
+    mayor_igual   desplazar e ir al estado 73
+    menor         desplazar e ir al estado 74
+    menor_igual   desplazar e ir al estado 75
+    oor           desplazar e ir al estado 76
+    aand          desplazar e ir al estado 77
+    mas           desplazar e ir al estado 78
+    menos         desplazar e ir al estado 79
+    por           desplazar e ir al estado 80
+    entre         desplazar e ir al estado 81
+    potencia      desplazar e ir al estado 82
+    par_d         desplazar e ir al estado 83
+
+
+Estado 49
+
+   31 B_SHOW: r_show par_i E . par_d puntocoma
+   54 E: E . aand E
+   55  | E . oor E
+   57  | E . igual_logico E
+   58  | E . desigual E
+   59  | E . mayor E
+   60  | E . mayor_igual E
+   61  | E . menor E
+   62  | E . menor_igual E
+   63  | E . mas E
+   64  | E . menos E
+   65  | E . por E
+   66  | E . entre E
+   67  | E . potencia E
+
+    igual_logico  desplazar e ir al estado 70
+    desigual      desplazar e ir al estado 71
+    mayor         desplazar e ir al estado 72
+    mayor_igual   desplazar e ir al estado 73
+    menor         desplazar e ir al estado 74
+    menor_igual   desplazar e ir al estado 75
+    oor           desplazar e ir al estado 76
+    aand          desplazar e ir al estado 77
+    mas           desplazar e ir al estado 78
+    menos         desplazar e ir al estado 79
+    por           desplazar e ir al estado 80
+    entre         desplazar e ir al estado 81
+    potencia      desplazar e ir al estado 82
+    par_d         desplazar e ir al estado 84
+
+
+Estado 50
+
+   47 B_IF: r_si par_i E . par_d llave_i L llave_d
+   48     | r_si par_i E . par_d llave_i L llave_d B_ELSE
+   49     | r_si par_i E . par_d llave_i L llave_d L_SINOSI
+   50     | r_si par_i E . par_d llave_i L llave_d L_SINOSI B_ELSE
+   54 E: E . aand E
+   55  | E . oor E
+   57  | E . igual_logico E
+   58  | E . desigual E
+   59  | E . mayor E
+   60  | E . mayor_igual E
+   61  | E . menor E
+   62  | E . menor_igual E
+   63  | E . mas E
+   64  | E . menos E
+   65  | E . por E
+   66  | E . entre E
+   67  | E . potencia E
+
+    igual_logico  desplazar e ir al estado 70
+    desigual      desplazar e ir al estado 71
+    mayor         desplazar e ir al estado 72
+    mayor_igual   desplazar e ir al estado 73
+    menor         desplazar e ir al estado 74
+    menor_igual   desplazar e ir al estado 75
+    oor           desplazar e ir al estado 76
+    aand          desplazar e ir al estado 77
+    mas           desplazar e ir al estado 78
+    menos         desplazar e ir al estado 79
+    por           desplazar e ir al estado 80
+    entre         desplazar e ir al estado 81
+    potencia      desplazar e ir al estado 82
+    par_d         desplazar e ir al estado 85
+
+
+Estado 51
+
+   35 IN_PARA: r_int . id TIPO1 E puntocoma id TIPO1 E puntocoma id TIPO_UN llave_i L llave_d
+
+    id  desplazar e ir al estado 86
+
+
+Estado 52
+
+   36 IN_PARA: id . TIPO1 E puntocoma id TIPO1 E puntocoma id TIPO_UN llave_i L llave_d
+
+    desigual     desplazar e ir al estado 87
+    mayor        desplazar e ir al estado 88
+    mayor_igual  desplazar e ir al estado 89
+    menor        desplazar e ir al estado 90
+    menor_igual  desplazar e ir al estado 91
+    igual        desplazar e ir al estado 92
+
+    TIPO1  ir al estado 93
+
+
+Estado 53
+
+   34 B_PARA: r_para par_i IN_PARA . par_d llave_i L llave_d
+
+    par_d  desplazar e ir al estado 94
+
+
+Estado 54
+
+   33 B_REPETIR: r_repetir par_i E . par_d llave_i L llave_d
+   54 E: E . aand E
+   55  | E . oor E
+   57  | E . igual_logico E
+   58  | E . desigual E
+   59  | E . mayor E
+   60  | E . mayor_igual E
+   61  | E . menor E
+   62  | E . menor_igual E
+   63  | E . mas E
+   64  | E . menos E
+   65  | E . por E
+   66  | E . entre E
+   67  | E . potencia E
+
+    igual_logico  desplazar e ir al estado 70
+    desigual      desplazar e ir al estado 71
+    mayor         desplazar e ir al estado 72
+    mayor_igual   desplazar e ir al estado 73
+    menor         desplazar e ir al estado 74
+    menor_igual   desplazar e ir al estado 75
+    oor           desplazar e ir al estado 76
+    aand          desplazar e ir al estado 77
+    mas           desplazar e ir al estado 78
+    menos         desplazar e ir al estado 79
+    por           desplazar e ir al estado 80
+    entre         desplazar e ir al estado 81
+    potencia      desplazar e ir al estado 82
+    par_d         desplazar e ir al estado 95
+
+
+Estado 55
+
+   21 ASIGNA_VAR: id igual E . puntocoma
+   54 E: E . aand E
+   55  | E . oor E
+   57  | E . igual_logico E
+   58  | E . desigual E
+   59  | E . mayor E
+   60  | E . mayor_igual E
+   61  | E . menor E
+   62  | E . menor_igual E
+   63  | E . mas E
+   64  | E . menos E
+   65  | E . por E
+   66  | E . entre E
+   67  | E . potencia E
+
+    igual_logico  desplazar e ir al estado 70
+    desigual      desplazar e ir al estado 71
+    mayor         desplazar e ir al estado 72
+    mayor_igual   desplazar e ir al estado 73
+    menor         desplazar e ir al estado 74
+    menor_igual   desplazar e ir al estado 75
+    oor           desplazar e ir al estado 76
+    aand          desplazar e ir al estado 77
+    mas           desplazar e ir al estado 78
+    menos         desplazar e ir al estado 79
+    por           desplazar e ir al estado 80
+    entre         desplazar e ir al estado 81
+    potencia      desplazar e ir al estado 82
+    puntocoma     desplazar e ir al estado 96
+
+
+Estado 56
+
+   23 ASIGNA_VAR: id cor_i E . cor_d igual E puntocoma
+   54 E: E . aand E
+   55  | E . oor E
+   57  | E . igual_logico E
+   58  | E . desigual E
+   59  | E . mayor E
+   60  | E . mayor_igual E
+   61  | E . menor E
+   62  | E . menor_igual E
+   63  | E . mas E
+   64  | E . menos E
+   65  | E . por E
+   66  | E . entre E
+   67  | E . potencia E
+
+    igual_logico  desplazar e ir al estado 70
+    desigual      desplazar e ir al estado 71
+    mayor         desplazar e ir al estado 72
+    mayor_igual   desplazar e ir al estado 73
+    menor         desplazar e ir al estado 74
+    menor_igual   desplazar e ir al estado 75
+    oor           desplazar e ir al estado 76
+    aand          desplazar e ir al estado 77
+    mas           desplazar e ir al estado 78
+    menos         desplazar e ir al estado 79
+    por           desplazar e ir al estado 80
+    entre         desplazar e ir al estado 81
+    potencia      desplazar e ir al estado 82
+    cor_d         desplazar e ir al estado 97
+
+
+Estado 57
+
+   22 ASIGNA_VAR: id TIPO_UN puntocoma .
+
+    $default  reduce usando la regla 22 (ASIGNA_VAR)
+
+
+Estado 58
+
+   14 DECLARA_VAR: TIPO_VAR r_arreglo L_ID . L_ARRAY puntocoma
+   15            | TIPO_VAR r_arreglo L_ID . L_ARRAY igual llave_i L_FILA llave_d puntocoma
+   45 L_ID: L_ID . coma id
+
+    coma   desplazar e ir al estado 60
+    cor_i  desplazar e ir al estado 98
+
+    L_ARRAY  ir al estado 99
+
+
+Estado 59
+
+   12 DECLARA_VAR: TIPO_VAR L_ID puntocoma .
+
+    $default  reduce usando la regla 12 (DECLARA_VAR)
+
+
+Estado 60
+
+   45 L_ID: L_ID coma . id
+
+    id  desplazar e ir al estado 100
+
+
+Estado 61
+
+   13 DECLARA_VAR: TIPO_VAR L_ID igual . E puntocoma
+
+    entero    desplazar e ir al estado 39
+    decimal   desplazar e ir al estado 40
+    caracter  desplazar e ir al estado 41
+    booleano  desplazar e ir al estado 42
+    cadena    desplazar e ir al estado 43
+    noot      desplazar e ir al estado 44
+    menos     desplazar e ir al estado 45
+    par_i     desplazar e ir al estado 46
+    id        desplazar e ir al estado 47
+
+    E  ir al estado 101
+
+
+Estado 62
+
+   69 E: entero TIPO_UN .
+
+    $default  reduce usando la regla 69 (E)
+
+
+Estado 63
+
+   71 E: decimal TIPO_UN .
+
+    $default  reduce usando la regla 71 (E)
+
+
+Estado 64
+
+   70 E: caracter TIPO_UN .
+
+    $default  reduce usando la regla 70 (E)
+
+
+Estado 65
+
+   54 E: E . aand E
+   55  | E . oor E
+   56  | noot E .
+   57  | E . igual_logico E
+   58  | E . desigual E
+   59  | E . mayor E
+   60  | E . mayor_igual E
+   61  | E . menor E
+   62  | E . menor_igual E
+   63  | E . mas E
+   64  | E . menos E
+   65  | E . por E
+   66  | E . entre E
+   67  | E . potencia E
+
+    igual_logico  desplazar e ir al estado 70
+    desigual      desplazar e ir al estado 71
+    mayor         desplazar e ir al estado 72
+    mayor_igual   desplazar e ir al estado 73
+    menor         desplazar e ir al estado 74
+    menor_igual   desplazar e ir al estado 75
+    mas           desplazar e ir al estado 78
+    menos         desplazar e ir al estado 79
+    por           desplazar e ir al estado 80
+    entre         desplazar e ir al estado 81
+    potencia      desplazar e ir al estado 82
+
+    $default  reduce usando la regla 56 (E)
+
+
+Estado 66
+
+   54 E: E . aand E
+   55  | E . oor E
+   57  | E . igual_logico E
+   58  | E . desigual E
+   59  | E . mayor E
+   60  | E . mayor_igual E
+   61  | E . menor E
+   62  | E . menor_igual E
+   63  | E . mas E
+   64  | E . menos E
+   65  | E . por E
+   66  | E . entre E
+   67  | E . potencia E
+   68  | menos E .
+
+    por       desplazar e ir al estado 80
+    entre     desplazar e ir al estado 81
+    potencia  desplazar e ir al estado 82
+
+    $default  reduce usando la regla 68 (E)
+
+
+Estado 67
+
+   54 E: E . aand E
+   55  | E . oor E
+   57  | E . igual_logico E
+   58  | E . desigual E
+   59  | E . mayor E
+   60  | E . mayor_igual E
+   61  | E . menor E
+   62  | E . menor_igual E
+   63  | E . mas E
+   64  | E . menos E
+   65  | E . por E
+   66  | E . entre E
+   67  | E . potencia E
+   77  | par_i E . par_d
+
+    igual_logico  desplazar e ir al estado 70
+    desigual      desplazar e ir al estado 71
+    mayor         desplazar e ir al estado 72
+    mayor_igual   desplazar e ir al estado 73
+    menor         desplazar e ir al estado 74
+    menor_igual   desplazar e ir al estado 75
+    oor           desplazar e ir al estado 76
+    aand          desplazar e ir al estado 77
+    mas           desplazar e ir al estado 78
+    menos         desplazar e ir al estado 79
+    por           desplazar e ir al estado 80
+    entre         desplazar e ir al estado 81
+    potencia      desplazar e ir al estado 82
+    par_d         desplazar e ir al estado 102
+
+
+Estado 68
+
+   76 E: id cor_i . E cor_d
+
+    entero    desplazar e ir al estado 39
+    decimal   desplazar e ir al estado 40
+    caracter  desplazar e ir al estado 41
+    booleano  desplazar e ir al estado 42
+    cadena    desplazar e ir al estado 43
+    noot      desplazar e ir al estado 44
+    menos     desplazar e ir al estado 45
+    par_i     desplazar e ir al estado 46
+    id        desplazar e ir al estado 47
+
+    E  ir al estado 103
+
+
+Estado 69
+
+   74 E: id TIPO_UN .
+
+    $default  reduce usando la regla 74 (E)
+
+
+Estado 70
+
+   57 E: E igual_logico . E
+
+    entero    desplazar e ir al estado 39
+    decimal   desplazar e ir al estado 40
+    caracter  desplazar e ir al estado 41
+    booleano  desplazar e ir al estado 42
+    cadena    desplazar e ir al estado 43
+    noot      desplazar e ir al estado 44
+    menos     desplazar e ir al estado 45
+    par_i     desplazar e ir al estado 46
+    id        desplazar e ir al estado 47
+
+    E  ir al estado 104
+
+
+Estado 71
+
+   58 E: E desigual . E
+
+    entero    desplazar e ir al estado 39
+    decimal   desplazar e ir al estado 40
+    caracter  desplazar e ir al estado 41
+    booleano  desplazar e ir al estado 42
+    cadena    desplazar e ir al estado 43
+    noot      desplazar e ir al estado 44
+    menos     desplazar e ir al estado 45
+    par_i     desplazar e ir al estado 46
+    id        desplazar e ir al estado 47
+
+    E  ir al estado 105
+
+
+Estado 72
+
+   59 E: E mayor . E
+
+    entero    desplazar e ir al estado 39
+    decimal   desplazar e ir al estado 40
+    caracter  desplazar e ir al estado 41
+    booleano  desplazar e ir al estado 42
+    cadena    desplazar e ir al estado 43
+    noot      desplazar e ir al estado 44
+    menos     desplazar e ir al estado 45
+    par_i     desplazar e ir al estado 46
+    id        desplazar e ir al estado 47
+
+    E  ir al estado 106
+
+
+Estado 73
+
+   60 E: E mayor_igual . E
+
+    entero    desplazar e ir al estado 39
+    decimal   desplazar e ir al estado 40
+    caracter  desplazar e ir al estado 41
+    booleano  desplazar e ir al estado 42
+    cadena    desplazar e ir al estado 43
+    noot      desplazar e ir al estado 44
+    menos     desplazar e ir al estado 45
+    par_i     desplazar e ir al estado 46
+    id        desplazar e ir al estado 47
+
+    E  ir al estado 107
+
+
+Estado 74
+
+   61 E: E menor . E
+
+    entero    desplazar e ir al estado 39
+    decimal   desplazar e ir al estado 40
+    caracter  desplazar e ir al estado 41
+    booleano  desplazar e ir al estado 42
+    cadena    desplazar e ir al estado 43
+    noot      desplazar e ir al estado 44
+    menos     desplazar e ir al estado 45
+    par_i     desplazar e ir al estado 46
+    id        desplazar e ir al estado 47
+
+    E  ir al estado 108
+
+
+Estado 75
+
+   62 E: E menor_igual . E
+
+    entero    desplazar e ir al estado 39
+    decimal   desplazar e ir al estado 40
+    caracter  desplazar e ir al estado 41
+    booleano  desplazar e ir al estado 42
+    cadena    desplazar e ir al estado 43
+    noot      desplazar e ir al estado 44
+    menos     desplazar e ir al estado 45
+    par_i     desplazar e ir al estado 46
+    id        desplazar e ir al estado 47
+
+    E  ir al estado 109
+
+
+Estado 76
+
+   55 E: E oor . E
+
+    entero    desplazar e ir al estado 39
+    decimal   desplazar e ir al estado 40
+    caracter  desplazar e ir al estado 41
+    booleano  desplazar e ir al estado 42
+    cadena    desplazar e ir al estado 43
+    noot      desplazar e ir al estado 44
+    menos     desplazar e ir al estado 45
+    par_i     desplazar e ir al estado 46
+    id        desplazar e ir al estado 47
+
+    E  ir al estado 110
+
+
+Estado 77
+
+   54 E: E aand . E
+
+    entero    desplazar e ir al estado 39
+    decimal   desplazar e ir al estado 40
+    caracter  desplazar e ir al estado 41
+    booleano  desplazar e ir al estado 42
+    cadena    desplazar e ir al estado 43
+    noot      desplazar e ir al estado 44
+    menos     desplazar e ir al estado 45
+    par_i     desplazar e ir al estado 46
+    id        desplazar e ir al estado 47
+
+    E  ir al estado 111
+
+
+Estado 78
+
+   63 E: E mas . E
+
+    entero    desplazar e ir al estado 39
+    decimal   desplazar e ir al estado 40
+    caracter  desplazar e ir al estado 41
+    booleano  desplazar e ir al estado 42
+    cadena    desplazar e ir al estado 43
+    noot      desplazar e ir al estado 44
+    menos     desplazar e ir al estado 45
+    par_i     desplazar e ir al estado 46
+    id        desplazar e ir al estado 47
+
+    E  ir al estado 112
+
+
+Estado 79
+
+   64 E: E menos . E
+
+    entero    desplazar e ir al estado 39
+    decimal   desplazar e ir al estado 40
+    caracter  desplazar e ir al estado 41
+    booleano  desplazar e ir al estado 42
+    cadena    desplazar e ir al estado 43
+    noot      desplazar e ir al estado 44
+    menos     desplazar e ir al estado 45
+    par_i     desplazar e ir al estado 46
+    id        desplazar e ir al estado 47
+
+    E  ir al estado 113
+
+
+Estado 80
+
+   65 E: E por . E
+
+    entero    desplazar e ir al estado 39
+    decimal   desplazar e ir al estado 40
+    caracter  desplazar e ir al estado 41
+    booleano  desplazar e ir al estado 42
+    cadena    desplazar e ir al estado 43
+    noot      desplazar e ir al estado 44
+    menos     desplazar e ir al estado 45
+    par_i     desplazar e ir al estado 46
+    id        desplazar e ir al estado 47
+
+    E  ir al estado 114
+
+
+Estado 81
+
+   66 E: E entre . E
+
+    entero    desplazar e ir al estado 39
+    decimal   desplazar e ir al estado 40
+    caracter  desplazar e ir al estado 41
+    booleano  desplazar e ir al estado 42
+    cadena    desplazar e ir al estado 43
+    noot      desplazar e ir al estado 44
+    menos     desplazar e ir al estado 45
+    par_i     desplazar e ir al estado 46
+    id        desplazar e ir al estado 47
+
+    E  ir al estado 115
+
+
+Estado 82
+
+   67 E: E potencia . E
+
+    entero    desplazar e ir al estado 39
+    decimal   desplazar e ir al estado 40
+    caracter  desplazar e ir al estado 41
+    booleano  desplazar e ir al estado 42
+    cadena    desplazar e ir al estado 43
+    noot      desplazar e ir al estado 44
+    menos     desplazar e ir al estado 45
+    par_i     desplazar e ir al estado 46
+    id        desplazar e ir al estado 47
+
+    E  ir al estado 116
+
+
+Estado 83
+
+   32 B_IMPRIMIR: r_imprimir par_i E par_d . puntocoma
+
+    puntocoma  desplazar e ir al estado 117
+
+
+Estado 84
+
+   31 B_SHOW: r_show par_i E par_d . puntocoma
+
+    puntocoma  desplazar e ir al estado 118
+
+
+Estado 85
+
+   47 B_IF: r_si par_i E par_d . llave_i L llave_d
+   48     | r_si par_i E par_d . llave_i L llave_d B_ELSE
+   49     | r_si par_i E par_d . llave_i L llave_d L_SINOSI
+   50     | r_si par_i E par_d . llave_i L llave_d L_SINOSI B_ELSE
+
+    llave_i  desplazar e ir al estado 119
+
+
+Estado 86
+
+   35 IN_PARA: r_int id . TIPO1 E puntocoma id TIPO1 E puntocoma id TIPO_UN llave_i L llave_d
+
+    desigual     desplazar e ir al estado 87
+    mayor        desplazar e ir al estado 88
+    mayor_igual  desplazar e ir al estado 89
+    menor        desplazar e ir al estado 90
+    menor_igual  desplazar e ir al estado 91
+    igual        desplazar e ir al estado 92
+
+    TIPO1  ir al estado 120
+
+
+Estado 87
+
+   42 TIPO1: desigual .
+
+    $default  reduce usando la regla 42 (TIPO1)
+
+
+Estado 88
+
+   38 TIPO1: mayor .
+
+    $default  reduce usando la regla 38 (TIPO1)
+
+
+Estado 89
+
+   39 TIPO1: mayor_igual .
+
+    $default  reduce usando la regla 39 (TIPO1)
+
+
+Estado 90
+
+   40 TIPO1: menor .
+
+    $default  reduce usando la regla 40 (TIPO1)
+
+
+Estado 91
+
+   41 TIPO1: menor_igual .
+
+    $default  reduce usando la regla 41 (TIPO1)
+
+
+Estado 92
+
+   37 TIPO1: igual .
+
+    $default  reduce usando la regla 37 (TIPO1)
+
+
+Estado 93
+
+   36 IN_PARA: id TIPO1 . E puntocoma id TIPO1 E puntocoma id TIPO_UN llave_i L llave_d
+
+    entero    desplazar e ir al estado 39
+    decimal   desplazar e ir al estado 40
+    caracter  desplazar e ir al estado 41
+    booleano  desplazar e ir al estado 42
+    cadena    desplazar e ir al estado 43
+    noot      desplazar e ir al estado 44
+    menos     desplazar e ir al estado 45
+    par_i     desplazar e ir al estado 46
+    id        desplazar e ir al estado 47
+
+    E  ir al estado 121
+
+
+Estado 94
+
+   34 B_PARA: r_para par_i IN_PARA par_d . llave_i L llave_d
+
+    llave_i  desplazar e ir al estado 122
+
+
+Estado 95
+
+   33 B_REPETIR: r_repetir par_i E par_d . llave_i L llave_d
+
+    llave_i  desplazar e ir al estado 123
+
+
+Estado 96
+
+   21 ASIGNA_VAR: id igual E puntocoma .
+
+    $default  reduce usando la regla 21 (ASIGNA_VAR)
+
+
+Estado 97
+
+   23 ASIGNA_VAR: id cor_i E cor_d . igual E puntocoma
+
+    igual  desplazar e ir al estado 124
+
+
+Estado 98
+
+   24 L_ARRAY: cor_i . E cor_d
+   25        | cor_i . E cor_d cor_i E cor_d
+   26        | cor_i . E cor_d cor_i E cor_d cor_i E cor_d
+
+    entero    desplazar e ir al estado 39
+    decimal   desplazar e ir al estado 40
+    caracter  desplazar e ir al estado 41
+    booleano  desplazar e ir al estado 42
+    cadena    desplazar e ir al estado 43
+    noot      desplazar e ir al estado 44
+    menos     desplazar e ir al estado 45
+    par_i     desplazar e ir al estado 46
+    id        desplazar e ir al estado 47
+
+    E  ir al estado 125
+
+
+Estado 99
+
+   14 DECLARA_VAR: TIPO_VAR r_arreglo L_ID L_ARRAY . puntocoma
+   15            | TIPO_VAR r_arreglo L_ID L_ARRAY . igual llave_i L_FILA llave_d puntocoma
+
+    puntocoma  desplazar e ir al estado 126
+    igual      desplazar e ir al estado 127
+
+
+Estado 100
+
+   45 L_ID: L_ID coma id .
+
+    $default  reduce usando la regla 45 (L_ID)
+
+
+Estado 101
+
+   13 DECLARA_VAR: TIPO_VAR L_ID igual E . puntocoma
+   54 E: E . aand E
+   55  | E . oor E
+   57  | E . igual_logico E
+   58  | E . desigual E
+   59  | E . mayor E
+   60  | E . mayor_igual E
+   61  | E . menor E
+   62  | E . menor_igual E
+   63  | E . mas E
+   64  | E . menos E
+   65  | E . por E
+   66  | E . entre E
+   67  | E . potencia E
+
+    igual_logico  desplazar e ir al estado 70
+    desigual      desplazar e ir al estado 71
+    mayor         desplazar e ir al estado 72
+    mayor_igual   desplazar e ir al estado 73
+    menor         desplazar e ir al estado 74
+    menor_igual   desplazar e ir al estado 75
+    oor           desplazar e ir al estado 76
+    aand          desplazar e ir al estado 77
+    mas           desplazar e ir al estado 78
+    menos         desplazar e ir al estado 79
+    por           desplazar e ir al estado 80
+    entre         desplazar e ir al estado 81
+    potencia      desplazar e ir al estado 82
+    puntocoma     desplazar e ir al estado 128
+
+
+Estado 102
+
+   77 E: par_i E par_d .
+
+    $default  reduce usando la regla 77 (E)
+
+
+Estado 103
+
+   54 E: E . aand E
+   55  | E . oor E
+   57  | E . igual_logico E
+   58  | E . desigual E
+   59  | E . mayor E
+   60  | E . mayor_igual E
+   61  | E . menor E
+   62  | E . menor_igual E
+   63  | E . mas E
+   64  | E . menos E
+   65  | E . por E
+   66  | E . entre E
+   67  | E . potencia E
+   76  | id cor_i E . cor_d
+
+    igual_logico  desplazar e ir al estado 70
+    desigual      desplazar e ir al estado 71
+    mayor         desplazar e ir al estado 72
+    mayor_igual   desplazar e ir al estado 73
+    menor         desplazar e ir al estado 74
+    menor_igual   desplazar e ir al estado 75
+    oor           desplazar e ir al estado 76
+    aand          desplazar e ir al estado 77
+    mas           desplazar e ir al estado 78
+    menos         desplazar e ir al estado 79
+    por           desplazar e ir al estado 80
+    entre         desplazar e ir al estado 81
+    potencia      desplazar e ir al estado 82
+    cor_d         desplazar e ir al estado 129
+
+
+Estado 104
+
+   54 E: E . aand E
+   55  | E . oor E
+   57  | E . igual_logico E
+   57  | E igual_logico E .
+   58  | E . desigual E
+   59  | E . mayor E
+   60  | E . mayor_igual E
+   61  | E . menor E
+   62  | E . menor_igual E
+   63  | E . mas E
+   64  | E . menos E
+   65  | E . por E
+   66  | E . entre E
+   67  | E . potencia E
+
+    mas       desplazar e ir al estado 78
+    menos     desplazar e ir al estado 79
+    por       desplazar e ir al estado 80
+    entre     desplazar e ir al estado 81
+    potencia  desplazar e ir al estado 82
+
+    $default  reduce usando la regla 57 (E)
+
+
+Estado 105
+
+   54 E: E . aand E
+   55  | E . oor E
+   57  | E . igual_logico E
+   58  | E . desigual E
+   58  | E desigual E .
+   59  | E . mayor E
+   60  | E . mayor_igual E
+   61  | E . menor E
+   62  | E . menor_igual E
+   63  | E . mas E
+   64  | E . menos E
+   65  | E . por E
+   66  | E . entre E
+   67  | E . potencia E
+
+    mas       desplazar e ir al estado 78
+    menos     desplazar e ir al estado 79
+    por       desplazar e ir al estado 80
+    entre     desplazar e ir al estado 81
+    potencia  desplazar e ir al estado 82
+
+    $default  reduce usando la regla 58 (E)
+
+
+Estado 106
+
+   54 E: E . aand E
+   55  | E . oor E
+   57  | E . igual_logico E
+   58  | E . desigual E
+   59  | E . mayor E
+   59  | E mayor E .
+   60  | E . mayor_igual E
+   61  | E . menor E
+   62  | E . menor_igual E
+   63  | E . mas E
+   64  | E . menos E
+   65  | E . por E
+   66  | E . entre E
+   67  | E . potencia E
+
+    mas       desplazar e ir al estado 78
+    menos     desplazar e ir al estado 79
+    por       desplazar e ir al estado 80
+    entre     desplazar e ir al estado 81
+    potencia  desplazar e ir al estado 82
+
+    $default  reduce usando la regla 59 (E)
+
+
+Estado 107
+
+   54 E: E . aand E
+   55  | E . oor E
+   57  | E . igual_logico E
+   58  | E . desigual E
+   59  | E . mayor E
+   60  | E . mayor_igual E
+   60  | E mayor_igual E .
+   61  | E . menor E
+   62  | E . menor_igual E
+   63  | E . mas E
+   64  | E . menos E
+   65  | E . por E
+   66  | E . entre E
+   67  | E . potencia E
+
+    mas       desplazar e ir al estado 78
+    menos     desplazar e ir al estado 79
+    por       desplazar e ir al estado 80
+    entre     desplazar e ir al estado 81
+    potencia  desplazar e ir al estado 82
+
+    $default  reduce usando la regla 60 (E)
+
+
+Estado 108
+
+   54 E: E . aand E
+   55  | E . oor E
+   57  | E . igual_logico E
+   58  | E . desigual E
+   59  | E . mayor E
+   60  | E . mayor_igual E
+   61  | E . menor E
+   61  | E menor E .
+   62  | E . menor_igual E
+   63  | E . mas E
+   64  | E . menos E
+   65  | E . por E
+   66  | E . entre E
+   67  | E . potencia E
+
+    mas       desplazar e ir al estado 78
+    menos     desplazar e ir al estado 79
+    por       desplazar e ir al estado 80
+    entre     desplazar e ir al estado 81
+    potencia  desplazar e ir al estado 82
+
+    $default  reduce usando la regla 61 (E)
+
+
+Estado 109
+
+   54 E: E . aand E
+   55  | E . oor E
+   57  | E . igual_logico E
+   58  | E . desigual E
+   59  | E . mayor E
+   60  | E . mayor_igual E
+   61  | E . menor E
+   62  | E . menor_igual E
+   62  | E menor_igual E .
+   63  | E . mas E
+   64  | E . menos E
+   65  | E . por E
+   66  | E . entre E
+   67  | E . potencia E
+
+    mas       desplazar e ir al estado 78
+    menos     desplazar e ir al estado 79
+    por       desplazar e ir al estado 80
+    entre     desplazar e ir al estado 81
+    potencia  desplazar e ir al estado 82
+
+    $default  reduce usando la regla 62 (E)
+
+
+Estado 110
+
+   54 E: E . aand E
+   55  | E . oor E
+   55  | E oor E .
+   57  | E . igual_logico E
+   58  | E . desigual E
+   59  | E . mayor E
+   60  | E . mayor_igual E
+   61  | E . menor E
+   62  | E . menor_igual E
+   63  | E . mas E
+   64  | E . menos E
+   65  | E . por E
+   66  | E . entre E
+   67  | E . potencia E
+
+    igual_logico  desplazar e ir al estado 70
+    desigual      desplazar e ir al estado 71
+    mayor         desplazar e ir al estado 72
+    mayor_igual   desplazar e ir al estado 73
+    menor         desplazar e ir al estado 74
+    menor_igual   desplazar e ir al estado 75
+    aand          desplazar e ir al estado 77
+    mas           desplazar e ir al estado 78
+    menos         desplazar e ir al estado 79
+    por           desplazar e ir al estado 80
+    entre         desplazar e ir al estado 81
+    potencia      desplazar e ir al estado 82
+
+    $default  reduce usando la regla 55 (E)
+
+
+Estado 111
+
+   54 E: E . aand E
+   54  | E aand E .
+   55  | E . oor E
+   57  | E . igual_logico E
+   58  | E . desigual E
+   59  | E . mayor E
+   60  | E . mayor_igual E
+   61  | E . menor E
+   62  | E . menor_igual E
+   63  | E . mas E
+   64  | E . menos E
+   65  | E . por E
+   66  | E . entre E
+   67  | E . potencia E
+
+    igual_logico  desplazar e ir al estado 70
+    desigual      desplazar e ir al estado 71
+    mayor         desplazar e ir al estado 72
+    mayor_igual   desplazar e ir al estado 73
+    menor         desplazar e ir al estado 74
+    menor_igual   desplazar e ir al estado 75
+    mas           desplazar e ir al estado 78
+    menos         desplazar e ir al estado 79
+    por           desplazar e ir al estado 80
+    entre         desplazar e ir al estado 81
+    potencia      desplazar e ir al estado 82
+
+    $default  reduce usando la regla 54 (E)
+
+
+Estado 112
+
+   54 E: E . aand E
+   55  | E . oor E
+   57  | E . igual_logico E
+   58  | E . desigual E
+   59  | E . mayor E
+   60  | E . mayor_igual E
+   61  | E . menor E
+   62  | E . menor_igual E
+   63  | E . mas E
+   63  | E mas E .
+   64  | E . menos E
+   65  | E . por E
+   66  | E . entre E
+   67  | E . potencia E
+
+    por       desplazar e ir al estado 80
+    entre     desplazar e ir al estado 81
+    potencia  desplazar e ir al estado 82
+
+    $default  reduce usando la regla 63 (E)
+
+
+Estado 113
+
+   54 E: E . aand E
+   55  | E . oor E
+   57  | E . igual_logico E
+   58  | E . desigual E
+   59  | E . mayor E
+   60  | E . mayor_igual E
+   61  | E . menor E
+   62  | E . menor_igual E
+   63  | E . mas E
+   64  | E . menos E
+   64  | E menos E .
+   65  | E . por E
+   66  | E . entre E
+   67  | E . potencia E
+
+    por       desplazar e ir al estado 80
+    entre     desplazar e ir al estado 81
+    potencia  desplazar e ir al estado 82
+
+    $default  reduce usando la regla 64 (E)
+
+
+Estado 114
+
+   54 E: E . aand E
+   55  | E . oor E
+   57  | E . igual_logico E
+   58  | E . desigual E
+   59  | E . mayor E
+   60  | E . mayor_igual E
+   61  | E . menor E
+   62  | E . menor_igual E
+   63  | E . mas E
+   64  | E . menos E
+   65  | E . por E
+   65  | E por E .
+   66  | E . entre E
+   67  | E . potencia E
+
+    potencia  desplazar e ir al estado 82
+
+    $default  reduce usando la regla 65 (E)
+
+
+Estado 115
+
+   54 E: E . aand E
+   55  | E . oor E
+   57  | E . igual_logico E
+   58  | E . desigual E
+   59  | E . mayor E
+   60  | E . mayor_igual E
+   61  | E . menor E
+   62  | E . menor_igual E
+   63  | E . mas E
+   64  | E . menos E
+   65  | E . por E
+   66  | E . entre E
+   66  | E entre E .
+   67  | E . potencia E
+
+    potencia  desplazar e ir al estado 82
+
+    $default  reduce usando la regla 66 (E)
+
+
+Estado 116
+
+   54 E: E . aand E
+   55  | E . oor E
+   57  | E . igual_logico E
+   58  | E . desigual E
+   59  | E . mayor E
+   60  | E . mayor_igual E
+   61  | E . menor E
+   62  | E . menor_igual E
+   63  | E . mas E
+   64  | E . menos E
+   65  | E . por E
+   66  | E . entre E
+   67  | E . potencia E
+   67  | E potencia E .
+
+    $default  reduce usando la regla 67 (E)
+
+
+Estado 117
+
+   32 B_IMPRIMIR: r_imprimir par_i E par_d puntocoma .
+
+    $default  reduce usando la regla 32 (B_IMPRIMIR)
+
+
+Estado 118
+
+   31 B_SHOW: r_show par_i E par_d puntocoma .
+
+    $default  reduce usando la regla 31 (B_SHOW)
+
+
+Estado 119
+
+   47 B_IF: r_si par_i E par_d llave_i . L llave_d
+   48     | r_si par_i E par_d llave_i . L llave_d B_ELSE
+   49     | r_si par_i E par_d llave_i . L llave_d L_SINOSI
+   50     | r_si par_i E par_d llave_i . L llave_d L_SINOSI B_ELSE
+
+    r_int       desplazar e ir al estado 1
+    r_string    desplazar e ir al estado 2
+    r_double    desplazar e ir al estado 3
+    r_char      desplazar e ir al estado 4
+    r_bool      desplazar e ir al estado 5
+    r_imprimir  desplazar e ir al estado 6
+    r_show      desplazar e ir al estado 7
+    r_si        desplazar e ir al estado 8
+    r_para      desplazar e ir al estado 9
+    r_repetir   desplazar e ir al estado 10
+    id          desplazar e ir al estado 11
+
+    L            ir al estado 130
+    BLOCK        ir al estado 14
+    B_VAR        ir al estado 15
+    DECLARA_VAR  ir al estado 16
+    TIPO_VAR     ir al estado 17
+    ASIGNA_VAR   ir al estado 18
+    B_SHOW       ir al estado 19
+    B_IMPRIMIR   ir al estado 20
+    B_REPETIR    ir al estado 21
+    B_PARA       ir al estado 22
+    B_IF         ir al estado 23
+
+
+Estado 120
+
+   35 IN_PARA: r_int id TIPO1 . E puntocoma id TIPO1 E puntocoma id TIPO_UN llave_i L llave_d
+
+    entero    desplazar e ir al estado 39
+    decimal   desplazar e ir al estado 40
+    caracter  desplazar e ir al estado 41
+    booleano  desplazar e ir al estado 42
+    cadena    desplazar e ir al estado 43
+    noot      desplazar e ir al estado 44
+    menos     desplazar e ir al estado 45
+    par_i     desplazar e ir al estado 46
+    id        desplazar e ir al estado 47
+
+    E  ir al estado 131
+
+
+Estado 121
+
+   36 IN_PARA: id TIPO1 E . puntocoma id TIPO1 E puntocoma id TIPO_UN llave_i L llave_d
+   54 E: E . aand E
+   55  | E . oor E
+   57  | E . igual_logico E
+   58  | E . desigual E
+   59  | E . mayor E
+   60  | E . mayor_igual E
+   61  | E . menor E
+   62  | E . menor_igual E
+   63  | E . mas E
+   64  | E . menos E
+   65  | E . por E
+   66  | E . entre E
+   67  | E . potencia E
+
+    igual_logico  desplazar e ir al estado 70
+    desigual      desplazar e ir al estado 71
+    mayor         desplazar e ir al estado 72
+    mayor_igual   desplazar e ir al estado 73
+    menor         desplazar e ir al estado 74
+    menor_igual   desplazar e ir al estado 75
+    oor           desplazar e ir al estado 76
+    aand          desplazar e ir al estado 77
+    mas           desplazar e ir al estado 78
+    menos         desplazar e ir al estado 79
+    por           desplazar e ir al estado 80
+    entre         desplazar e ir al estado 81
+    potencia      desplazar e ir al estado 82
+    puntocoma     desplazar e ir al estado 132
+
+
+Estado 122
+
+   34 B_PARA: r_para par_i IN_PARA par_d llave_i . L llave_d
+
+    r_int       desplazar e ir al estado 1
+    r_string    desplazar e ir al estado 2
+    r_double    desplazar e ir al estado 3
+    r_char      desplazar e ir al estado 4
+    r_bool      desplazar e ir al estado 5
+    r_imprimir  desplazar e ir al estado 6
+    r_show      desplazar e ir al estado 7
+    r_si        desplazar e ir al estado 8
+    r_para      desplazar e ir al estado 9
+    r_repetir   desplazar e ir al estado 10
+    id          desplazar e ir al estado 11
+
+    L            ir al estado 133
+    BLOCK        ir al estado 14
+    B_VAR        ir al estado 15
+    DECLARA_VAR  ir al estado 16
+    TIPO_VAR     ir al estado 17
+    ASIGNA_VAR   ir al estado 18
+    B_SHOW       ir al estado 19
+    B_IMPRIMIR   ir al estado 20
+    B_REPETIR    ir al estado 21
+    B_PARA       ir al estado 22
+    B_IF         ir al estado 23
+
+
+Estado 123
+
+   33 B_REPETIR: r_repetir par_i E par_d llave_i . L llave_d
+
+    r_int       desplazar e ir al estado 1
+    r_string    desplazar e ir al estado 2
+    r_double    desplazar e ir al estado 3
+    r_char      desplazar e ir al estado 4
+    r_bool      desplazar e ir al estado 5
+    r_imprimir  desplazar e ir al estado 6
+    r_show      desplazar e ir al estado 7
+    r_si        desplazar e ir al estado 8
+    r_para      desplazar e ir al estado 9
+    r_repetir   desplazar e ir al estado 10
+    id          desplazar e ir al estado 11
+
+    L            ir al estado 134
+    BLOCK        ir al estado 14
+    B_VAR        ir al estado 15
+    DECLARA_VAR  ir al estado 16
+    TIPO_VAR     ir al estado 17
+    ASIGNA_VAR   ir al estado 18
+    B_SHOW       ir al estado 19
+    B_IMPRIMIR   ir al estado 20
+    B_REPETIR    ir al estado 21
+    B_PARA       ir al estado 22
+    B_IF         ir al estado 23
+
+
+Estado 124
+
+   23 ASIGNA_VAR: id cor_i E cor_d igual . E puntocoma
+
+    entero    desplazar e ir al estado 39
+    decimal   desplazar e ir al estado 40
+    caracter  desplazar e ir al estado 41
+    booleano  desplazar e ir al estado 42
+    cadena    desplazar e ir al estado 43
+    noot      desplazar e ir al estado 44
+    menos     desplazar e ir al estado 45
+    par_i     desplazar e ir al estado 46
+    id        desplazar e ir al estado 47
+
+    E  ir al estado 135
+
+
+Estado 125
+
+   24 L_ARRAY: cor_i E . cor_d
+   25        | cor_i E . cor_d cor_i E cor_d
+   26        | cor_i E . cor_d cor_i E cor_d cor_i E cor_d
+   54 E: E . aand E
+   55  | E . oor E
+   57  | E . igual_logico E
+   58  | E . desigual E
+   59  | E . mayor E
+   60  | E . mayor_igual E
+   61  | E . menor E
+   62  | E . menor_igual E
+   63  | E . mas E
+   64  | E . menos E
+   65  | E . por E
+   66  | E . entre E
+   67  | E . potencia E
+
+    igual_logico  desplazar e ir al estado 70
+    desigual      desplazar e ir al estado 71
+    mayor         desplazar e ir al estado 72
+    mayor_igual   desplazar e ir al estado 73
+    menor         desplazar e ir al estado 74
+    menor_igual   desplazar e ir al estado 75
+    oor           desplazar e ir al estado 76
+    aand          desplazar e ir al estado 77
+    mas           desplazar e ir al estado 78
+    menos         desplazar e ir al estado 79
+    por           desplazar e ir al estado 80
+    entre         desplazar e ir al estado 81
+    potencia      desplazar e ir al estado 82
+    cor_d         desplazar e ir al estado 136
+
+
+Estado 126
+
+   14 DECLARA_VAR: TIPO_VAR r_arreglo L_ID L_ARRAY puntocoma .
+
+    $default  reduce usando la regla 14 (DECLARA_VAR)
+
+
+Estado 127
+
+   15 DECLARA_VAR: TIPO_VAR r_arreglo L_ID L_ARRAY igual . llave_i L_FILA llave_d puntocoma
+
+    llave_i  desplazar e ir al estado 137
+
+
+Estado 128
+
+   13 DECLARA_VAR: TIPO_VAR L_ID igual E puntocoma .
+
+    $default  reduce usando la regla 13 (DECLARA_VAR)
+
+
+Estado 129
+
+   76 E: id cor_i E cor_d .
+
+    $default  reduce usando la regla 76 (E)
+
+
+Estado 130
+
+    2 L: L . BLOCK
+   47 B_IF: r_si par_i E par_d llave_i L . llave_d
+   48     | r_si par_i E par_d llave_i L . llave_d B_ELSE
+   49     | r_si par_i E par_d llave_i L . llave_d L_SINOSI
+   50     | r_si par_i E par_d llave_i L . llave_d L_SINOSI B_ELSE
+
+    r_int       desplazar e ir al estado 1
+    r_string    desplazar e ir al estado 2
+    r_double    desplazar e ir al estado 3
+    r_char      desplazar e ir al estado 4
+    r_bool      desplazar e ir al estado 5
+    r_imprimir  desplazar e ir al estado 6
+    r_show      desplazar e ir al estado 7
+    r_si        desplazar e ir al estado 8
+    r_para      desplazar e ir al estado 9
+    r_repetir   desplazar e ir al estado 10
+    llave_d     desplazar e ir al estado 138
+    id          desplazar e ir al estado 11
+
+    BLOCK        ir al estado 35
+    B_VAR        ir al estado 15
+    DECLARA_VAR  ir al estado 16
+    TIPO_VAR     ir al estado 17
+    ASIGNA_VAR   ir al estado 18
+    B_SHOW       ir al estado 19
+    B_IMPRIMIR   ir al estado 20
+    B_REPETIR    ir al estado 21
+    B_PARA       ir al estado 22
+    B_IF         ir al estado 23
+
+
+Estado 131
+
+   35 IN_PARA: r_int id TIPO1 E . puntocoma id TIPO1 E puntocoma id TIPO_UN llave_i L llave_d
+   54 E: E . aand E
+   55  | E . oor E
+   57  | E . igual_logico E
+   58  | E . desigual E
+   59  | E . mayor E
+   60  | E . mayor_igual E
+   61  | E . menor E
+   62  | E . menor_igual E
+   63  | E . mas E
+   64  | E . menos E
+   65  | E . por E
+   66  | E . entre E
+   67  | E . potencia E
+
+    igual_logico  desplazar e ir al estado 70
+    desigual      desplazar e ir al estado 71
+    mayor         desplazar e ir al estado 72
+    mayor_igual   desplazar e ir al estado 73
+    menor         desplazar e ir al estado 74
+    menor_igual   desplazar e ir al estado 75
+    oor           desplazar e ir al estado 76
+    aand          desplazar e ir al estado 77
+    mas           desplazar e ir al estado 78
+    menos         desplazar e ir al estado 79
+    por           desplazar e ir al estado 80
+    entre         desplazar e ir al estado 81
+    potencia      desplazar e ir al estado 82
+    puntocoma     desplazar e ir al estado 139
+
+
+Estado 132
+
+   36 IN_PARA: id TIPO1 E puntocoma . id TIPO1 E puntocoma id TIPO_UN llave_i L llave_d
+
+    id  desplazar e ir al estado 140
+
+
+Estado 133
+
+    2 L: L . BLOCK
+   34 B_PARA: r_para par_i IN_PARA par_d llave_i L . llave_d
+
+    r_int       desplazar e ir al estado 1
+    r_string    desplazar e ir al estado 2
+    r_double    desplazar e ir al estado 3
+    r_char      desplazar e ir al estado 4
+    r_bool      desplazar e ir al estado 5
+    r_imprimir  desplazar e ir al estado 6
+    r_show      desplazar e ir al estado 7
+    r_si        desplazar e ir al estado 8
+    r_para      desplazar e ir al estado 9
+    r_repetir   desplazar e ir al estado 10
+    llave_d     desplazar e ir al estado 141
+    id          desplazar e ir al estado 11
+
+    BLOCK        ir al estado 35
+    B_VAR        ir al estado 15
+    DECLARA_VAR  ir al estado 16
+    TIPO_VAR     ir al estado 17
+    ASIGNA_VAR   ir al estado 18
+    B_SHOW       ir al estado 19
+    B_IMPRIMIR   ir al estado 20
+    B_REPETIR    ir al estado 21
+    B_PARA       ir al estado 22
+    B_IF         ir al estado 23
+
+
+Estado 134
+
+    2 L: L . BLOCK
+   33 B_REPETIR: r_repetir par_i E par_d llave_i L . llave_d
+
+    r_int       desplazar e ir al estado 1
+    r_string    desplazar e ir al estado 2
+    r_double    desplazar e ir al estado 3
+    r_char      desplazar e ir al estado 4
+    r_bool      desplazar e ir al estado 5
+    r_imprimir  desplazar e ir al estado 6
+    r_show      desplazar e ir al estado 7
+    r_si        desplazar e ir al estado 8
+    r_para      desplazar e ir al estado 9
+    r_repetir   desplazar e ir al estado 10
+    llave_d     desplazar e ir al estado 142
+    id          desplazar e ir al estado 11
+
+    BLOCK        ir al estado 35
+    B_VAR        ir al estado 15
+    DECLARA_VAR  ir al estado 16
+    TIPO_VAR     ir al estado 17
+    ASIGNA_VAR   ir al estado 18
+    B_SHOW       ir al estado 19
+    B_IMPRIMIR   ir al estado 20
+    B_REPETIR    ir al estado 21
+    B_PARA       ir al estado 22
+    B_IF         ir al estado 23
+
+
+Estado 135
+
+   23 ASIGNA_VAR: id cor_i E cor_d igual E . puntocoma
+   54 E: E . aand E
+   55  | E . oor E
+   57  | E . igual_logico E
+   58  | E . desigual E
+   59  | E . mayor E
+   60  | E . mayor_igual E
+   61  | E . menor E
+   62  | E . menor_igual E
+   63  | E . mas E
+   64  | E . menos E
+   65  | E . por E
+   66  | E . entre E
+   67  | E . potencia E
+
+    igual_logico  desplazar e ir al estado 70
+    desigual      desplazar e ir al estado 71
+    mayor         desplazar e ir al estado 72
+    mayor_igual   desplazar e ir al estado 73
+    menor         desplazar e ir al estado 74
+    menor_igual   desplazar e ir al estado 75
+    oor           desplazar e ir al estado 76
+    aand          desplazar e ir al estado 77
+    mas           desplazar e ir al estado 78
+    menos         desplazar e ir al estado 79
+    por           desplazar e ir al estado 80
+    entre         desplazar e ir al estado 81
+    potencia      desplazar e ir al estado 82
+    puntocoma     desplazar e ir al estado 143
+
+
+Estado 136
+
+   24 L_ARRAY: cor_i E cor_d .
+   25        | cor_i E cor_d . cor_i E cor_d
+   26        | cor_i E cor_d . cor_i E cor_d cor_i E cor_d
+
+    cor_i  desplazar e ir al estado 144
+
+    $default  reduce usando la regla 24 (L_ARRAY)
+
+
+Estado 137
+
+   15 DECLARA_VAR: TIPO_VAR r_arreglo L_ID L_ARRAY igual llave_i . L_FILA llave_d puntocoma
+
+    llave_i  desplazar e ir al estado 145
+
+    L_FILA  ir al estado 146
+
+
+Estado 138
+
+   47 B_IF: r_si par_i E par_d llave_i L llave_d .
+   48     | r_si par_i E par_d llave_i L llave_d . B_ELSE
+   49     | r_si par_i E par_d llave_i L llave_d . L_SINOSI
+   50     | r_si par_i E par_d llave_i L llave_d . L_SINOSI B_ELSE
+
+    r_sino  desplazar e ir al estado 147
+
+    $default  reduce usando la regla 47 (B_IF)
+
+    B_ELSE    ir al estado 148
+    L_SINOSI  ir al estado 149
+
+
+Estado 139
+
+   35 IN_PARA: r_int id TIPO1 E puntocoma . id TIPO1 E puntocoma id TIPO_UN llave_i L llave_d
+
+    id  desplazar e ir al estado 150
+
+
+Estado 140
+
+   36 IN_PARA: id TIPO1 E puntocoma id . TIPO1 E puntocoma id TIPO_UN llave_i L llave_d
+
+    desigual     desplazar e ir al estado 87
+    mayor        desplazar e ir al estado 88
+    mayor_igual  desplazar e ir al estado 89
+    menor        desplazar e ir al estado 90
+    menor_igual  desplazar e ir al estado 91
+    igual        desplazar e ir al estado 92
+
+    TIPO1  ir al estado 151
+
+
+Estado 141
+
+   34 B_PARA: r_para par_i IN_PARA par_d llave_i L llave_d .
+
+    $default  reduce usando la regla 34 (B_PARA)
+
+
+Estado 142
+
+   33 B_REPETIR: r_repetir par_i E par_d llave_i L llave_d .
+
+    $default  reduce usando la regla 33 (B_REPETIR)
+
+
+Estado 143
+
+   23 ASIGNA_VAR: id cor_i E cor_d igual E puntocoma .
+
+    $default  reduce usando la regla 23 (ASIGNA_VAR)
+
+
+Estado 144
+
+   25 L_ARRAY: cor_i E cor_d cor_i . E cor_d
+   26        | cor_i E cor_d cor_i . E cor_d cor_i E cor_d
+
+    entero    desplazar e ir al estado 39
+    decimal   desplazar e ir al estado 40
+    caracter  desplazar e ir al estado 41
+    booleano  desplazar e ir al estado 42
+    cadena    desplazar e ir al estado 43
+    noot      desplazar e ir al estado 44
+    menos     desplazar e ir al estado 45
+    par_i     desplazar e ir al estado 46
+    id        desplazar e ir al estado 47
+
+    E  ir al estado 152
+
+
+Estado 145
+
+   28 L_FILA: llave_i . L_COLUMNA llave_d
+
+    entero    desplazar e ir al estado 39
+    decimal   desplazar e ir al estado 40
+    caracter  desplazar e ir al estado 41
+    booleano  desplazar e ir al estado 42
+    cadena    desplazar e ir al estado 43
+    noot      desplazar e ir al estado 44
+    menos     desplazar e ir al estado 45
+    par_i     desplazar e ir al estado 46
+    id        desplazar e ir al estado 47
+
+    L_COLUMNA  ir al estado 153
+    E          ir al estado 154
+
+
+Estado 146
+
+   15 DECLARA_VAR: TIPO_VAR r_arreglo L_ID L_ARRAY igual llave_i L_FILA . llave_d puntocoma
+   27 L_FILA: L_FILA . coma llave_i L_COLUMNA llave_d
+
+    coma     desplazar e ir al estado 155
+    llave_d  desplazar e ir al estado 156
+
+
+Estado 147
+
+   51 B_ELSE: r_sino . llave_i L llave_d
+   53 L_SINOSI: r_sino . r_si par_i E par_d llave_i L llave_d
+
+    r_si     desplazar e ir al estado 157
+    llave_i  desplazar e ir al estado 158
+
+
+Estado 148
+
+   48 B_IF: r_si par_i E par_d llave_i L llave_d B_ELSE .
+
+    $default  reduce usando la regla 48 (B_IF)
+
+
+Estado 149
+
+   49 B_IF: r_si par_i E par_d llave_i L llave_d L_SINOSI .
+   50     | r_si par_i E par_d llave_i L llave_d L_SINOSI . B_ELSE
+   52 L_SINOSI: L_SINOSI . r_sino r_si par_i E par_d llave_i L llave_d
+
+    r_sino  desplazar e ir al estado 159
+
+    $default  reduce usando la regla 49 (B_IF)
+
+    B_ELSE  ir al estado 160
+
+
+Estado 150
+
+   35 IN_PARA: r_int id TIPO1 E puntocoma id . TIPO1 E puntocoma id TIPO_UN llave_i L llave_d
+
+    desigual     desplazar e ir al estado 87
+    mayor        desplazar e ir al estado 88
+    mayor_igual  desplazar e ir al estado 89
+    menor        desplazar e ir al estado 90
+    menor_igual  desplazar e ir al estado 91
+    igual        desplazar e ir al estado 92
+
+    TIPO1  ir al estado 161
+
+
+Estado 151
+
+   36 IN_PARA: id TIPO1 E puntocoma id TIPO1 . E puntocoma id TIPO_UN llave_i L llave_d
+
+    entero    desplazar e ir al estado 39
+    decimal   desplazar e ir al estado 40
+    caracter  desplazar e ir al estado 41
+    booleano  desplazar e ir al estado 42
+    cadena    desplazar e ir al estado 43
+    noot      desplazar e ir al estado 44
+    menos     desplazar e ir al estado 45
+    par_i     desplazar e ir al estado 46
+    id        desplazar e ir al estado 47
+
+    E  ir al estado 162
+
+
+Estado 152
+
+   25 L_ARRAY: cor_i E cor_d cor_i E . cor_d
+   26        | cor_i E cor_d cor_i E . cor_d cor_i E cor_d
+   54 E: E . aand E
+   55  | E . oor E
+   57  | E . igual_logico E
+   58  | E . desigual E
+   59  | E . mayor E
+   60  | E . mayor_igual E
+   61  | E . menor E
+   62  | E . menor_igual E
+   63  | E . mas E
+   64  | E . menos E
+   65  | E . por E
+   66  | E . entre E
+   67  | E . potencia E
+
+    igual_logico  desplazar e ir al estado 70
+    desigual      desplazar e ir al estado 71
+    mayor         desplazar e ir al estado 72
+    mayor_igual   desplazar e ir al estado 73
+    menor         desplazar e ir al estado 74
+    menor_igual   desplazar e ir al estado 75
+    oor           desplazar e ir al estado 76
+    aand          desplazar e ir al estado 77
+    mas           desplazar e ir al estado 78
+    menos         desplazar e ir al estado 79
+    por           desplazar e ir al estado 80
+    entre         desplazar e ir al estado 81
+    potencia      desplazar e ir al estado 82
+    cor_d         desplazar e ir al estado 163
+
+
+Estado 153
+
+   28 L_FILA: llave_i L_COLUMNA . llave_d
+   29 L_COLUMNA: L_COLUMNA . coma E
+
+    coma     desplazar e ir al estado 164
+    llave_d  desplazar e ir al estado 165
+
+
+Estado 154
+
+   30 L_COLUMNA: E .
+   54 E: E . aand E
+   55  | E . oor E
+   57  | E . igual_logico E
+   58  | E . desigual E
+   59  | E . mayor E
+   60  | E . mayor_igual E
+   61  | E . menor E
+   62  | E . menor_igual E
+   63  | E . mas E
+   64  | E . menos E
+   65  | E . por E
+   66  | E . entre E
+   67  | E . potencia E
+
+    igual_logico  desplazar e ir al estado 70
+    desigual      desplazar e ir al estado 71
+    mayor         desplazar e ir al estado 72
+    mayor_igual   desplazar e ir al estado 73
+    menor         desplazar e ir al estado 74
+    menor_igual   desplazar e ir al estado 75
+    oor           desplazar e ir al estado 76
+    aand          desplazar e ir al estado 77
+    mas           desplazar e ir al estado 78
+    menos         desplazar e ir al estado 79
+    por           desplazar e ir al estado 80
+    entre         desplazar e ir al estado 81
+    potencia      desplazar e ir al estado 82
+
+    $default  reduce usando la regla 30 (L_COLUMNA)
+
+
+Estado 155
+
+   27 L_FILA: L_FILA coma . llave_i L_COLUMNA llave_d
+
+    llave_i  desplazar e ir al estado 166
+
+
+Estado 156
+
+   15 DECLARA_VAR: TIPO_VAR r_arreglo L_ID L_ARRAY igual llave_i L_FILA llave_d . puntocoma
+
+    puntocoma  desplazar e ir al estado 167
+
+
+Estado 157
+
+   53 L_SINOSI: r_sino r_si . par_i E par_d llave_i L llave_d
+
+    par_i  desplazar e ir al estado 168
+
+
+Estado 158
+
+   51 B_ELSE: r_sino llave_i . L llave_d
+
+    r_int       desplazar e ir al estado 1
+    r_string    desplazar e ir al estado 2
+    r_double    desplazar e ir al estado 3
+    r_char      desplazar e ir al estado 4
+    r_bool      desplazar e ir al estado 5
+    r_imprimir  desplazar e ir al estado 6
+    r_show      desplazar e ir al estado 7
+    r_si        desplazar e ir al estado 8
+    r_para      desplazar e ir al estado 9
+    r_repetir   desplazar e ir al estado 10
+    id          desplazar e ir al estado 11
+
+    L            ir al estado 169
+    BLOCK        ir al estado 14
+    B_VAR        ir al estado 15
+    DECLARA_VAR  ir al estado 16
+    TIPO_VAR     ir al estado 17
+    ASIGNA_VAR   ir al estado 18
+    B_SHOW       ir al estado 19
+    B_IMPRIMIR   ir al estado 20
+    B_REPETIR    ir al estado 21
+    B_PARA       ir al estado 22
+    B_IF         ir al estado 23
+
+
+Estado 159
+
+   51 B_ELSE: r_sino . llave_i L llave_d
+   52 L_SINOSI: L_SINOSI r_sino . r_si par_i E par_d llave_i L llave_d
+
+    r_si     desplazar e ir al estado 170
+    llave_i  desplazar e ir al estado 158
+
+
+Estado 160
+
+   50 B_IF: r_si par_i E par_d llave_i L llave_d L_SINOSI B_ELSE .
+
+    $default  reduce usando la regla 50 (B_IF)
+
+
+Estado 161
+
+   35 IN_PARA: r_int id TIPO1 E puntocoma id TIPO1 . E puntocoma id TIPO_UN llave_i L llave_d
+
+    entero    desplazar e ir al estado 39
+    decimal   desplazar e ir al estado 40
+    caracter  desplazar e ir al estado 41
+    booleano  desplazar e ir al estado 42
+    cadena    desplazar e ir al estado 43
+    noot      desplazar e ir al estado 44
+    menos     desplazar e ir al estado 45
+    par_i     desplazar e ir al estado 46
+    id        desplazar e ir al estado 47
+
+    E  ir al estado 171
+
+
+Estado 162
+
+   36 IN_PARA: id TIPO1 E puntocoma id TIPO1 E . puntocoma id TIPO_UN llave_i L llave_d
+   54 E: E . aand E
+   55  | E . oor E
+   57  | E . igual_logico E
+   58  | E . desigual E
+   59  | E . mayor E
+   60  | E . mayor_igual E
+   61  | E . menor E
+   62  | E . menor_igual E
+   63  | E . mas E
+   64  | E . menos E
+   65  | E . por E
+   66  | E . entre E
+   67  | E . potencia E
+
+    igual_logico  desplazar e ir al estado 70
+    desigual      desplazar e ir al estado 71
+    mayor         desplazar e ir al estado 72
+    mayor_igual   desplazar e ir al estado 73
+    menor         desplazar e ir al estado 74
+    menor_igual   desplazar e ir al estado 75
+    oor           desplazar e ir al estado 76
+    aand          desplazar e ir al estado 77
+    mas           desplazar e ir al estado 78
+    menos         desplazar e ir al estado 79
+    por           desplazar e ir al estado 80
+    entre         desplazar e ir al estado 81
+    potencia      desplazar e ir al estado 82
+    puntocoma     desplazar e ir al estado 172
+
+
+Estado 163
+
+   25 L_ARRAY: cor_i E cor_d cor_i E cor_d .
+   26        | cor_i E cor_d cor_i E cor_d . cor_i E cor_d
+
+    cor_i  desplazar e ir al estado 173
+
+    $default  reduce usando la regla 25 (L_ARRAY)
+
+
+Estado 164
+
+   29 L_COLUMNA: L_COLUMNA coma . E
+
+    entero    desplazar e ir al estado 39
+    decimal   desplazar e ir al estado 40
+    caracter  desplazar e ir al estado 41
+    booleano  desplazar e ir al estado 42
+    cadena    desplazar e ir al estado 43
+    noot      desplazar e ir al estado 44
+    menos     desplazar e ir al estado 45
+    par_i     desplazar e ir al estado 46
+    id        desplazar e ir al estado 47
+
+    E  ir al estado 174
+
+
+Estado 165
+
+   28 L_FILA: llave_i L_COLUMNA llave_d .
+
+    $default  reduce usando la regla 28 (L_FILA)
+
+
+Estado 166
+
+   27 L_FILA: L_FILA coma llave_i . L_COLUMNA llave_d
+
+    entero    desplazar e ir al estado 39
+    decimal   desplazar e ir al estado 40
+    caracter  desplazar e ir al estado 41
+    booleano  desplazar e ir al estado 42
+    cadena    desplazar e ir al estado 43
+    noot      desplazar e ir al estado 44
+    menos     desplazar e ir al estado 45
+    par_i     desplazar e ir al estado 46
+    id        desplazar e ir al estado 47
+
+    L_COLUMNA  ir al estado 175
+    E          ir al estado 154
+
+
+Estado 167
+
+   15 DECLARA_VAR: TIPO_VAR r_arreglo L_ID L_ARRAY igual llave_i L_FILA llave_d puntocoma .
+
+    $default  reduce usando la regla 15 (DECLARA_VAR)
+
+
+Estado 168
+
+   53 L_SINOSI: r_sino r_si par_i . E par_d llave_i L llave_d
+
+    entero    desplazar e ir al estado 39
+    decimal   desplazar e ir al estado 40
+    caracter  desplazar e ir al estado 41
+    booleano  desplazar e ir al estado 42
+    cadena    desplazar e ir al estado 43
+    noot      desplazar e ir al estado 44
+    menos     desplazar e ir al estado 45
+    par_i     desplazar e ir al estado 46
+    id        desplazar e ir al estado 47
+
+    E  ir al estado 176
+
+
+Estado 169
+
+    2 L: L . BLOCK
+   51 B_ELSE: r_sino llave_i L . llave_d
+
+    r_int       desplazar e ir al estado 1
+    r_string    desplazar e ir al estado 2
+    r_double    desplazar e ir al estado 3
+    r_char      desplazar e ir al estado 4
+    r_bool      desplazar e ir al estado 5
+    r_imprimir  desplazar e ir al estado 6
+    r_show      desplazar e ir al estado 7
+    r_si        desplazar e ir al estado 8
+    r_para      desplazar e ir al estado 9
+    r_repetir   desplazar e ir al estado 10
+    llave_d     desplazar e ir al estado 177
+    id          desplazar e ir al estado 11
+
+    BLOCK        ir al estado 35
+    B_VAR        ir al estado 15
+    DECLARA_VAR  ir al estado 16
+    TIPO_VAR     ir al estado 17
+    ASIGNA_VAR   ir al estado 18
+    B_SHOW       ir al estado 19
+    B_IMPRIMIR   ir al estado 20
+    B_REPETIR    ir al estado 21
+    B_PARA       ir al estado 22
+    B_IF         ir al estado 23
+
+
+Estado 170
+
+   52 L_SINOSI: L_SINOSI r_sino r_si . par_i E par_d llave_i L llave_d
+
+    par_i  desplazar e ir al estado 178
+
+
+Estado 171
+
+   35 IN_PARA: r_int id TIPO1 E puntocoma id TIPO1 E . puntocoma id TIPO_UN llave_i L llave_d
+   54 E: E . aand E
+   55  | E . oor E
+   57  | E . igual_logico E
+   58  | E . desigual E
+   59  | E . mayor E
+   60  | E . mayor_igual E
+   61  | E . menor E
+   62  | E . menor_igual E
+   63  | E . mas E
+   64  | E . menos E
+   65  | E . por E
+   66  | E . entre E
+   67  | E . potencia E
+
+    igual_logico  desplazar e ir al estado 70
+    desigual      desplazar e ir al estado 71
+    mayor         desplazar e ir al estado 72
+    mayor_igual   desplazar e ir al estado 73
+    menor         desplazar e ir al estado 74
+    menor_igual   desplazar e ir al estado 75
+    oor           desplazar e ir al estado 76
+    aand          desplazar e ir al estado 77
+    mas           desplazar e ir al estado 78
+    menos         desplazar e ir al estado 79
+    por           desplazar e ir al estado 80
+    entre         desplazar e ir al estado 81
+    potencia      desplazar e ir al estado 82
+    puntocoma     desplazar e ir al estado 179
+
+
+Estado 172
+
+   36 IN_PARA: id TIPO1 E puntocoma id TIPO1 E puntocoma . id TIPO_UN llave_i L llave_d
+
+    id  desplazar e ir al estado 180
+
+
+Estado 173
+
+   26 L_ARRAY: cor_i E cor_d cor_i E cor_d cor_i . E cor_d
+
+    entero    desplazar e ir al estado 39
+    decimal   desplazar e ir al estado 40
+    caracter  desplazar e ir al estado 41
+    booleano  desplazar e ir al estado 42
+    cadena    desplazar e ir al estado 43
+    noot      desplazar e ir al estado 44
+    menos     desplazar e ir al estado 45
+    par_i     desplazar e ir al estado 46
+    id        desplazar e ir al estado 47
+
+    E  ir al estado 181
+
+
+Estado 174
+
+   29 L_COLUMNA: L_COLUMNA coma E .
+   54 E: E . aand E
+   55  | E . oor E
+   57  | E . igual_logico E
+   58  | E . desigual E
+   59  | E . mayor E
+   60  | E . mayor_igual E
+   61  | E . menor E
+   62  | E . menor_igual E
+   63  | E . mas E
+   64  | E . menos E
+   65  | E . por E
+   66  | E . entre E
+   67  | E . potencia E
+
+    igual_logico  desplazar e ir al estado 70
+    desigual      desplazar e ir al estado 71
+    mayor         desplazar e ir al estado 72
+    mayor_igual   desplazar e ir al estado 73
+    menor         desplazar e ir al estado 74
+    menor_igual   desplazar e ir al estado 75
+    oor           desplazar e ir al estado 76
+    aand          desplazar e ir al estado 77
+    mas           desplazar e ir al estado 78
+    menos         desplazar e ir al estado 79
+    por           desplazar e ir al estado 80
+    entre         desplazar e ir al estado 81
+    potencia      desplazar e ir al estado 82
+
+    $default  reduce usando la regla 29 (L_COLUMNA)
+
+
+Estado 175
+
+   27 L_FILA: L_FILA coma llave_i L_COLUMNA . llave_d
+   29 L_COLUMNA: L_COLUMNA . coma E
+
+    coma     desplazar e ir al estado 164
+    llave_d  desplazar e ir al estado 182
+
+
+Estado 176
+
+   53 L_SINOSI: r_sino r_si par_i E . par_d llave_i L llave_d
+   54 E: E . aand E
+   55  | E . oor E
+   57  | E . igual_logico E
+   58  | E . desigual E
+   59  | E . mayor E
+   60  | E . mayor_igual E
+   61  | E . menor E
+   62  | E . menor_igual E
+   63  | E . mas E
+   64  | E . menos E
+   65  | E . por E
+   66  | E . entre E
+   67  | E . potencia E
+
+    igual_logico  desplazar e ir al estado 70
+    desigual      desplazar e ir al estado 71
+    mayor         desplazar e ir al estado 72
+    mayor_igual   desplazar e ir al estado 73
+    menor         desplazar e ir al estado 74
+    menor_igual   desplazar e ir al estado 75
+    oor           desplazar e ir al estado 76
+    aand          desplazar e ir al estado 77
+    mas           desplazar e ir al estado 78
+    menos         desplazar e ir al estado 79
+    por           desplazar e ir al estado 80
+    entre         desplazar e ir al estado 81
+    potencia      desplazar e ir al estado 82
+    par_d         desplazar e ir al estado 183
+
+
+Estado 177
+
+   51 B_ELSE: r_sino llave_i L llave_d .
+
+    $default  reduce usando la regla 51 (B_ELSE)
+
+
+Estado 178
+
+   52 L_SINOSI: L_SINOSI r_sino r_si par_i . E par_d llave_i L llave_d
+
+    entero    desplazar e ir al estado 39
+    decimal   desplazar e ir al estado 40
+    caracter  desplazar e ir al estado 41
+    booleano  desplazar e ir al estado 42
+    cadena    desplazar e ir al estado 43
+    noot      desplazar e ir al estado 44
+    menos     desplazar e ir al estado 45
+    par_i     desplazar e ir al estado 46
+    id        desplazar e ir al estado 47
+
+    E  ir al estado 184
+
+
+Estado 179
+
+   35 IN_PARA: r_int id TIPO1 E puntocoma id TIPO1 E puntocoma . id TIPO_UN llave_i L llave_d
+
+    id  desplazar e ir al estado 185
+
+
+Estado 180
+
+   36 IN_PARA: id TIPO1 E puntocoma id TIPO1 E puntocoma id . TIPO_UN llave_i L llave_d
+
+    aumento     desplazar e ir al estado 29
+    decremento  desplazar e ir al estado 30
+
+    TIPO_UN  ir al estado 186
+
+
+Estado 181
+
+   26 L_ARRAY: cor_i E cor_d cor_i E cor_d cor_i E . cor_d
+   54 E: E . aand E
+   55  | E . oor E
+   57  | E . igual_logico E
+   58  | E . desigual E
+   59  | E . mayor E
+   60  | E . mayor_igual E
+   61  | E . menor E
+   62  | E . menor_igual E
+   63  | E . mas E
+   64  | E . menos E
+   65  | E . por E
+   66  | E . entre E
+   67  | E . potencia E
+
+    igual_logico  desplazar e ir al estado 70
+    desigual      desplazar e ir al estado 71
+    mayor         desplazar e ir al estado 72
+    mayor_igual   desplazar e ir al estado 73
+    menor         desplazar e ir al estado 74
+    menor_igual   desplazar e ir al estado 75
+    oor           desplazar e ir al estado 76
+    aand          desplazar e ir al estado 77
+    mas           desplazar e ir al estado 78
+    menos         desplazar e ir al estado 79
+    por           desplazar e ir al estado 80
+    entre         desplazar e ir al estado 81
+    potencia      desplazar e ir al estado 82
+    cor_d         desplazar e ir al estado 187
+
+
+Estado 182
+
+   27 L_FILA: L_FILA coma llave_i L_COLUMNA llave_d .
+
+    $default  reduce usando la regla 27 (L_FILA)
+
+
+Estado 183
+
+   53 L_SINOSI: r_sino r_si par_i E par_d . llave_i L llave_d
+
+    llave_i  desplazar e ir al estado 188
+
+
+Estado 184
+
+   52 L_SINOSI: L_SINOSI r_sino r_si par_i E . par_d llave_i L llave_d
+   54 E: E . aand E
+   55  | E . oor E
+   57  | E . igual_logico E
+   58  | E . desigual E
+   59  | E . mayor E
+   60  | E . mayor_igual E
+   61  | E . menor E
+   62  | E . menor_igual E
+   63  | E . mas E
+   64  | E . menos E
+   65  | E . por E
+   66  | E . entre E
+   67  | E . potencia E
+
+    igual_logico  desplazar e ir al estado 70
+    desigual      desplazar e ir al estado 71
+    mayor         desplazar e ir al estado 72
+    mayor_igual   desplazar e ir al estado 73
+    menor         desplazar e ir al estado 74
+    menor_igual   desplazar e ir al estado 75
+    oor           desplazar e ir al estado 76
+    aand          desplazar e ir al estado 77
+    mas           desplazar e ir al estado 78
+    menos         desplazar e ir al estado 79
+    por           desplazar e ir al estado 80
+    entre         desplazar e ir al estado 81
+    potencia      desplazar e ir al estado 82
+    par_d         desplazar e ir al estado 189
+
+
+Estado 185
+
+   35 IN_PARA: r_int id TIPO1 E puntocoma id TIPO1 E puntocoma id . TIPO_UN llave_i L llave_d
+
+    aumento     desplazar e ir al estado 29
+    decremento  desplazar e ir al estado 30
+
+    TIPO_UN  ir al estado 190
+
+
+Estado 186
+
+   36 IN_PARA: id TIPO1 E puntocoma id TIPO1 E puntocoma id TIPO_UN . llave_i L llave_d
+
+    llave_i  desplazar e ir al estado 191
+
+
+Estado 187
+
+   26 L_ARRAY: cor_i E cor_d cor_i E cor_d cor_i E cor_d .
+
+    $default  reduce usando la regla 26 (L_ARRAY)
+
+
+Estado 188
+
+   53 L_SINOSI: r_sino r_si par_i E par_d llave_i . L llave_d
+
+    r_int       desplazar e ir al estado 1
+    r_string    desplazar e ir al estado 2
+    r_double    desplazar e ir al estado 3
+    r_char      desplazar e ir al estado 4
+    r_bool      desplazar e ir al estado 5
+    r_imprimir  desplazar e ir al estado 6
+    r_show      desplazar e ir al estado 7
+    r_si        desplazar e ir al estado 8
+    r_para      desplazar e ir al estado 9
+    r_repetir   desplazar e ir al estado 10
+    id          desplazar e ir al estado 11
+
+    L            ir al estado 192
+    BLOCK        ir al estado 14
+    B_VAR        ir al estado 15
+    DECLARA_VAR  ir al estado 16
+    TIPO_VAR     ir al estado 17
+    ASIGNA_VAR   ir al estado 18
+    B_SHOW       ir al estado 19
+    B_IMPRIMIR   ir al estado 20
+    B_REPETIR    ir al estado 21
+    B_PARA       ir al estado 22
+    B_IF         ir al estado 23
+
+
+Estado 189
+
+   52 L_SINOSI: L_SINOSI r_sino r_si par_i E par_d . llave_i L llave_d
+
+    llave_i  desplazar e ir al estado 193
+
+
+Estado 190
+
+   35 IN_PARA: r_int id TIPO1 E puntocoma id TIPO1 E puntocoma id TIPO_UN . llave_i L llave_d
+
+    llave_i  desplazar e ir al estado 194
+
+
+Estado 191
+
+   36 IN_PARA: id TIPO1 E puntocoma id TIPO1 E puntocoma id TIPO_UN llave_i . L llave_d
+
+    r_int       desplazar e ir al estado 1
+    r_string    desplazar e ir al estado 2
+    r_double    desplazar e ir al estado 3
+    r_char      desplazar e ir al estado 4
+    r_bool      desplazar e ir al estado 5
+    r_imprimir  desplazar e ir al estado 6
+    r_show      desplazar e ir al estado 7
+    r_si        desplazar e ir al estado 8
+    r_para      desplazar e ir al estado 9
+    r_repetir   desplazar e ir al estado 10
+    id          desplazar e ir al estado 11
+
+    L            ir al estado 195
+    BLOCK        ir al estado 14
+    B_VAR        ir al estado 15
+    DECLARA_VAR  ir al estado 16
+    TIPO_VAR     ir al estado 17
+    ASIGNA_VAR   ir al estado 18
+    B_SHOW       ir al estado 19
+    B_IMPRIMIR   ir al estado 20
+    B_REPETIR    ir al estado 21
+    B_PARA       ir al estado 22
+    B_IF         ir al estado 23
+
+
+Estado 192
+
+    2 L: L . BLOCK
+   53 L_SINOSI: r_sino r_si par_i E par_d llave_i L . llave_d
+
+    r_int       desplazar e ir al estado 1
+    r_string    desplazar e ir al estado 2
+    r_double    desplazar e ir al estado 3
+    r_char      desplazar e ir al estado 4
+    r_bool      desplazar e ir al estado 5
+    r_imprimir  desplazar e ir al estado 6
+    r_show      desplazar e ir al estado 7
+    r_si        desplazar e ir al estado 8
+    r_para      desplazar e ir al estado 9
+    r_repetir   desplazar e ir al estado 10
+    llave_d     desplazar e ir al estado 196
+    id          desplazar e ir al estado 11
+
+    BLOCK        ir al estado 35
+    B_VAR        ir al estado 15
+    DECLARA_VAR  ir al estado 16
+    TIPO_VAR     ir al estado 17
+    ASIGNA_VAR   ir al estado 18
+    B_SHOW       ir al estado 19
+    B_IMPRIMIR   ir al estado 20
+    B_REPETIR    ir al estado 21
+    B_PARA       ir al estado 22
+    B_IF         ir al estado 23
+
+
+Estado 193
+
+   52 L_SINOSI: L_SINOSI r_sino r_si par_i E par_d llave_i . L llave_d
+
+    r_int       desplazar e ir al estado 1
+    r_string    desplazar e ir al estado 2
+    r_double    desplazar e ir al estado 3
+    r_char      desplazar e ir al estado 4
+    r_bool      desplazar e ir al estado 5
+    r_imprimir  desplazar e ir al estado 6
+    r_show      desplazar e ir al estado 7
+    r_si        desplazar e ir al estado 8
+    r_para      desplazar e ir al estado 9
+    r_repetir   desplazar e ir al estado 10
+    id          desplazar e ir al estado 11
+
+    L            ir al estado 197
+    BLOCK        ir al estado 14
+    B_VAR        ir al estado 15
+    DECLARA_VAR  ir al estado 16
+    TIPO_VAR     ir al estado 17
+    ASIGNA_VAR   ir al estado 18
+    B_SHOW       ir al estado 19
+    B_IMPRIMIR   ir al estado 20
+    B_REPETIR    ir al estado 21
+    B_PARA       ir al estado 22
+    B_IF         ir al estado 23
+
+
+Estado 194
+
+   35 IN_PARA: r_int id TIPO1 E puntocoma id TIPO1 E puntocoma id TIPO_UN llave_i . L llave_d
+
+    r_int       desplazar e ir al estado 1
+    r_string    desplazar e ir al estado 2
+    r_double    desplazar e ir al estado 3
+    r_char      desplazar e ir al estado 4
+    r_bool      desplazar e ir al estado 5
+    r_imprimir  desplazar e ir al estado 6
+    r_show      desplazar e ir al estado 7
+    r_si        desplazar e ir al estado 8
+    r_para      desplazar e ir al estado 9
+    r_repetir   desplazar e ir al estado 10
+    id          desplazar e ir al estado 11
+
+    L            ir al estado 198
+    BLOCK        ir al estado 14
+    B_VAR        ir al estado 15
+    DECLARA_VAR  ir al estado 16
+    TIPO_VAR     ir al estado 17
+    ASIGNA_VAR   ir al estado 18
+    B_SHOW       ir al estado 19
+    B_IMPRIMIR   ir al estado 20
+    B_REPETIR    ir al estado 21
+    B_PARA       ir al estado 22
+    B_IF         ir al estado 23
+
+
+Estado 195
+
+    2 L: L . BLOCK
+   36 IN_PARA: id TIPO1 E puntocoma id TIPO1 E puntocoma id TIPO_UN llave_i L . llave_d
+
+    r_int       desplazar e ir al estado 1
+    r_string    desplazar e ir al estado 2
+    r_double    desplazar e ir al estado 3
+    r_char      desplazar e ir al estado 4
+    r_bool      desplazar e ir al estado 5
+    r_imprimir  desplazar e ir al estado 6
+    r_show      desplazar e ir al estado 7
+    r_si        desplazar e ir al estado 8
+    r_para      desplazar e ir al estado 9
+    r_repetir   desplazar e ir al estado 10
+    llave_d     desplazar e ir al estado 199
+    id          desplazar e ir al estado 11
+
+    BLOCK        ir al estado 35
+    B_VAR        ir al estado 15
+    DECLARA_VAR  ir al estado 16
+    TIPO_VAR     ir al estado 17
+    ASIGNA_VAR   ir al estado 18
+    B_SHOW       ir al estado 19
+    B_IMPRIMIR   ir al estado 20
+    B_REPETIR    ir al estado 21
+    B_PARA       ir al estado 22
+    B_IF         ir al estado 23
+
+
+Estado 196
+
+   53 L_SINOSI: r_sino r_si par_i E par_d llave_i L llave_d .
+
+    $default  reduce usando la regla 53 (L_SINOSI)
+
+
+Estado 197
+
+    2 L: L . BLOCK
+   52 L_SINOSI: L_SINOSI r_sino r_si par_i E par_d llave_i L . llave_d
+
+    r_int       desplazar e ir al estado 1
+    r_string    desplazar e ir al estado 2
+    r_double    desplazar e ir al estado 3
+    r_char      desplazar e ir al estado 4
+    r_bool      desplazar e ir al estado 5
+    r_imprimir  desplazar e ir al estado 6
+    r_show      desplazar e ir al estado 7
+    r_si        desplazar e ir al estado 8
+    r_para      desplazar e ir al estado 9
+    r_repetir   desplazar e ir al estado 10
+    llave_d     desplazar e ir al estado 200
+    id          desplazar e ir al estado 11
+
+    BLOCK        ir al estado 35
+    B_VAR        ir al estado 15
+    DECLARA_VAR  ir al estado 16
+    TIPO_VAR     ir al estado 17
+    ASIGNA_VAR   ir al estado 18
+    B_SHOW       ir al estado 19
+    B_IMPRIMIR   ir al estado 20
+    B_REPETIR    ir al estado 21
+    B_PARA       ir al estado 22
+    B_IF         ir al estado 23
+
+
+Estado 198
+
+    2 L: L . BLOCK
+   35 IN_PARA: r_int id TIPO1 E puntocoma id TIPO1 E puntocoma id TIPO_UN llave_i L . llave_d
+
+    r_int       desplazar e ir al estado 1
+    r_string    desplazar e ir al estado 2
+    r_double    desplazar e ir al estado 3
+    r_char      desplazar e ir al estado 4
+    r_bool      desplazar e ir al estado 5
+    r_imprimir  desplazar e ir al estado 6
+    r_show      desplazar e ir al estado 7
+    r_si        desplazar e ir al estado 8
+    r_para      desplazar e ir al estado 9
+    r_repetir   desplazar e ir al estado 10
+    llave_d     desplazar e ir al estado 201
+    id          desplazar e ir al estado 11
+
+    BLOCK        ir al estado 35
+    B_VAR        ir al estado 15
+    DECLARA_VAR  ir al estado 16
+    TIPO_VAR     ir al estado 17
+    ASIGNA_VAR   ir al estado 18
+    B_SHOW       ir al estado 19
+    B_IMPRIMIR   ir al estado 20
+    B_REPETIR    ir al estado 21
+    B_PARA       ir al estado 22
+    B_IF         ir al estado 23
+
+
+Estado 199
+
+   36 IN_PARA: id TIPO1 E puntocoma id TIPO1 E puntocoma id TIPO_UN llave_i L llave_d .
+
+    $default  reduce usando la regla 36 (IN_PARA)
+
+
+Estado 200
+
+   52 L_SINOSI: L_SINOSI r_sino r_si par_i E par_d llave_i L llave_d .
+
+    $default  reduce usando la regla 52 (L_SINOSI)
+
+
+Estado 201
+
+   35 IN_PARA: r_int id TIPO1 E puntocoma id TIPO1 E puntocoma id TIPO_UN llave_i L llave_d .
+
+    $default  reduce usando la regla 35 (IN_PARA)
