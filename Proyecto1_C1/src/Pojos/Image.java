@@ -10,31 +10,16 @@ package Pojos;
  * @author Erik
  */
 public class Image {
-    
-    private String alto,ancho,path;
 
-    public Image(String alto, String ancho, String path) {
-        this.alto = alto;
-        this.ancho = ancho;
-        this.path = path;
-    }
+    private String path;
+    private int alto,ancho;
 
     public Image() {
     }
 
-    public String getAlto() {
-        return alto;
-    }
-
-    public void setAlto(String alto) {
+    public Image(String path, int alto, int ancho) {
+        this.path = path;
         this.alto = alto;
-    }
-
-    public String getAncho() {
-        return ancho;
-    }
-
-    public void setAncho(String ancho) {
         this.ancho = ancho;
     }
 
@@ -45,7 +30,26 @@ public class Image {
     public void setPath(String path) {
         this.path = path;
     }
-    
-    
-    
+
+    public int getAlto() {
+        return alto;
+    }
+
+    public void setAlto(int alto) {
+        this.alto = alto;
+    }
+
+    public int getAncho() {
+        return ancho;
+    }
+
+    public void setAncho(int ancho) {
+        this.ancho = ancho;
+    }
+
+    public String getHtml(){
+        path = path.replaceAll("\""," ");
+        return "<image src= \"" + this.path +"\" width=" + this.ancho  + " height=" + this.alto  +  " >" + "</image>";
+      }
+
 }

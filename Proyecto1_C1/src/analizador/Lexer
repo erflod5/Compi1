@@ -3,26 +3,26 @@ import java_cup.runtime.Symbol;
 
 
 import static proyecto1_c1.Principal.token;
-import static proyecto1_c1.Principal.errorLexer; 
+import static proyecto1_c1.Principal.errorLexer;
 
 
-%% 
+%%
 %class Lexer
-%public 
-%line 
-%char 
-%cup 
+%public
+%line
+%char
+%cup
 %unicode
 %ignorecase
 %8bit
 %full
 
 %init{
-    yyline = 0; 
-    yychar = 0; 
+    yyline = 0;
+    yychar = 0;
 %init}
 
-%{ 
+%{
     StringBuffer cadenaTemp = new StringBuffer();
     boolean entro = false;
 %}
@@ -41,20 +41,23 @@ cadena = [\"]([^\"\n]|(\\\"))*[\"]
     /*CARACTER HS*/
     "<?hs" {token.add(new Pojos.Token(yyline,yychar,yytext(),"Abre Hs"));  yybegin(HS_STATE); return new Symbol(sym.ABRE_HS,yyline,yychar,yytext());}
     "<!" {yybegin(COM_HTML);}
-    
+
     /*SIMBOLOS*/
     "<" {token.add(new Pojos.Token(yyline,yychar,yytext(),"Simbolo")); return new Symbol(sym.TEXTO,yyline,yychar,yytext());}
     "/" {token.add(new Pojos.Token(yyline,yychar,yytext(),"Simbolo")); return new Symbol(sym.SLASH,yyline,yychar,yytext());}
-    ">" {token.add(new Pojos.Token(yyline,yychar,yytext(),"Simbolo")); entro=false; cadenaTemp.setLength(0); yybegin(TEXTO); return new Symbol(sym.CIERRA_ETIQUETA,yyline,yychar,yytext());}    
+
+
+    ">" {entro=false; token.add(new Pojos.Token(yyline,yychar,yytext(),"Simbolo")); cadenaTemp.setLength(0); yybegin(TEXTO); return new Symbol(sym.CIERRA_ETIQUETA,yyline,yychar,yytext());}
     "=" {token.add(new Pojos.Token(yyline,yychar,yytext(),"Simbolo")); return new Symbol(sym.IGUAL,yyline,yychar,yytext());}
+
 
     /*PALABRAS RESERVADAS*/
     "compi" {token.add(new Pojos.Token(yyline,yychar,yytext(),"PR")); return new Symbol(sym.R_COMPI,yyline,yychar,yytext());}
-    
+
     "cabecera" {token.add(new Pojos.Token(yyline,yychar,yytext(),"PR")); return new Symbol(sym.R_CABECERA,yyline,yychar,yytext());}
-    
+
     "titulo" {token.add(new Pojos.Token(yyline,yychar,yytext(),"PR")); return new Symbol(sym.R_TITULO,yyline,yychar,yytext());}
-    
+
     "cuerpo" {token.add(new Pojos.Token(yyline,yychar,yytext(),"PR")); return new Symbol(sym.R_CUERPO,yyline,yychar,yytext());}
     "fondo" {token.add(new Pojos.Token(yyline,yychar,yytext(),"PR")); return new Symbol(sym.R_FONDO,yyline,yychar,yytext());}
     "parrafo" {token.add(new Pojos.Token(yyline,yychar,yytext(),"PR")); return new Symbol(sym.R_PARRAFO,yyline,yychar,yytext());}
@@ -69,7 +72,7 @@ cadena = [\"]([^\"\n]|(\\\"))*[\"]
     "fila" {token.add(new Pojos.Token(yyline,yychar,yytext(),"PR")); return new Symbol(sym.R_FILA,yyline,yychar,yytext());}
     "columnac" {token.add(new Pojos.Token(yyline,yychar,yytext(),"PR")); return new Symbol(sym.R_COLUMNAC,yyline,yychar,yytext());}
     "columna" {token.add(new Pojos.Token(yyline,yychar,yytext(),"PR")); return new Symbol(sym.R_COLUMNA,yyline,yychar,yytext());}
-    
+
 
     {cadena} {token.add(new Pojos.Token(yyline,yychar,yytext(),"Cadena")); return new Symbol(sym.CADENA,yyline,yychar,yytext());}
     {id} {token.add(new Pojos.Token(yyline,yychar,yytext(),"Id")); return new Symbol(sym.ID,yyline,yychar,yytext());}
@@ -78,8 +81,9 @@ cadena = [\"]([^\"\n]|(\\\"))*[\"]
 
     {BLANCOS} {}
     \n {yychar=0;}
-    
+
     . {
+        errorLexer.add(new Pojos.err(yyline,yychar,"Lexico",yytext()));
         System.err.println("Este es un error lexico: "+yytext()+", en la linea: "+yyline+", en la columna: "+yychar);
     }
 
@@ -89,46 +93,44 @@ cadena = [\"]([^\"\n]|(\\\"))*[\"]
 <TEXTO>{
     "<!" {yybegin(COM_HTML);}
     "<?hs" {token.add(new Pojos.Token(yyline,yychar,yytext(),"Abre Hs")); yybegin(HS_STATE); return new Symbol(sym.ABRE_HS,yyline,yychar,yytext());}
-    "<" { yybegin(YYINITIAL); 
+    "<" { yybegin(YYINITIAL);
         if(entro){
-            cadenaTemp.append("<");
+            token.add(new Pojos.Token(yyline,yychar,cadenaTemp.toString(),"Texto"));
             token.add(new Pojos.Token(yyline,yychar,yytext(),"Simbolo"));
-            token.add(new Pojos.Token(yyline,yychar,cadenaTemp.toString(),"Simbolo")); 
+            cadenaTemp.append("<");
             return new Symbol(sym.TEXTO,yyline,yychar,cadenaTemp.toString());
-        } 
+        }
         else {
             token.add(new Pojos.Token(yyline,yychar,yytext(),"Simbolo"));
             return new Symbol(sym.TEXTO,yyline,yychar,yytext());
-            } 
+            }
         }
 
-    {id} { entro = true; cadenaTemp.append(yytext());}
-    {num} {entro = true; cadenaTemp.append(yytext());}
-    
     "\n" {yychar=0; cadenaTemp.append("\n");}
 
     {BLANCOS} {
         cadenaTemp.append(" ");
     }
-
     . {
-    
+      entro =true;
+        cadenaTemp.append(yytext());
     }
 }
 
 <COM_HTML>{
-    "!>" {yybegin(YYINITIAL);}
+    "!>" {yybegin(TEXTO);}
 
-    . {
-    
-    }
+    {BLANCOS} { }
+    "\n" {  }
+    . { }
 }
 
 <COM_LIN>{
     "\n" {yychar=0; yybegin(HS_STATE);}
 
+
     . {
-    
+
     }
 }
 
@@ -142,38 +144,41 @@ cadena = [\"]([^\"\n]|(\\\"))*[\"]
 
 <HS_STATE>{
     "//" { yybegin(COM_LIN);}
-    "/*"  {yybegin(COM_MLIN);} 
+    "/*"  {yybegin(COM_MLIN);}
 
     /*SIMBOLOS*/
-    ";" {token.add(new Pojos.Token(yyline,yychar,yytext(),"Simbolo"));return new Symbol(sym.PUNTOYCOMA,yyline,yychar, yytext());} 
+    ";" {token.add(new Pojos.Token(yyline,yychar,yytext(),"Simbolo"));return new Symbol(sym.PUNTOYCOMA,yyline,yychar, yytext());}
+    "," {token.add(new Pojos.Token(yyline,yychar,yytext(),"Simbolo"));return new Symbol(sym.COMA,yyline,yychar, yytext());}
     "+" {token.add(new Pojos.Token(yyline,yychar,yytext(),"Simbolo"));return new Symbol(sym.MAS,yyline,yychar, yytext());}
     "-" {token.add(new Pojos.Token(yyline,yychar,yytext(),"Simbolo"));return new Symbol(sym.MENOS,yyline,yychar, yytext());}
     "*" {token.add(new Pojos.Token(yyline,yychar,yytext(),"Simbolo"));return new Symbol(sym.POR,yyline,yychar, yytext());}
     "/" {token.add(new Pojos.Token(yyline,yychar,yytext(),"Simbolo"));return new Symbol(sym.ENTRE,yyline,yychar, yytext());}
-    
+
     "." {token.add(new Pojos.Token(yyline,yychar,yytext(),"Simbolo"));return new Symbol(sym.CONCATENACION,yyline,yychar, yytext());}
     "(" {token.add(new Pojos.Token(yyline,yychar,yytext(),"Simbolo"));return new Symbol(sym.ABRE,yyline,yychar, yytext());}
     ")" {token.add(new Pojos.Token(yyline,yychar,yytext(),"Simbolo"));return new Symbol(sym.CIERRA,yyline,yychar, yytext());}
-    
+
     "<" {token.add(new Pojos.Token(yyline,yychar,yytext(),"Simbolo"));return new Symbol(sym.MENOR,yyline,yychar, yytext());}
     ">" {token.add(new Pojos.Token(yyline,yychar,yytext(),"Simbolo"));return new Symbol(sym.MAYOR,yyline,yychar, yytext());}
     "<=" {token.add(new Pojos.Token(yyline,yychar,yytext(),"Simbolo"));return new Symbol(sym.MENOR_IGUAL,yyline,yychar, yytext());}
     ">=" {token.add(new Pojos.Token(yyline,yychar,yytext(),"Simbolo"));return new Symbol(sym.MAYOR_IGUAL,yyline,yychar, yytext());}
     "!=" {token.add(new Pojos.Token(yyline,yychar,yytext(),"Simbolo"));return new Symbol(sym.DESIGUAL,yyline,yychar, yytext());}
-    "==" {token.add(new Pojos.Token(yyline,yychar,yytext(),"Simbolo"));return new Symbol(sym.IGUAL_LOGICO,yyline,yychar, yytext());}        
+    "==" {token.add(new Pojos.Token(yyline,yychar,yytext(),"Simbolo"));return new Symbol(sym.IGUAL_LOGICO,yyline,yychar, yytext());}
     "=" {token.add(new Pojos.Token(yyline,yychar,yytext(),"Simbolo"));return new Symbol(sym.IGUAL,yyline,yychar,yytext());}
 
     "$" {token.add(new Pojos.Token(yyline,yychar,yytext(),"Simbolo"));return new Symbol(sym.VAR1,yyline,yychar,yytext());}
     "#" {token.add(new Pojos.Token(yyline,yychar,yytext(),"Simbolo"));return new Symbol(sym.VAR2,yyline,yychar,yytext());}
 
 
-    "{" {token.add(new Pojos.Token(yyline,yychar,yytext(),"Simbolo")); return new Symbol(sym.LLAVEIZQUIERDA,yyline,yychar, yytext());} 
+    "{" {token.add(new Pojos.Token(yyline,yychar,yytext(),"Simbolo")); return new Symbol(sym.LLAVEIZQUIERDA,yyline,yychar, yytext());}
     "}" {token.add(new Pojos.Token(yyline,yychar,yytext(),"Simbolo")); return new Symbol(sym.LLAVEDERECHA,yyline,yychar, yytext());}
+    "[" {token.add(new Pojos.Token(yyline,yychar,yytext(),"Simbolo")); return new Symbol(sym.CORCHETEIZQUIERDA,yyline,yychar, yytext());}
+    "]" {token.add(new Pojos.Token(yyline,yychar,yytext(),"Simbolo")); return new Symbol(sym.CORCHETEDERECHA,yyline,yychar, yytext());}
 
     "&&" {token.add(new Pojos.Token(yyline,yychar,yytext(),"Simbolo")); return new Symbol(sym.AND,yyline,yychar, yytext());}
     "||" {token.add(new Pojos.Token(yyline,yychar,yytext(),"Simbolo")); return new Symbol(sym.OR,yyline,yychar, yytext());}
-    "!" {token.add(new Pojos.Token(yyline,yychar,yytext(),"Simbolo")); return new Symbol(sym.NOT,yyline,yychar, yytext());}    
-    
+    "!" {token.add(new Pojos.Token(yyline,yychar,yytext(),"Simbolo")); return new Symbol(sym.NOT,yyline,yychar, yytext());}
+
     /*PALABRAS RESERVADAS*/
     "echo" {token.add(new Pojos.Token(yyline,yychar,yytext(),"PR"));return new Symbol(sym.R_ECHO,yyline,yychar,yytext());}
     "if" {token.add(new Pojos.Token(yyline,yychar,yytext(),"PR"));return new Symbol(sym.R_IF,yyline,yychar,yytext());}
@@ -198,7 +203,7 @@ cadena = [\"]([^\"\n]|(\\\"))*[\"]
 
     "creartabla" {token.add(new Pojos.Token(yyline,yychar,yytext(),"PR"));return new Symbol(sym.R_CREARTABLA,yyline,yychar,yytext());}
     "setborde" {token.add(new Pojos.Token(yyline,yychar,yytext(),"PR"));return new Symbol(sym.R_SETBORDE,yyline,yychar,yytext());}
-    
+
     "crearboton" {token.add(new Pojos.Token(yyline,yychar,yytext(),"PR"));return new Symbol(sym.R_CREARBOTON,yyline,yychar,yytext());}
     "settexto" {token.add(new Pojos.Token(yyline,yychar,yytext(),"PR"));return new Symbol(sym.R_SETTEXTO,yyline,yychar,yytext());}
     "gettexto" {token.add(new Pojos.Token(yyline,yychar,yytext(),"PR"));return new Symbol(sym.R_GETTEXTO,yyline,yychar,yytext());}
@@ -216,12 +221,14 @@ cadena = [\"]([^\"\n]|(\\\"))*[\"]
 
 
 
-    "?>" { token.add(new Pojos.Token(yyline,yychar,yytext(),"Cierra Hs")); yybegin(YYINITIAL); return new Symbol(sym.R_CIERRAHS,yyline,yychar, yytext());} 
+    "?>" { token.add(new Pojos.Token(yyline,yychar,yytext(),"Cierra Hs")); yybegin(YYINITIAL); return new Symbol(sym.R_CIERRAHS,yyline,yychar, yytext());}
 
     {BLANCOS} {}
     \n {yychar=0;}
 
     . {
+        errorLexer.add(new Pojos.err(yyline,yychar,"Lexico",yytext()));
+
         System.err.println("Este es un error lexico: "+yytext()+", en la linea: "+yyline+", en la columna: "+yychar);
     }
 

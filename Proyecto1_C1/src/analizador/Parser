@@ -1,13 +1,16 @@
-package analizador; 
+package analizador;
 
 import java_cup.runtime.*;
 import java.util.Objects;
+import java.util.ArrayList;
+import statement.*;
+import Pojos.*;
 
-
-parser code 
+parser code
 {:
-    
+
     javax.swing.JTextArea txt_console;
+    public Pojos.err err;
     public parser(java_cup.runtime.Scanner s,javax.swing.JTextArea txt_console) {super(s); this.txt_console = txt_console;}
 
     /*Variable global que guarda el html*/
@@ -15,15 +18,16 @@ parser code
 
     /**
      * Método al que se llama automáticamente ante algún error sintactico.
-     **/ 
-    public void syntax_error(Symbol s){ 
-        System.err.println("Error Sintáctico en la Línea " + (s.left) +" Columna "+s.right+ ". No se esperaba este componente: " +s.value+"."); 
-    } 
+     **/
+    public void syntax_error(Symbol s){
+        err = new Pojos.err(s.left,s.right,"sintactico",(String)s.value);
+        txt_console.append("Error Sintáctico en la Línea " + (s.left) +" Columna "+s.right+ ". No se esperaba este componente: " +s.value+".\n");
+    }
     /**
      * Método al que se llama en el momento en que ya no es posible una recuperación de errores.
-     **/ 
-    public void unrecovered_syntax_error(Symbol s) throws java.lang.Exception{ 
-            System.err.println("Error síntactico irrecuperable en la Línea " + (s.left)+ " Columna "+s.right+". Componente " + s.value + " no reconocido.");
+     **/
+    public void unrecovered_syntax_error(Symbol s) throws java.lang.Exception{
+            txt_console.append("Error síntactico irrecuperable en la Línea " + (s.left)+ " Columna "+s.right+". Componente " + s.value + " no reconocido.\n");
     }
 
     /*validar fondo*/
@@ -48,7 +52,7 @@ parser code
                     try {
                         Integer.parseInt(color.substring(1, 6), 16);
                         return color;
-                    } 
+                    }
                     catch (NumberFormatException e) {
                         return "#00000";
                     }
@@ -56,19 +60,19 @@ parser code
             return "#00000";
         }
     }
-    
-:} 
 
-terminal ABRE_ETIQUETA, SLASH, IGUAL, R_COMPI, R_CABECERA, R_TITULO;
+:}
+
+terminal SLASH, IGUAL, R_COMPI, R_CABECERA, R_TITULO;
 terminal R_CUERPO, R_FONDO, R_PARRAFO, R_SALTO, R_TABLA, R_IMAGEN, R_TEXTOA, R_TEXTOB;
-terminal R_BOTON, R_ESPACIO, R_ALINEACION, R_ANCHO, R_ALTO, R_PATH, R_ID, R_TEXTO, R_BORDE;
+terminal R_BOTON, R_ESPACIO;
 terminal R_FILA, R_COLUMNAC, R_COLUMNA, CADENA,ID,NUM,CIERRA_ETIQUETA,TEXTO;
 terminal ABRE_HS,ENTERO,DECIMAL,R_TRUE,R_FALSE,R_SETPATH,R_SETALTO,R_SETANCHO,R_GETPATH,R_GETALTO,R_GETANCHO;
 terminal R_GETTEXTO,R_CREARBOTON,R_CREARTABLA,R_CLICKBOTON,R_CREARIMAGEN,R_CREARTEXTOA,R_CREARTEXTOB,R_SETCONTENIDO,R_GETCONTENIDO,R_SETALINEACION,R_GETALINEACION;
 terminal R_SETBORDE,R_SETTEXTO,R_CIERRAHS;
 
-terminal PUNTOYCOMA, MAS, MENOS, POR, ENTRE, CONCATENACION, ABRE, CIERRA, MENOR, MAYOR, MENOR_IGUAL,MENOS1;
-terminal MAYOR_IGUAL, DESIGUAL, IGUAL_LOGICO, LLAVEIZQUIERDA, LLAVEDERECHA;
+terminal PUNTOYCOMA, COMA, MAS, MENOS, POR, ENTRE, CONCATENACION, ABRE, CIERRA, MENOR, MAYOR, MENOR_IGUAL,MENOS1;
+terminal MAYOR_IGUAL, DESIGUAL, IGUAL_LOGICO, LLAVEIZQUIERDA, LLAVEDERECHA, CORCHETEIZQUIERDA,CORCHETEDERECHA;
 terminal AND, OR, NOT, R_ECHO,R_IF,R_ELSE,R_REPETIR,R_INSERTAR,R_CREARPARRAFO,VARIABLE,VAR1,VAR2;
 
 non terminal S;
@@ -87,10 +91,17 @@ non terminal String op_imagen,list_img;
 non  terminal String op_tabla,lista_tabla,lista_fila,tipo_columna, op_columna,lista_columna;
 
 /*-----------------------HSCRIPT--------------------------*/
-non terminal list_hs, op_hs  ,block_if,block_echo,block_repetir;
+non terminal op_hs  ,block_if,block_echo,block_repetir,list_hs;
+non terminal statement.St op_hsp;
+non terminal ArrayList<statement.St> list_hsp;
 
 non terminal e_echo;
-non terminal expr,expr_rep,condicion;
+non terminal expr,expr_rep,expr_logica;
+
+non terminal var_obj,lst_parrafo,lst_img,lst_table,lst_boton,cad_var,st_set,st_get,st_insert;
+non terminal ArrayList<String> ls_col;
+non terminal ArrayList<ArrayList<String>> ls_row;
+
 
 precedence left OR;
 precedence left AND;
@@ -104,9 +115,9 @@ precedence left MENOS1;
 start with S;
 
 S::= TEXTO R_COMPI CIERRA_ETIQUETA inner:a TEXTO SLASH R_COMPI CIERRA_ETIQUETA {:
-    bf.append("<html>");
+    bf.append("<html>\n");
     bf.append(a);
-    bf.append("</html>");
+    bf.append("\n</html>");
     :}
 ;
 
@@ -118,27 +129,26 @@ inner::= inner:a t_inner:b{:
     :}
 ;
 
-
 t_inner::= TEXTO:a R_CABECERA CIERRA_ETIQUETA inner_cabecera:b TEXTO:c SLASH R_CABECERA CIERRA_ETIQUETA {:
-        RESULT = a + "head>" + b + c + "/head>";
-    :}        
+        RESULT = a + "head>\n" + b + c + "/head>\n";
+    :}
     | TEXTO:a R_CABECERA CIERRA_ETIQUETA TEXTO:b SLASH R_CABECERA CIERRA_ETIQUETA {:
-        RESULT = a + "head>" + b + "/head>";
+        RESULT = a + "head>\n" + b + "/head>\n";
     :}
     | TEXTO:a R_CUERPO op_cuerpo:b CIERRA_ETIQUETA inner_cuerpo:c TEXTO:d SLASH R_CUERPO CIERRA_ETIQUETA {:
         if(b==null){
-            RESULT = a + "body>" + c + d + "/body>"; 
+            RESULT = a + "body>\n" + c + d + "/body>\n";
         }
         else{
-            RESULT = a + "body " + b + ">" + c + d + "/body>"; 
-        }   
+            RESULT = a + "body " + b + ">\n" + c + d + "/body>\n";
+        }
     :}
     | TEXTO:a R_CUERPO op_cuerpo:b CIERRA_ETIQUETA TEXTO:c SLASH R_CUERPO CIERRA_ETIQUETA {:
         if(b==null){
-            RESULT = a + "body>" + c + "/body>"; 
+            RESULT = a + "body>\n" + c + "/body>\n";
         }
         else{
-            RESULT = a + "body" + b + ">" + c + "/body>"; 
+            RESULT = a + "body" + b + ">\n" + c + "/body>\n";
         }
     :}
 ;
@@ -149,9 +159,8 @@ op_cuerpo::= R_FONDO IGUAL CADENA:a{:
     | {:/*epsilon*/:}
 ;
 
-
 inner_cabecera::= TEXTO:a R_TITULO CIERRA_ETIQUETA TEXTO:b SLASH R_TITULO CIERRA_ETIQUETA {:
-        RESULT = a + "title>" + b + "/title>";
+        RESULT = a + "title>\n" + b + "/title>\n";
     :}
 ;
 
@@ -163,45 +172,60 @@ inner_cuerpo::= inner_cuerpo:a tipo_cuerpo:b {:
     :}
 ;
 
-
-
 tipo_cuerpo::=TEXTO:a R_PARRAFO op_parrafo:b CIERRA_ETIQUETA TEXTO:c SLASH R_PARRAFO CIERRA_ETIQUETA {:
         if(b==null){
-            RESULT = a + "p>" + c + "/p>";
+            RESULT = a + "p>\n" + c + "/p>\n";
         }
         else{
-            RESULT = a + "p " + b + ">" + c + "/p>";
+            RESULT = a + "p " + b + ">\n" + c + "/p>\n";
         }
     :}
     |TEXTO:a SLASH R_SALTO CIERRA_ETIQUETA{:
         RESULT = a + "br>";
     :}
     |TEXTO:a R_TABLA op_tabla:b CIERRA_ETIQUETA lista_tabla:c TEXTO:d SLASH R_TABLA CIERRA_ETIQUETA{:
-        RESULT = a + "table " + b + ">" + c + d + "/table>";
+        RESULT = a + "table " + b + ">\n" + c + d + "/table>\n";
     :}
     |TEXTO:a R_IMAGEN list_img:b CIERRA_ETIQUETA TEXTO:c SLASH R_IMAGEN CIERRA_ETIQUETA{:
-        RESULT = a + "image " + b + ">" + c + "/image>";
+        RESULT = a + "img " + b + ">\n" + c + "/img>\n";
     :}
     |TEXTO:a R_TEXTOA CIERRA_ETIQUETA TEXTO:b SLASH R_TEXTOA CIERRA_ETIQUETA{:
-        RESULT = a + "h4>" + b + "/h4>";
+        RESULT = a + "h1>\n" + b + "/h1>\n";
     :}
     |TEXTO:a R_TEXTOB CIERRA_ETIQUETA TEXTO:b SLASH R_TEXTOB CIERRA_ETIQUETA{:
-        RESULT = a + "h5>" + b + "/h5>";    
+        RESULT = a + "h3>\n" + b + "/h3>\n";
     :}
     |TEXTO:a R_BOTON op_boton:b CIERRA_ETIQUETA TEXTO:c SLASH R_BOTON CIERRA_ETIQUETA{:
-        RESULT = a + "input type=\"button\" " + b + ">" + c.toString().replace("<"," ");
+        RESULT = a + "input type=\"button\" " + b + ">\n" + c.toString().replace("<"," ");
     :}
     |TEXTO:a R_ESPACIO CIERRA_ETIQUETA inner_cuerpo:b TEXTO:c SLASH R_ESPACIO CIERRA_ETIQUETA{:
-        RESULT = a + "div>" + b + c + "/div>";
+        RESULT = a + "div>\n" + b + c + "/div>\n";
     :}
-    |ABRE_HS list_hs R_CIERRAHS{:
-    
+    |ABRE_HS list_hs:a R_CIERRAHS{:
+      if(a!=null)
+        RESULT = a.toString();
+      else
+        RESULT = "";
     :}
 ;
 
 op_parrafo::= ID:a IGUAL CADENA:b{:
-        if(a.toString().equals("alineacion")){
-            RESULT = "align=" + b;
+        if(a.toString().equalsIgnoreCase("alineacion")){
+            String align = "";
+            b = ((String)b).replaceAll("\"","");
+            if(b.toString().equalsIgnoreCase("centrado")){
+                align = "center";
+            }
+            else if(b.toString().equalsIgnoreCase("justificado")){
+                align = "justify";
+            }
+            else if(b.toString().equalsIgnoreCase("derecha")){
+                align = "right";
+            }
+            else if(b.toString().equalsIgnoreCase("izquierda")){
+                align = "left";
+            }
+            RESULT = "align=\"" + align+"\"";
         }
         else{
             RESULT = "";
@@ -210,10 +234,22 @@ op_parrafo::= ID:a IGUAL CADENA:b{:
     |{: /*epsilon*/ :}
 ;
 
-
-//PENDIENTEEEEEEE
-op_boton::= ID:a IGUAL CADENA:b ID:c IGUAL CADENA:d{:        
-        RESULT = "id =" +  b.toString() + " value =" + d.toString();    
+op_boton::= ID:a IGUAL CADENA:b ID:c IGUAL CADENA:d{:
+        String id="";
+        String value="";
+        if(a.toString().equalsIgnoreCase("id")){
+            id = b.toString();
+        }
+        else if(a.toString().equalsIgnoreCase("texto")){
+            value = d.toString();
+        }
+        if(c.toString().equalsIgnoreCase("id")){
+            id = d.toString();
+        }
+        else if(c.toString().equalsIgnoreCase("texto")){
+            value = d.toString();
+        }
+        RESULT = "id =" +  id + " value =" + value;
     :}
 ;
 
@@ -226,18 +262,40 @@ list_img::= list_img:a op_imagen:b{:
 ;
 
 op_imagen::= ID:a IGUAL CADENA:b{:
-        RESULT = a + "=" + b;
+        if(a.toString().equalsIgnoreCase("path")){
+            RESULT = " src=" + b;
+        }
+        else if(a.toString().equalsIgnoreCase("alto")){
+            RESULT = " height=" + b;
+        }
+        else if(a.toString().equalsIgnoreCase("ancho")){
+            RESULT = " width=" + b;
+        }
     :}
     | ID:a IGUAL NUM:b{:
-        RESULT = a + "=" + b;
+        if(a.toString().equalsIgnoreCase("path")){
+            RESULT = " src=" + b;
+        }
+        else if(a.toString().equalsIgnoreCase("alto")){
+            RESULT = " height=" + b;
+        }
+        else if(a.toString().equalsIgnoreCase("ancho")){
+            RESULT = " width=" + b;
+        }
     :}
 ;
 
 op_tabla::= ID:a IGUAL ID:b{:
-        RESULT = "border" + "=" + b;
+        if(a.toString().equalsIgnoreCase("borde")){
+            RESULT = "border" + "=" + b;
+        }
+        else RESULT = "";
     :}
     | ID:a IGUAL CADENA:b{:
-        RESULT = "border" + "=" + b;
+        if(a.toString().equalsIgnoreCase("borde")){
+            RESULT = "border" + "=" + b;
+        }
+        else RESULT = "";
     :}
     | {:/*epsilon*/:}
 ;
@@ -298,47 +356,352 @@ op_columna::= TEXTO:a R_PARRAFO op_parrafo:b CIERRA_ETIQUETA TEXTO:c SLASH R_PAR
     |TEXTO:a R_BOTON op_boton:b CIERRA_ETIQUETA TEXTO:c SLASH R_BOTON CIERRA_ETIQUETA{:
         RESULT = a + "input type=\"button\" " + b + ">" + c.toString().replace("<"," ");
     :}
-    |ABRE_HS list_hs R_CIERRAHS{:
-        /*pendiente*/
+    |ABRE_HS list_hs:a R_CIERRAHS{:
+        RESULT = (String)a;
     :}
 ;
 
-
-list_hs::= list_hs op_hs{:
-
+list_hs::= list_hs:a op_hs:b{:
+        RESULT = a;
+        if(b!=null){
+            if(b instanceof St_If){
+                if(((St_If)b).isCondicion())
+                      RESULT = RESULT + ((St_If)b).ejecutar(txt_console);
+            }
+            else if(b instanceof St_While){
+                StringBuilder temp = new StringBuilder();
+                for(int i=0; i<((St_While)b).getRep();i++){
+                    temp.append(((St_While)b).ejecutar(txt_console));
+                }
+                RESULT = RESULT + temp.toString();
+            }
+            else if(b instanceof St_IfElse){
+                if(((St_IfElse)b).isCond())
+                      RESULT = RESULT + ((St_IfElse)b).ejecutar(txt_console);
+                else
+                      RESULT = RESULT + ((St_IfElse)b).ejecutar1(txt_console);
+            }
+            else{
+                  RESULT = RESULT + b.toString();
+            }
+        }
     :}
-    | op_hs{:
-    
-    :} 
+    | op_hs:a{:
+        RESULT = "";
+        if(a!=null){
+            if(a instanceof St_If){
+                if(((St_If)a).isCondicion())
+                    RESULT = ((St_If)a).ejecutar(txt_console);
+            }
+            else if(a instanceof St_While){
+                StringBuilder temp = new StringBuilder();
+                for(int i=0; i<((St_While)a).getRep();i++){
+                    temp.append(((St_While)a).ejecutar(txt_console));
+                }
+                RESULT = temp.toString();
+            }
+            else if(a instanceof St_IfElse){
+                if(((St_IfElse)a).isCond())
+                      RESULT = ((St_IfElse)a).ejecutar(txt_console);
+                else
+                    RESULT = ((St_IfElse)a).ejecutar1(txt_console);
+            }
+            else{
+                RESULT = a.toString();
+            }
+        }
+    :}
 ;
 
+list_hsp::= list_hsp:a op_hsp:b{:
+        RESULT = a;
+        RESULT.add(b);
+    :}
+    | op_hsp:a{:
+        RESULT = new ArrayList<statement.St>();
+        RESULT.add(a);
+    :}
+;
 
+//GUARDAR LOS GLOBALES
 op_hs::= VAR1 VARIABLE:a IGUAL block_echo:b PUNTOYCOMA{:
         if(b instanceof Boolean){
-            lista_variable.put(a.toString(),new Pojos.Variable(a.toString(),"Booleano",aleft,aright,b));
+            lista_variable.put("$"+a.toString().toLowerCase(),new Pojos.Variable("$"+a.toString(),"Booleano",aleft,aright,b));
         }
         else if(b instanceof String){
-            lista_variable.put(a.toString(),new Pojos.Variable(a.toString(),"Cadena",aleft,aright,b));
+            lista_variable.put("$"+a.toString().toLowerCase(),new Pojos.Variable("$"+a.toString(),"Cadena",aleft,aright,b));
         }
         else if(b instanceof Integer){
-            lista_variable.put(a.toString(),new Pojos.Variable(a.toString(),"Entero",aleft,aright,b));
+            lista_variable.put("$"+a.toString().toLowerCase(),new Pojos.Variable("$"+a.toString(),"Entero",aleft,aright,b));
         }
         else if(b instanceof Float){
-            lista_variable.put(a.toString(),new Pojos.Variable(a.toString(),"Decimal",aleft,aright,b));
+            lista_variable.put("$"+a.toString().toLowerCase(),new Pojos.Variable("$"+a.toString(),"Decimal",aleft,aright,b));
         }
     :}
-    | block_if{:
-    
+    | block_if:a{:
+        RESULT = a;
     :}
     |R_ECHO block_echo:a PUNTOYCOMA{:
-        txt_console.append(a.toString()+"\n");
+        txt_console.append("-> " + a.toString()+"\n");
     :}
-    |block_repetir{:
-    
+    |block_repetir:b{:
+        RESULT = b;
     :}
+    | VAR2 VARIABLE:a IGUAL var_obj:b PUNTOYCOMA{:
+        lista_variable.put("#"+a.toString().toLowerCase(),new Pojos.Variable("#"+a.toString().toLowerCase(),"Object",aleft,aright,b));
+    :}
+    | st_set{:
 
+    :}
+    | st_insert:a{:
+          RESULT = a.toString();
+    :}
 ;
 
+/**********internos*******************/
+op_hsp::= VAR1 VARIABLE:a IGUAL block_echo:b PUNTOYCOMA{:
+        if(b instanceof Boolean){
+            RESULT = new statement.Var(new Pojos.Variable("$"+a.toString().toLowerCase(),"Booleano",aleft,aright,b));
+        }
+        else if(b instanceof String){
+            RESULT = new statement.Var(new Pojos.Variable("$"+a.toString().toLowerCase(),"Cadena",aleft,aright,b));
+        }
+        else if(b instanceof Integer){
+            RESULT = new statement.Var(new Pojos.Variable("$"+a.toString().toLowerCase(),"Entero",aleft,aright,b));
+        }
+        else if(b instanceof Float){
+            RESULT = new statement.Var(new Pojos.Variable("$"+a.toString().toLowerCase(),"Decimal",aleft,aright,b));
+        }
+    :}
+    | block_if:a{:
+        if(a instanceof statement.St_If){
+            RESULT = (statement.St_If) a;
+        }
+        else if(a instanceof statement.St_IfElse){
+            RESULT = (statement.St_IfElse) a;
+        }
+    :}
+    |R_ECHO block_echo:a PUNTOYCOMA{:
+        RESULT = new statement.Echo(a.toString());
+    :}
+    |block_repetir:a{:
+        RESULT = (statement.St_While) a;
+    :}
+    |VAR2 VARIABLE:a IGUAL var_obj:b PUNTOYCOMA{:
+        RESULT = new statement.Var(new Pojos.Variable("#"+a.toString().toLowerCase(),"Object",aleft,aright,b));
+
+    :}
+    |st_insert:a{:
+        RESULT = new statement.Insert(a.toString());
+    :}
+;
+
+var_obj::= R_CREARPARRAFO ABRE lst_parrafo:a CIERRA{:
+        RESULT = a;
+    :}
+    | R_CREARTEXTOA ABRE cad_var:a CIERRA{:
+        RESULT = new Pojos.TextoA(a.toString());
+    :}
+    | R_CREARTEXTOB ABRE cad_var:a CIERRA{:
+        RESULT = new Pojos.TextoB(a.toString());
+    :}
+    |R_CREARIMAGEN ABRE lst_img:a CIERRA{:
+        RESULT = a;
+    :}
+    |R_CREARTABLA ABRE lst_table:a CIERRA{:
+        RESULT = a;
+    :}
+    |R_CREARBOTON ABRE lst_boton:a CIERRA{:
+        RESULT = a;
+    :}
+;
+
+st_set::= VAR2 VARIABLE:a CONCATENACION R_SETALTO ABRE expr_logica:b CIERRA PUNTOYCOMA {:
+        Object o = lista_variable.get("#"+a.toString().toLowerCase()).getValue();
+        if(o instanceof Image){
+            ((Image)o).setAlto(Integer.parseInt(b.toString()));
+        }
+    :}
+    |VAR2 VARIABLE:a CONCATENACION R_SETPATH ABRE block_echo:b CIERRA PUNTOYCOMA {:
+        Object o = lista_variable.get("#"+a.toString().toLowerCase()).getValue();
+        if(o instanceof Image){
+            ((Image)o).setPath(b.toString());
+        }
+    :}
+    |VAR2 VARIABLE:a CONCATENACION R_SETANCHO ABRE expr_logica:b CIERRA PUNTOYCOMA {:
+        Object o = lista_variable.get("#"+a.toString().toLowerCase()).getValue();
+        if(o instanceof Image){
+            if(b instanceof Float){
+                float b1 = Float.parseFloat(b.toString());
+                ((Image)o).setAncho((int)b1);
+            }
+            else{
+                ((Image)o).setAncho(Integer.parseInt(b.toString()));
+            }
+        }
+    :}
+    |VAR2 VARIABLE:a CONCATENACION R_SETBORDE ABRE expr_logica:b CIERRA PUNTOYCOMA {:
+        Object o = lista_variable.get("#"+a.toString().toLowerCase()).getValue();
+        if(o instanceof Tabla){
+          ((Tabla)o).setBorde((boolean)b);
+        }
+    :}
+    |VAR2 VARIABLE:a CONCATENACION R_SETTEXTO  ABRE block_echo:b CIERRA PUNTOYCOMA {:
+        Object o = lista_variable.get("#"+a.toString().toLowerCase()).getValue();
+        if(o instanceof Boton){
+            ((Boton)o).setTexto(b.toString());
+        }
+    :}
+    |VAR2 VARIABLE:a CONCATENACION R_SETCONTENIDO  ABRE block_echo:b CIERRA PUNTOYCOMA {:
+        Object o = lista_variable.get("#"+a.toString().toLowerCase()).getValue();
+        if(o instanceof Parrafo){
+            ((Parrafo)o).setTexto(b.toString());
+        }
+        else if(o instanceof TextoA){
+          ((TextoA)o).setTexto(b.toString());
+        }
+        else if(o instanceof TextoB){
+          ((TextoB)o).setTexto(b.toString());
+        }
+    :}
+    |VAR2 VARIABLE:a CONCATENACION R_SETALINEACION ABRE block_echo:b CIERRA PUNTOYCOMA {:
+        Object o = lista_variable.get("#"+a.toString().toLowerCase()).getValue();
+        if(o instanceof Parrafo){
+            ((Parrafo)o).setAlineacion(b.toString());
+        }
+    :}
+;
+
+st_insert::= VAR2 VARIABLE:a CONCATENACION R_INSERTAR ABRE CIERRA PUNTOYCOMA{:
+        Object o = lista_variable.get("#"+a.toString().toLowerCase()).getValue();
+        if(o instanceof Image){
+            RESULT = ((Image)o).getHtml();
+        }
+        else if(o instanceof Boton){
+            RESULT = ((Boton)o).getHtml();
+        }
+        else if(o instanceof Parrafo){
+            RESULT = ((Parrafo)o).getHtml();
+        }
+        else if(o instanceof TextoA){
+            RESULT = ((TextoA)o).getHtml();
+        }
+        else if(o instanceof TextoB){
+            RESULT = ((TextoB)o).getHtml();
+        }
+        else if(o instanceof Tabla){
+            RESULT = ((Tabla)o).getHtml();
+        }
+  :}
+  | VAR2 VARIABLE:a CONCATENACION R_CLICKBOTON ABRE block_echo:b CIERRA PUNTOYCOMA{:
+        Object o = lista_variable.get("#"+a.toString().toLowerCase()).getValue();
+        if(o instanceof Boton){
+            String id = ((Boton)o).getId();
+            RESULT = "\n<script> document.getElementById(\"" + id + "\").onclick = function(){alert(\"" + b + "\");};</script>\n";
+        }
+  :}
+;
+
+  st_get::= VAR2 VARIABLE:a CONCATENACION R_GETALTO ABRE CIERRA{:
+          Object o = lista_variable.get("#"+a.toString().toLowerCase()).getValue();
+          if(o instanceof Image){
+              RESULT = ((Image)o).getAlto();
+          }
+    :}
+    |VAR2 VARIABLE:a CONCATENACION R_GETPATH ABRE CIERRA{:
+          Object o = lista_variable.get("#"+a.toString().toLowerCase()).getValue();
+          if(o instanceof Image){
+              RESULT = ((Image)o).getPath();
+          }
+    :}
+    |VAR2 VARIABLE:a CONCATENACION R_GETANCHO ABRE CIERRA{:
+          Object o = lista_variable.get("#"+a.toString().toLowerCase()).getValue();
+          if(o instanceof Image){
+              RESULT = ((Image)o).getAncho();
+          }
+    :}
+    |VAR2 VARIABLE:a CONCATENACION  R_GETTEXTO ABRE CIERRA{:
+          Object o = lista_variable.get("#"+a.toString().toLowerCase()).getValue();
+          if(o instanceof Boton){
+              RESULT = ((Boton)o).getTexto();
+          }
+    :}
+    |VAR2 VARIABLE:a CONCATENACION  R_GETCONTENIDO ABRE CIERRA{:
+          Object o = lista_variable.get("#"+a.toString().toLowerCase()).getValue();
+          if(o instanceof Parrafo){
+              RESULT = ((Parrafo)o).getTexto();
+          }
+          else if(o instanceof TextoA){
+            RESULT = ((TextoA)o).getTexto();
+          }
+          else if(o instanceof TextoB){
+            RESULT = ((TextoB)o).getTexto();
+          }
+    :}
+    |VAR2 VARIABLE:a CONCATENACION  R_GETALINEACION ABRE CIERRA{:
+          Object o = lista_variable.get("#"+a.toString().toLowerCase()).getValue();
+          if(o instanceof Parrafo){
+              RESULT = ((Parrafo)o).getAlineacion();
+          }
+    :}
+  ;
+
+cad_var::= block_echo:a{:
+        RESULT = a.toString();
+    :}
+;
+
+lst_parrafo::= cad_var:a{:
+        RESULT = new Pojos.Parrafo(a.toString());
+    :}
+    | cad_var:a COMA cad_var:b{:
+        RESULT = new Pojos.Parrafo(a.toString(),b.toString());
+    :}
+;
+
+lst_img::= cad_var:a{:
+        RESULT = new Pojos.Image(a.toString(),100,100);
+    :}
+    | cad_var:a COMA expr_logica:b{:
+        RESULT = new Pojos.Image(a.toString(),(int)b,100);
+    :}
+    | cad_var:a COMA expr_logica:b COMA expr_logica:c{:
+        RESULT = new Pojos.Image(a.toString(),(int)b,(int)c);
+    :}
+;
+
+lst_boton::= cad_var:a{:
+        RESULT = new Pojos.Boton(a.toString(),"default");
+    :}
+    | cad_var:a COMA cad_var:b{:
+        RESULT = new Pojos.Boton(a.toString(),b.toString());
+    :}
+;
+
+lst_table::= ls_row:a{:
+        RESULT = new Pojos.Tabla(a);
+    :}
+;
+
+ls_row::= ls_row:a COMA CORCHETEIZQUIERDA ls_col:b CORCHETEDERECHA{:
+        RESULT = a;
+        RESULT.add(b);
+    :}
+    | CORCHETEIZQUIERDA ls_col:a CORCHETEDERECHA{:
+        RESULT = new ArrayList<>();
+        RESULT.add(a);
+    :}
+;
+
+ls_col::= ls_col:a COMA block_echo:b{:
+        RESULT = a;
+        RESULT.add(b.toString());
+    :}
+    | block_echo:a{:
+        RESULT = new ArrayList<>();
+        RESULT.add(a.toString());
+    :}
+;
 
 block_echo::=  block_echo:a CONCATENACION e_echo:b{:
         RESULT = a.toString() + " " + b.toString();
@@ -348,41 +711,41 @@ block_echo::=  block_echo:a CONCATENACION e_echo:b{:
     :}
 ;
 
-e_echo::= expr:a{:
+e_echo::= expr_logica:a{:
         RESULT = a;
     :}
 ;
 
-block_if::= R_IF ABRE expr CIERRA LLAVEIZQUIERDA list_hs LLAVEDERECHA{:
-
+block_if::= R_IF ABRE expr_logica:a CIERRA LLAVEIZQUIERDA list_hsp:b LLAVEDERECHA{:
+        RESULT = new statement.St_If((boolean)a,b);
     :}
-    | R_IF ABRE expr CIERRA LLAVEIZQUIERDA list_hs LLAVEDERECHA R_ELSE LLAVEIZQUIERDA list_hs LLAVEDERECHA{:
-
+    | R_IF ABRE expr_logica:a CIERRA LLAVEIZQUIERDA list_hsp:b LLAVEDERECHA R_ELSE LLAVEIZQUIERDA list_hsp:c LLAVEDERECHA{:
+        RESULT = new statement.St_IfElse((boolean)a,b,c);
     :}
 ;
 
-block_repetir::=  R_REPETIR ABRE expr_rep CIERRA LLAVEIZQUIERDA list_hs LLAVEDERECHA{:
-
+block_repetir::=  R_REPETIR ABRE expr_rep:a CIERRA LLAVEIZQUIERDA list_hsp:b LLAVEDERECHA{:
+        RESULT = new statement.St_While((Integer)a,b);
     :}
 ;
 
 expr_rep::=expr_rep:a MAS expr_rep:b
-        {: 
+        {:
             RESULT = (Integer) a + (Integer) b;
         :}
         | expr_rep:a MENOS expr_rep:b
-        {: 
+        {:
             RESULT = (Integer) a - (Integer) b;
         :}
         | expr_rep:a POR expr_rep:b
-        {: 
+        {:
             RESULT = (Integer) a * (Integer) b;
         :}
         | expr_rep:a ENTRE expr_rep:b
-        {: 
+        {:
             RESULT = (Integer) a / (Integer) b;
         :}
-        | MENOS1 expr_rep:a
+        | MENOS expr_rep:a
         {:
             RESULT = -(Integer) a;
         :}
@@ -397,7 +760,7 @@ expr_rep::=expr_rep:a MAS expr_rep:b
         :}
         |VAR1 VARIABLE:a{:
             /*************BUSCAR VARIABLE**********/
-            Object o = lista_variable.get(a.toString()).getValue();
+            Object o = lista_variable.get("$"+a.toString().toLowerCase()).getValue();
             if(o instanceof Integer){
                 RESULT = (Integer) o;
             }
@@ -405,161 +768,180 @@ expr_rep::=expr_rep:a MAS expr_rep:b
                 RESULT = 0;
             }
         :}
-;
-
-expr_logica::= expr_logica AND expr_logica{:
-
-    :}
-    | expr_logica OR expr_logica{:
-    
-    :}
-    |NOT expr_logica{:
-    
-    :}
-    |expr{:
-    
-    :}
-;
-
-expr ::=expr:a OR expr:b
-        {: 
-            RESULT = (boolean)a || (boolean)b;
-        :}
-        |expr:a AND expr:b
-        {: 
-            RESULT = (boolean)a && (boolean)b;
-        :}
-        |NOT expr:a 
-        {: 
-            RESULT = !(boolean)a;
-        :} 
-        |expr:a IGUAL_LOGICO expr:b
-        {: 
-            if(a instanceof String || b instanceof String){
-                RESULT = a.toString().compareTo(b.toString()) == 0;                
-            }
-            else if(a instanceof Integer && b instanceof Integer){
-                RESULT = (Integer) a == (Integer) b;                
-            }
-            else if(a instanceof Float || b instanceof Float){
-                RESULT = (float)a == (float)b;                
-            }
-        :}
-        |expr:a DESIGUAL expr:b
-        {: 
-             if(a instanceof String || b instanceof String){
-                RESULT = a.toString().compareTo(b.toString()) != 0;                
-            }
-            else if(a instanceof Integer && b instanceof Integer){
-                RESULT = (Integer) a != (Integer) b;                
-            }
-            else if(a instanceof Float || b instanceof Float){
-                RESULT = (float)a != (float)b;                
-            }             
-        :}
-        |expr:a MAYOR expr:b
-        {: 
-            if(a instanceof String || b instanceof String){
-                RESULT = a.toString().compareTo(b.toString()) > 0;
-            }
-            else if(a instanceof Integer && b instanceof Integer){
-                RESULT = (Integer) a > (Integer) b;
-            }
-            else if(a instanceof Float || b instanceof Float){
-                RESULT = (float)a > (float)b;
-            }
-        :}
-        |expr:a MAYOR_IGUAL expr:b
-        {:
-            if(a instanceof String || b instanceof String){
-                RESULT = a.toString().compareTo(b.toString()) >= 0;                
-            }
-            else if(a instanceof Integer && b instanceof Integer){
-                RESULT = (Integer) a >= (Integer) b;                
-            }
-            else if(a instanceof Float || b instanceof Float){
-                RESULT = (float)a >= (float)b;                
-            } 
-        :}
-        |expr:a MENOR expr:b
-        {:
-            if(a instanceof String || b instanceof String){
-                RESULT = a.toString().compareTo(b.toString()) < 0;                
-            }
-            else if(a instanceof Integer && b instanceof Integer){
-                RESULT = (Integer) a < (Integer) b;
-            }
-            else if(a instanceof Float || b instanceof Float){
-                RESULT = (float)a < (float)b;  
-            } 
-        :}
-        |expr:a MENOR_IGUAL expr:b
-        {: 
-            if(a instanceof String || b instanceof String){
-                RESULT = a.toString().compareTo(b.toString()) <= 0;                
-            }
-            else if(a instanceof Integer && b instanceof Integer){
-                RESULT = (Integer) a <= (Integer) b;
-            }
-            else if(a instanceof Float || b instanceof Float){
-                RESULT = (float)a <= (float)b;  
-            }
-        :}
-        |expr:a MAS expr:b
-        {: 
-            RESULT = (Integer) a + (Integer) b;
-        :}
-        | expr:a MENOS expr:b
-        {: 
-            RESULT = (Integer) a - (Integer) b;
-        :}
-        | expr:a POR expr:b
-        {: 
-            RESULT = (Integer) a * (Integer) b;
-        :}
-        | expr:a ENTRE expr:b
-        {: 
-            RESULT = (Integer) a / (Integer) b;
-        :}
-        | MENOS1 expr:a
-        {:
-            RESULT = -(Integer) a;
-        :}
-        %prec MENOS1
-        |ABRE expr:a CIERRA
-        {:
+        |st_get:a{:
             RESULT = a;
         :}
-        | ENTERO:n
-        {:
-            RESULT = Integer.parseInt(n.toString());
-        :}
-        | DECIMAL:n {:
-            RESULT = Float.parseFloat(n.toString());
-        :}
-        |VAR1 VARIABLE:a{:
-            /*************BUSCAR VARIABLE**********/
-            Object o = lista_variable.get(a.toString()).getValue();
-            if(o instanceof Integer){
-                RESULT = (Integer) o;
-            }
-            else if(o instanceof String){
-                RESULT = (String) o;
-            }
-            else if(o instanceof Float){
-                RESULT = (Float) o;
-            }
-            else if(o instanceof Boolean){
-                RESULT = (Boolean) o;
-            }
-        :}
-        |R_TRUE{:
-            RESULT = true;
-        :}
-        |R_FALSE{:
-            RESULT = false;
-        :}
-        |CADENA:a{:
-        RESULT = a.toString().replaceAll("\"","");
+;
+
+expr_logica::= expr_logica:a AND expr_logica:b{:
+        RESULT = (boolean)a && (boolean)b;
     :}
+    | expr_logica:a OR expr_logica:b{:
+        RESULT = (boolean)a || (boolean)b;
+    :}
+    |NOT expr_logica:a{:
+        RESULT = !(boolean)a;
+    :}
+    |expr:a{:
+        RESULT = a;
+    :}
+;
+
+expr ::=expr:a IGUAL_LOGICO expr:b
+      {:
+          if(a instanceof String || b instanceof String){
+              RESULT = a.toString().compareTo(b.toString()) == 0;
+          }
+          else if(a instanceof Integer && b instanceof Integer){
+              RESULT = (Integer) a == (Integer) b;
+          }
+          else if(a instanceof Float || b instanceof Float){
+              RESULT = Float.parseFloat(a.toString()) == Float.parseFloat(b.toString());
+          }
+      :}
+      |expr:a DESIGUAL expr:b
+      {:
+            if(a instanceof String || b instanceof String){
+              RESULT = a.toString().compareTo(b.toString()) != 0;
+          }
+          else if(a instanceof Integer && b instanceof Integer){
+              RESULT = (Integer) a != (Integer) b;
+          }
+          else if(a instanceof Float || b instanceof Float){
+              RESULT = Float.parseFloat(a.toString()) != Float.parseFloat(b.toString());
+          }
+      :}
+      |expr:a MAYOR expr:b
+      {:
+          if(a instanceof String || b instanceof String){
+              RESULT = a.toString().compareTo(b.toString()) > 0;
+          }
+          else if(a instanceof Integer && b instanceof Integer){
+              RESULT = (Integer) a > (Integer) b;
+          }
+          else if(a instanceof Float || b instanceof Float){
+              RESULT = Float.parseFloat(a.toString()) > Float.parseFloat(b.toString());
+          }
+      :}
+      |expr:a MAYOR_IGUAL expr:b
+      {:
+          if(a instanceof String || b instanceof String){
+              RESULT = a.toString().compareTo(b.toString()) >= 0;
+          }
+          else if(a instanceof Integer && b instanceof Integer){
+              RESULT = (Integer) a >= (Integer) b;
+          }
+          else if(a instanceof Float || b instanceof Float){
+              RESULT = Float.parseFloat(a.toString()) >= Float.parseFloat(b.toString());
+          }
+      :}
+      |expr:a MENOR expr:b
+      {:
+          if(a instanceof String || b instanceof String){
+              RESULT = a.toString().compareTo(b.toString()) < 0;
+          }
+          else if(a instanceof Integer && b instanceof Integer){
+              RESULT = (Integer) a < (Integer) b;
+          }
+          else if(a instanceof Float || b instanceof Float){
+              RESULT = Float.parseFloat(a.toString()) < Float.parseFloat(b.toString());
+          }
+      :}
+      |expr:a MENOR_IGUAL expr:b
+      {:
+          if(a instanceof String || b instanceof String){
+              RESULT = a.toString().compareTo(b.toString()) <= 0;
+          }
+          else if(a instanceof Integer && b instanceof Integer){
+              RESULT = (Integer) a <= (Integer) b;
+          }
+          else if(a instanceof Float || b instanceof Float){
+              RESULT = Float.parseFloat(a.toString()) <= Float.parseFloat(b.toString());
+          }
+      :}
+      |expr:a MAS expr:b
+      {:
+          if(a instanceof Integer && b instanceof Integer){
+              RESULT = (Integer) a + (Integer) b;
+          }
+          else{
+              RESULT = Float.parseFloat(a.toString()) + Float.parseFloat(b.toString());
+          }
+      :}
+      | expr:a MENOS expr:b
+      {:
+          if(a instanceof Integer && b instanceof Integer){
+              RESULT = (Integer) a - (Integer) b;
+          }
+          else{
+              RESULT = Float.parseFloat(a.toString()) - Float.parseFloat(b.toString());
+          }
+      :}
+      | expr:a POR expr:b
+      {:
+          if(a instanceof Integer && b instanceof Integer){
+              RESULT = (Integer) a * (Integer) b;
+          }
+          else{
+              RESULT = Float.parseFloat(a.toString()) * Float.parseFloat(b.toString());
+          }
+      :}
+      | expr:a ENTRE expr:b
+      {:
+          if(a instanceof Integer && b instanceof Integer){
+              RESULT = (Integer) a / (Integer) b;
+          }
+          else{
+              RESULT = Float.parseFloat(a.toString()) / Float.parseFloat(b.toString());
+          }
+      :}
+      | MENOS expr:a
+      {:
+          if(a instanceof Integer){
+              RESULT = -(Integer) a;
+          }
+          else{
+              RESULT = -Float.parseFloat(a.toString());
+          }
+      :}
+      %prec MENOS1
+
+      | ENTERO:n
+      {:
+          RESULT = Integer.parseInt(n.toString());
+      :}
+      | DECIMAL:n {:
+          RESULT = Float.parseFloat(n.toString());
+      :}
+      |VAR1 VARIABLE:a{:
+          /*************BUSCAR VARIABLE**********/
+          Object o = lista_variable.get("$"+a.toString().toLowerCase()).getValue();
+          if(o instanceof Integer){
+              RESULT = (Integer) o;
+          }
+          else if(o instanceof String){
+              RESULT = (String) o;
+          }
+          else if(o instanceof Float){
+              RESULT = (Float) o;
+          }
+          else if(o instanceof Boolean){
+              RESULT = (Boolean) o;
+          }
+      :}
+      |R_TRUE{:
+          RESULT = true;
+      :}
+      |R_FALSE{:
+          RESULT = false;
+      :}
+      |CADENA:a{:
+          RESULT = a.toString().replaceAll("\"","");
+      :}
+      |st_get:a{:
+          RESULT = a;
+      :}
+      |ABRE expr_logica:a CIERRA{:
+          RESULT = a;
+      :}
 ;

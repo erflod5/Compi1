@@ -17,15 +17,14 @@ import java.io.IOException;
 import java.io.StringReader;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.Scanner;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
+import javax.swing.JTable;
 import javax.swing.filechooser.FileNameExtensionFilter;
 import javax.swing.table.DefaultTableModel;
-import javax.swing.table.TableModel;
 
 /**
  *
@@ -35,10 +34,10 @@ public class Principal extends javax.swing.JFrame {
 
     private analizador.Lexer lexer;
     private analizador.parser parser;
-    public static ArrayList<String> errorLexer;
+    public static ArrayList<Pojos.err> errorLexer;
     public static ArrayList<Token> token;
     public static HashMap<String,Variable> lista_variable;
-
+    private NumeroLinea n;
 
     /**
      * Creates new form Principal
@@ -49,6 +48,8 @@ public class Principal extends javax.swing.JFrame {
         errorLexer = new ArrayList<>();
         lista_variable = new HashMap<>();
         initComponents();
+        n = new NumeroLinea(txt_editor);
+        jScrollPane1.setRowHeaderView(n);
     }
 
     /**
@@ -72,7 +73,7 @@ public class Principal extends javax.swing.JFrame {
         jTabbedPane3 = new javax.swing.JTabbedPane();
         jPanel7 = new javax.swing.JPanel();
         jScrollPane4 = new javax.swing.JScrollPane();
-        jTextArea3 = new javax.swing.JTextArea();
+        txtPlano = new javax.swing.JTextArea();
         jPanel9 = new javax.swing.JPanel();
         jScrollPane5 = new javax.swing.JScrollPane();
         navigator = new javax.swing.JEditorPane();
@@ -135,6 +136,16 @@ public class Principal extends javax.swing.JFrame {
         jTabbedPane2.addTab("Edicion", jPanel1);
 
         jComboBox1.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Pagina Web Resultante", "Reporte de Tokens", "Errores Lexicos", "Errores Sintacticos" }));
+        jComboBox1.addItemListener(new java.awt.event.ItemListener() {
+            public void itemStateChanged(java.awt.event.ItemEvent evt) {
+                jComboBox1ItemStateChanged(evt);
+            }
+        });
+        jComboBox1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jComboBox1ActionPerformed(evt);
+            }
+        });
 
         jButton1.setText("Abrir con navegador");
         jButton1.addActionListener(new java.awt.event.ActionListener() {
@@ -143,10 +154,10 @@ public class Principal extends javax.swing.JFrame {
             }
         });
 
-        jTextArea3.setEditable(false);
-        jTextArea3.setColumns(20);
-        jTextArea3.setRows(5);
-        jScrollPane4.setViewportView(jTextArea3);
+        txtPlano.setEditable(false);
+        txtPlano.setColumns(20);
+        txtPlano.setRows(5);
+        jScrollPane4.setViewportView(txtPlano);
 
         javax.swing.GroupLayout jPanel7Layout = new javax.swing.GroupLayout(jPanel7);
         jPanel7.setLayout(jPanel7Layout);
@@ -167,6 +178,7 @@ public class Principal extends javax.swing.JFrame {
 
         jTabbedPane3.addTab("Texto Plano", jPanel7);
 
+        navigator.setEditable(false);
         jScrollPane5.setViewportView(navigator);
 
         javax.swing.GroupLayout jPanel9Layout = new javax.swing.GroupLayout(jPanel9);
@@ -430,7 +442,7 @@ public class Principal extends javax.swing.JFrame {
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
-    
+
     java.io.File archivo;
     private void jMenuItem8ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem8ActionPerformed
         JOptionPane.showMessageDialog(null, "CopyRight \nErik Gerardo Flores Diaz \n201701066", "Acerca De", JOptionPane.INFORMATION_MESSAGE);
@@ -469,7 +481,7 @@ public class Principal extends javax.swing.JFrame {
             } catch (FileNotFoundException ex) {
                 Logger.getLogger(Principal.class.getName()).log(Level.SEVERE, null, ex);
             }
-        }        
+        }
     }//GEN-LAST:event_jMenuItem3ActionPerformed
 
     /* GUARDAR ARCHIVO */
@@ -482,7 +494,7 @@ public class Principal extends javax.swing.JFrame {
                 JOptionPane.showMessageDialog(null, "Archivo guardado","Congrats!",JOptionPane.INFORMATION_MESSAGE);
                 bw.close();
             } catch (IOException ex) {
-                Logger.getLogger(Principal.class.getName()).log(Level.SEVERE, null, ex);       
+                Logger.getLogger(Principal.class.getName()).log(Level.SEVERE, null, ex);
             }
             finally{
                 if(bw!=null){
@@ -490,7 +502,7 @@ public class Principal extends javax.swing.JFrame {
                         bw.close();
                     }
                     catch(IOException ex){
-                        Logger.getLogger(Principal.class.getName()).log(Level.SEVERE, null, ex);       
+                        Logger.getLogger(Principal.class.getName()).log(Level.SEVERE, null, ex);
                     }
                 }
             }
@@ -515,18 +527,6 @@ public class Principal extends javax.swing.JFrame {
         }
     }//GEN-LAST:event_jMenuItem4ActionPerformed
 
-    private void generaHtml(){
-        BufferedWriter bw = null;
-        try{
-            FileWriter save = new FileWriter("index.html");
-            save.write(parser.bf.toString());
-            save.close();
-        }
-        catch(Exception ex){
-            
-        }
-    }
-    
     /* GUAURDAR COMO */
     private void jMenuItem2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem2ActionPerformed
         try{
@@ -567,7 +567,7 @@ public class Principal extends javax.swing.JFrame {
 
 
     }//GEN-LAST:event_jMenuItem6ActionPerformed
-    
+
     /* MANUAL TECNICO */
     private void jMenuItem7ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem7ActionPerformed
         try {
@@ -581,42 +581,236 @@ public class Principal extends javax.swing.JFrame {
 
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
         try {
-            File archivo = new File("index.html");
-            Desktop.getDesktop().open(archivo);
-            
+            if(jComboBox1.getSelectedIndex()==0){
+                File file = new File("index.html");
+                Desktop.getDesktop().open(file);
+            }
+            else if(jComboBox1.getSelectedIndex()==1){
+                File file = new File("Tokens.html");
+                Desktop.getDesktop().open(file);
+            }
+            else if(jComboBox1.getSelectedIndex()==2){
+                File file = new File("ReporteLexer.html");
+                Desktop.getDesktop().open(file);
+            }
+            else if(jComboBox1.getSelectedIndex()==3){
+                File file = new File("ReporteParser.html");
+                Desktop.getDesktop().open(file);
+            }
         } catch (IOException ex) {
             Logger.getLogger(Principal.class.getName()).log(Level.SEVERE, null, ex);
-        }        
+        }
     }//GEN-LAST:event_jButton1ActionPerformed
 
     private void jButton3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton3ActionPerformed
         // TODO add your handling code here:
         txt_console.setText("");
     }//GEN-LAST:event_jButton3ActionPerformed
-    
-    
-   
-    
+
+    private void jComboBox1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jComboBox1ActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_jComboBox1ActionPerformed
+
+    private void jComboBox1ItemStateChanged(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_jComboBox1ItemStateChanged
+        // TODO add your handling code here:
+    }//GEN-LAST:event_jComboBox1ItemStateChanged
+
+
     private void analizar(){
         String input = txt_editor.getText();
         lexer = new analizador.Lexer(new BufferedReader(new StringReader(input)));
         parser = new analizador.parser(lexer,txt_console);
+        token.clear();
+        errorLexer.clear();
         txt_console.setText("");
         try {
             parser.parse();
-            jTextArea3.setText(parser.bf.toString());
             addTable();
             generaHtml();
-            for(Pojos.Token t : token){
+            reporteTokens();
+            reporteLexer();
+            reporteSintactico();
+            /*for(Pojos.Token t : token){
                 System.out.println(t.toString());
-            }
+            }*/
         } catch (Exception ex) {
             System.out.println(ex.getMessage());
         }
     }
-    
-    
-    
+
+
+    public void reporteTokens() throws IOException{
+            BufferedWriter bw;
+        File file = new File("Tokens.html");
+        if(!file.exists()){
+            file.createNewFile();
+        }
+        bw = new BufferedWriter(new FileWriter(file));
+        bw.write("<html>\n" +
+                "<head>\n" +
+                "<meta charset=\"utf-8\" />\n" +
+                "<title>Reporte de Tokens</title>\n" +
+                "<meta name=\"viewport\" content=\"initial-scale=1.0; maximum-scale=1.0; width=device-width;\">\n" +
+                "<link rel=\"stylesheet\" type=\"text/css\" href=\"css/main.css\">\n" +
+                "</head>\n" +
+                "<body>\n" +
+                "<div class=\"table-title\">\n" +
+                "<h3>Reporte de Tokens</h3>\n" +
+                "</div>\n" +
+                "\n" +
+                "<table class=\"table-fill\">\n" +
+                "<thead>\n" +
+                "<tr>\n" +
+                "<th class=\"text-left\">No.</th>\n" +
+                "<th class=\"text-left\">Token</th>\n" +
+                "<th class=\"text-left\">Lexema</th>\n" +
+                "<th class=\"text-left\">Fila</th>	\n" +
+                "<th class=\"text-left\">Columna</th>	\n" +
+                "</tr>\n" +
+                "</thead>\n" +
+                "<tbody class=\"table-hover\">");
+        int n = 0;
+        for(Token t: token){
+            bw.write("<tr>");
+            bw.write("<td class=\"text-left\">"+ n +"</td>");
+            bw.write("<td class=\"text-left\">"+ t.getToken() +"</td>");
+            bw.write("<td class=\"text-left\">"+ t.getLexema() +"</td>");
+            bw.write("<td class=\"text-left\">"+ t.getFila() +"</td>");
+            bw.write("<td class=\"text-left\">"+ t.getColumna() +"</td>");
+            bw.write("</tr>");
+            n++;
+        }
+        bw.write("</tbody>\n" +
+                "</table>\n" +
+                "</body>\n" +
+                "</html>");
+        bw.close();
+    }
+
+    public void reporteLexer() throws IOException{
+             BufferedWriter bw;
+        File file = new File("ReporteLexer.html");
+        if(!file.exists()){
+            file.createNewFile();
+        }
+        bw = new BufferedWriter(new FileWriter(file));
+        bw.write("<html>\n" +
+                "<head>\n" +
+                "<meta charset=\"utf-8\" />\n" +
+                "<title>Reporte de Errores Lexicos</title>\n" +
+                "<meta name=\"viewport\" content=\"initial-scale=1.0; maximum-scale=1.0; width=device-width;\">\n" +
+                "<link rel=\"stylesheet\" type=\"text/css\" href=\"css/main.css\">\n" +
+                "</head>\n" +
+                "<body>\n" +
+                "<div class=\"table-title\">\n" +
+                "<h3>Reporte de Errores Lexicos</h3>\n" +
+                "</div>\n" +
+                "\n" +
+                "<table class=\"table-fill\">\n" +
+                "<thead>\n" +
+                "<tr>\n" +
+                "<th class=\"text-left\">No.</th>\n" +
+                "<th class=\"text-left\">Error</th>\n" +
+                "<th class=\"text-left\">Fila</th>	\n" +
+                "<th class=\"text-left\">Columna</th>	\n" +
+                "</tr>\n" +
+                "</thead>\n" +
+                "<tbody class=\"table-hover\">");
+        int n = 0;
+        for(Pojos.err e: errorLexer){
+            bw.write("<tr>");
+            bw.write("<td class=\"text-left\">"+ n +"</td>");
+            bw.write("<td class=\"text-left\">"+ e.getError() +"</td>");
+            bw.write("<td class=\"text-left\">"+ e.getFila() +"</td>");
+            bw.write("<td class=\"text-left\">"+ e.getColumna() +"</td>");
+            bw.write("</tr>");
+            n++;
+        }
+        bw.write("</tbody>\n" +
+                "</table>\n" +
+                "</body>\n" +
+                "</html>");
+        bw.close();
+    }
+
+    public void reporteSintactico() throws IOException{
+        BufferedWriter bw;
+        File file = new File("ReporteParser.html");
+        if(!file.exists()){
+            file.createNewFile();
+        }
+        bw = new BufferedWriter(new FileWriter(file));
+        bw.write("<html>\n" +
+                "<head>\n" +
+                "<meta charset=\"utf-8\" />\n" +
+                "<title>Reporte de Errores Sintacticoss</title>\n" +
+                "<meta name=\"viewport\" content=\"initial-scale=1.0; maximum-scale=1.0; width=device-width;\">\n" +
+                "<link rel=\"stylesheet\" type=\"text/css\" href=\"css/main.css\">\n" +
+                "</head>\n" +
+                "<body>\n" +
+                "<div class=\"table-title\">\n" +
+                "<h3>Reporte de Errores Sintacticos</h3>\n" +
+                "</div>\n" +
+                "\n" +
+                "<table class=\"table-fill\">\n" +
+                "<thead>\n" +
+                "<tr>\n" +
+                "<th class=\"text-left\">No.</th>\n" +
+                "<th class=\"text-left\">Error</th>\n" +
+                "<th class=\"text-left\">Fila</th>	\n" +
+                "<th class=\"text-left\">Columna</th>	\n" +
+                "</tr>\n" +
+                "</thead>\n" +
+                "<tbody class=\"table-hover\">");
+
+        if(parser.err !=null){
+            bw.write("<tr>");
+            bw.write("<td class=\"text-left\"> 1 </td>");
+            bw.write("<td class=\"text-left\">No se esperaba este  componente: "+ parser.err.getError() +"</td>");
+            bw.write("<td class=\"text-left\">"+ parser.err.getFila() +"</td>");
+            bw.write("<td class=\"text-left\">"+ parser.err.getColumna() +"</td>");
+            bw.write("</tr>");
+        }
+        bw.write("</tbody>\n" +
+                "</table>\n" +
+                "</body>\n" +
+                "</html>");
+        bw.close();
+    }
+
+    public void mostrarPage(){
+        String url = System.getProperty("user.dir") + "\\index.html";
+        File rec = new File(url);
+        try {
+            navigator.setPage(rec.toURI().toURL());
+        } catch (IOException ex) {
+            Logger.getLogger(Principal.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+
+    public void addTable() {
+        DefaultTableModel md = (DefaultTableModel) jTable1.getModel();
+        md.setRowCount(0);
+        lista_variable.forEach((k,v) -> {
+            Variable b = (Variable)v;
+            md.addRow(new Object[] { b.getId(), b.getTipo(),b.getValue(),b.getFila(),b.getColumna()});
+        });
+ }
+
+    private void generaHtml(){
+        BufferedWriter bw = null;
+        try{
+            FileWriter save = new FileWriter("index.html");
+            save.write(parser.bf.toString());
+            save.close();
+            mostrarPage();
+            txtPlano.setText(parser.bf.toString());
+        }
+        catch(Exception ex){
+
+        }
+    }
+
     /**
      * @param args the command line arguments
      */
@@ -624,7 +818,7 @@ public class Principal extends javax.swing.JFrame {
         /* Set the Nimbus look and feel */
         //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
         /* If Nimbus (introduced in Java SE 6) is not available, stay with the default look and feel.
-         * For details see http://download.oracle.com/javase/tutorial/uiswing/lookandfeel/plaf.html 
+         * For details see http://download.oracle.com/javase/tutorial/uiswing/lookandfeel/plaf.html
          */
         try {
             for (javax.swing.UIManager.LookAndFeelInfo info : javax.swing.UIManager.getInstalledLookAndFeels()) {
@@ -651,27 +845,7 @@ public class Principal extends javax.swing.JFrame {
             }
         });
     }
-    
-    public void mostrarPage(){
-        String url = System.getProperty("user.dir") + "\\index.html";
-        File rec = new File(url);
-        navigator.setEditable(false);
-        try {
-            navigator.setPage(rec.toURI().toURL());
-        } catch (IOException ex) {
-            Logger.getLogger(Principal.class.getName()).log(Level.SEVERE, null, ex);
-        }
-    }
-    
-    public void addTable() {
-        DefaultTableModel md = (DefaultTableModel) jTable1.getModel();
-        md.setRowCount(0);
-        lista_variable.forEach((k,v) -> {
-            Variable b = (Variable)v;
-            md.addRow(new Object[] { b.getId(), b.getTipo(),b.getValue(),b.getFila(),b.getColumna()});
-        });
- }
-    
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton jButton1;
     private javax.swing.JButton jButton3;
@@ -705,8 +879,8 @@ public class Principal extends javax.swing.JFrame {
     private javax.swing.JTabbedPane jTabbedPane2;
     private javax.swing.JTabbedPane jTabbedPane3;
     private javax.swing.JTable jTable1;
-    private javax.swing.JTextArea jTextArea3;
     private javax.swing.JEditorPane navigator;
+    private javax.swing.JTextArea txtPlano;
     private javax.swing.JTextArea txt_console;
     private javax.swing.JTextArea txt_editor;
     // End of variables declaration//GEN-END:variables

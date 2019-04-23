@@ -8,97 +8,91 @@ package analizador;
 /** CUP generated class containing symbol constants. */
 public class sym {
   /* terminals */
-  public static final int R_SETANCHO = 40;
-  public static final int R_GETTEXTO = 44;
-  public static final int MENOR_IGUAL = 68;
-  public static final int R_SETCONTENIDO = 51;
-  public static final int R_GETALINEACION = 54;
-  public static final int R_ALINEACION = 18;
-  public static final int R_GETPATH = 41;
-  public static final int R_SETBORDE = 55;
-  public static final int LLAVEIZQUIERDA = 73;
-  public static final int R_IMAGEN = 13;
-  public static final int R_ALTO = 20;
-  public static final int R_CREARBOTON = 45;
-  public static final int R_CREARTEXTOB = 50;
-  public static final int R_FONDO = 9;
-  public static final int R_CREARTEXTOA = 49;
-  public static final int MAYOR = 67;
-  public static final int R_SETALTO = 39;
-  public static final int TEXTO = 32;
-  public static final int CIERRA_ETIQUETA = 31;
-  public static final int R_CREARPARRAFO = 83;
-  public static final int R_GETCONTENIDO = 52;
-  public static final int POR = 61;
-  public static final int R_CREARIMAGEN = 48;
-  public static final int R_TABLA = 12;
-  public static final int NOT = 77;
-  public static final int R_GETALTO = 42;
-  public static final int R_TEXTO = 23;
-  public static final int CONCATENACION = 63;
-  public static final int R_TRUE = 36;
-  public static final int CIERRA = 65;
-  public static final int NUM = 30;
-  public static final int R_CIERRAHS = 57;
-  public static final int R_ELSE = 80;
-  public static final int R_FALSE = 37;
-  public static final int ENTERO = 34;
-  public static final int R_GETANCHO = 43;
-  public static final int SLASH = 3;
-  public static final int R_ECHO = 78;
-  public static final int R_PARRAFO = 10;
-  public static final int IGUAL = 4;
-  public static final int R_INSERTAR = 82;
-  public static final int R_CREARTABLA = 46;
-  public static final int R_TITULO = 7;
-  public static final int DECIMAL = 35;
-  public static final int PUNTOYCOMA = 58;
-  public static final int ABRE_ETIQUETA = 2;
-  public static final int VARIABLE = 84;
-  public static final int MENOS = 60;
-  public static final int MENOR = 66;
-  public static final int R_COLUMNAC = 26;
-  public static final int MAS = 59;
-  public static final int R_SETTEXTO = 56;
-  public static final int R_CUERPO = 8;
-  public static final int VAR2 = 86;
-  public static final int VAR1 = 85;
+  public static final int R_SETANCHO = 32;
+  public static final int R_GETTEXTO = 36;
+  public static final int MENOR_IGUAL = 61;
+  public static final int R_SETCONTENIDO = 43;
+  public static final int R_GETALINEACION = 46;
+  public static final int R_GETPATH = 33;
+  public static final int R_SETBORDE = 47;
+  public static final int LLAVEIZQUIERDA = 66;
+  public static final int R_IMAGEN = 12;
+  public static final int R_CREARBOTON = 37;
+  public static final int R_CREARTEXTOB = 42;
+  public static final int R_FONDO = 8;
+  public static final int R_CREARTEXTOA = 41;
+  public static final int MAYOR = 60;
+  public static final int R_SETALTO = 31;
+  public static final int TEXTO = 24;
+  public static final int CIERRA_ETIQUETA = 23;
+  public static final int R_CREARPARRAFO = 78;
+  public static final int R_GETCONTENIDO = 44;
+  public static final int POR = 54;
+  public static final int R_CREARIMAGEN = 40;
+  public static final int R_TABLA = 11;
+  public static final int NOT = 72;
+  public static final int R_GETALTO = 34;
+  public static final int CONCATENACION = 56;
+  public static final int R_TRUE = 28;
+  public static final int CIERRA = 58;
+  public static final int NUM = 22;
+  public static final int R_CIERRAHS = 49;
+  public static final int CORCHETEIZQUIERDA = 68;
+  public static final int COMA = 51;
+  public static final int R_ELSE = 75;
+  public static final int R_FALSE = 29;
+  public static final int ENTERO = 26;
+  public static final int R_GETANCHO = 35;
+  public static final int SLASH = 2;
+  public static final int R_ECHO = 73;
+  public static final int R_PARRAFO = 9;
+  public static final int CORCHETEDERECHA = 69;
+  public static final int IGUAL = 3;
+  public static final int R_INSERTAR = 77;
+  public static final int R_CREARTABLA = 38;
+  public static final int R_TITULO = 6;
+  public static final int DECIMAL = 27;
+  public static final int PUNTOYCOMA = 50;
+  public static final int VARIABLE = 79;
+  public static final int MENOS = 53;
+  public static final int MENOR = 59;
+  public static final int R_COLUMNAC = 18;
+  public static final int MAS = 52;
+  public static final int R_SETTEXTO = 48;
+  public static final int R_CUERPO = 7;
+  public static final int VAR2 = 81;
+  public static final int VAR1 = 80;
   public static final int EOF = 0;
-  public static final int R_COLUMNA = 27;
-  public static final int IGUAL_LOGICO = 72;
-  public static final int R_ESPACIO = 17;
-  public static final int R_FILA = 25;
-  public static final int ENTRE = 62;
-  public static final int R_CLICKBOTON = 47;
-  public static final int R_ANCHO = 19;
-  public static final int OR = 76;
+  public static final int R_COLUMNA = 19;
+  public static final int IGUAL_LOGICO = 65;
+  public static final int R_ESPACIO = 16;
+  public static final int R_FILA = 17;
+  public static final int ENTRE = 55;
+  public static final int R_CLICKBOTON = 39;
+  public static final int OR = 71;
   public static final int error = 1;
-  public static final int R_REPETIR = 81;
-  public static final int R_SALTO = 11;
-  public static final int ID = 29;
-  public static final int MENOS1 = 69;
-  public static final int R_COMPI = 5;
-  public static final int R_BORDE = 24;
-  public static final int R_CABECERA = 6;
-  public static final int CADENA = 28;
-  public static final int R_PATH = 21;
-  public static final int DESIGUAL = 71;
-  public static final int R_BOTON = 16;
-  public static final int R_SETPATH = 38;
-  public static final int R_SETALINEACION = 53;
-  public static final int AND = 75;
-  public static final int R_IF = 79;
-  public static final int LLAVEDERECHA = 74;
-  public static final int ABRE = 64;
-  public static final int R_ID = 22;
-  public static final int MAYOR_IGUAL = 70;
-  public static final int R_TEXTOB = 15;
-  public static final int R_TEXTOA = 14;
-  public static final int ABRE_HS = 33;
+  public static final int R_REPETIR = 76;
+  public static final int R_SALTO = 10;
+  public static final int ID = 21;
+  public static final int MENOS1 = 62;
+  public static final int R_COMPI = 4;
+  public static final int R_CABECERA = 5;
+  public static final int CADENA = 20;
+  public static final int DESIGUAL = 64;
+  public static final int R_BOTON = 15;
+  public static final int R_SETPATH = 30;
+  public static final int R_SETALINEACION = 45;
+  public static final int AND = 70;
+  public static final int R_IF = 74;
+  public static final int ABRE = 57;
+  public static final int LLAVEDERECHA = 67;
+  public static final int MAYOR_IGUAL = 63;
+  public static final int R_TEXTOB = 14;
+  public static final int R_TEXTOA = 13;
+  public static final int ABRE_HS = 25;
   public static final String[] terminalNames = new String[] {
   "EOF",
   "error",
-  "ABRE_ETIQUETA",
   "SLASH",
   "IGUAL",
   "R_COMPI",
@@ -114,13 +108,6 @@ public class sym {
   "R_TEXTOB",
   "R_BOTON",
   "R_ESPACIO",
-  "R_ALINEACION",
-  "R_ANCHO",
-  "R_ALTO",
-  "R_PATH",
-  "R_ID",
-  "R_TEXTO",
-  "R_BORDE",
   "R_FILA",
   "R_COLUMNAC",
   "R_COLUMNA",
@@ -155,6 +142,7 @@ public class sym {
   "R_SETTEXTO",
   "R_CIERRAHS",
   "PUNTOYCOMA",
+  "COMA",
   "MAS",
   "MENOS",
   "POR",
@@ -171,6 +159,8 @@ public class sym {
   "IGUAL_LOGICO",
   "LLAVEIZQUIERDA",
   "LLAVEDERECHA",
+  "CORCHETEIZQUIERDA",
+  "CORCHETEDERECHA",
   "AND",
   "OR",
   "NOT",

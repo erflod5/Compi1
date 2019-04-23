@@ -1,0 +1,15 @@
+D:\Erik Flores\Documents\Repositorio\OLC1\Compi1\Proyecto2\Proyecto2\Proyecto2\obj\Debug\Proyecto2.csprojAssemblyReference.cache
+D:\Erik Flores\Documents\Repositorio\OLC1\Compi1\Proyecto2\Proyecto2\Proyecto2\obj\Debug\Proyecto2.Form1.resources
+D:\Erik Flores\Documents\Repositorio\OLC1\Compi1\Proyecto2\Proyecto2\Proyecto2\obj\Debug\Proyecto2.Properties.Resources.resources
+D:\Erik Flores\Documents\Repositorio\OLC1\Compi1\Proyecto2\Proyecto2\Proyecto2\obj\Debug\Proyecto2.csproj.GenerateResource.cache
+D:\Erik Flores\Documents\Repositorio\OLC1\Compi1\Proyecto2\Proyecto2\Proyecto2\obj\Debug\Proyecto2.csproj.CoreCompileInputs.cache
+D:\Erik Flores\Documents\Repositorio\OLC1\Compi1\Proyecto2\Proyecto2\Proyecto2\bin\Debug\Proyecto2.exe.config
+D:\Erik Flores\Documents\Repositorio\OLC1\Compi1\Proyecto2\Proyecto2\Proyecto2\bin\Debug\Proyecto2.exe
+D:\Erik Flores\Documents\Repositorio\OLC1\Compi1\Proyecto2\Proyecto2\Proyecto2\bin\Debug\Proyecto2.pdb
+D:\Erik Flores\Documents\Repositorio\OLC1\Compi1\Proyecto2\Proyecto2\Proyecto2\bin\Debug\Irony.dll
+D:\Erik Flores\Documents\Repositorio\OLC1\Compi1\Proyecto2\Proyecto2\Proyecto2\bin\Debug\Irony.pdb
+D:\Erik Flores\Documents\Repositorio\OLC1\Compi1\Proyecto2\Proyecto2\Proyecto2\obj\Debug\Proyecto2.csproj.CopyComplete
+D:\Erik Flores\Documents\Repositorio\OLC1\Compi1\Proyecto2\Proyecto2\Proyecto2\obj\Debug\Proyecto2.exe
+D:\Erik Flores\Documents\Repositorio\OLC1\Compi1\Proyecto2\Proyecto2\Proyecto2\obj\Debug\Proyecto2.pdb
+D:\Erik Flores\Documents\Repositorio\OLC1\Compi1\Proyecto2\Proyecto2\Proyecto2\obj\Debug\Interop.WINGRAPHVIZLib.dll
+D:\Erik Flores\Documents\Repositorio\OLC1\Compi1\Proyecto2\Proyecto2\Proyecto2\obj\Debug\Proyecto2.csproj.ResolveComReference.cache

@@ -10,7 +10,7 @@ package Pojos;
  * @author Erik
  */
 public class Variable {
-    
+
     private String id,tipo;
     private int fila,columna;
     private Object value;
@@ -66,6 +66,6 @@ public class Variable {
         this.value = value;
     }
 
-    
-    
+
+
 }

@@ -17,7 +17,7 @@ public class Token {
     public Token(){
         this(0,0,"","");
     }
-    
+
     public Token(int fila, int columna, String lexema, String token) {
         this.fila = fila;
         this.columna = columna;
@@ -56,10 +56,10 @@ public class Token {
     public void setToken(String token) {
         this.token = token;
     }
-    
-    
+
+
     public String toString(){
         return fila + " " + columna + " " + lexema + " " + token;
-                
+
     }
 }
