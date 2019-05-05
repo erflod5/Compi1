@@ -19,9 +19,9 @@ namespace Proyecto2.analizador
             CommentTerminal com_linea = new CommentTerminal("comentariolinea", ">>", "\n", "\r\n");
             CommentTerminal com_multi = new CommentTerminal("comentariomulti", "<-", "->");
 
-            StringLiteral StringLiteral = TerminalFactory.CreateCSharpString("StringLiteral");
-            StringLiteral CharLiteral = TerminalFactory.CreateCSharpChar("CharLiteral");
-            IdentifierTerminal identifier = TerminalFactory.CreateCSharpIdentifier("Identifier");
+            StringLiteral StringLiteral = TerminalFactory.CreateCSharpString("String");
+            StringLiteral CharLiteral = TerminalFactory.CreateCSharpChar("Char");
+            IdentifierTerminal identifier = new IdentifierTerminal("Identifier");
 
             NonGrammarTerminals.Add(com_linea);
             NonGrammarTerminals.Add(com_multi);
@@ -119,7 +119,8 @@ namespace Proyecto2.analizador
             BLOQUEWHILE = new NonTerminal("BloqueWhile"), BLOQUEELSEIF = new NonTerminal("BloqueElseIf"), BLOQUEHACER = new NonTerminal("BloqueHacer"),
             BLOQUECOMPROBAR = new NonTerminal("BloqueComprobar"), BLOQUECASO = new NonTerminal("BloqueCaso"), ADDFIGURE = new NonTerminal("AddFigure"),
             FIGURE = new NonTerminal("Figure"), TFIGURE = new NonTerminal("TFigure"), B3 = new NonTerminal("B3"), B2 = new NonTerminal("B2"),
-            MAIN = new NonTerminal("Main"), L1 = new NonTerminal("L1"), C1 = new NonTerminal("C1"), D1 = new NonTerminal("D1")
+            MAIN = new NonTerminal("Main"), L1 = new NonTerminal("L1"), C1 = new NonTerminal("C1"), D1 = new NonTerminal("D1"),
+            IF = new NonTerminal("IF"), ElseIF = new NonTerminal("ELSEIF"), ELSE = new NonTerminal("ELSE")
             ;
 
             #endregion
@@ -185,12 +186,18 @@ namespace Proyecto2.analizador
                     | rreturn + E + ToTerm(";");
                 
 
-            BLOQUEIF.Rule = rif + ToTerm("(") + E + ToTerm(")") + ToTerm("{") + INMETODO + ToTerm("}")
-                    | rif + ToTerm("(") + E + ToTerm(")") + ToTerm("{") + INMETODO + ToTerm("}") + relse + ToTerm("{") + INMETODO + ToTerm("}")
-                    | rif + ToTerm("(") + E + ToTerm(")") + ToTerm("{") + INMETODO + ToTerm("}") + BLOQUEELSEIF
-                    | rif + ToTerm("(") + E + ToTerm(")") + ToTerm("{") + INMETODO + ToTerm("}") + BLOQUEELSEIF + relse + ToTerm("{") + INMETODO + ToTerm("}");
+            BLOQUEIF.Rule = IF
+                    | IF + ELSE
+                    | IF + BLOQUEELSEIF
+                    | IF + BLOQUEELSEIF + ELSE;
 
-            BLOQUEELSEIF.Rule = MakePlusRule(BLOQUEELSEIF, relse + rif + ToTerm("(") + E + ToTerm(")") + ToTerm("{") + INMETODO + ToTerm("}"));
+            IF.Rule = rif + ToTerm("(") + E + ToTerm(")") + ToTerm("{") + INMETODO + ToTerm("}");
+
+            ELSE.Rule = relse + ToTerm("{") + INMETODO + ToTerm("}");
+
+            ElseIF.Rule = relse + rif + ToTerm("(") + E + ToTerm(")") + ToTerm("{") + INMETODO + ToTerm("}");
+
+            BLOQUEELSEIF.Rule = MakePlusRule(BLOQUEELSEIF, ElseIF);
 
             BLOQUEREPETIR.Rule = rrepeat + ToTerm("(") + E + ToTerm(")") + ToTerm("{") + INMETODO + ToTerm("}");
 
@@ -320,7 +327,7 @@ namespace Proyecto2.analizador
 
             #region Preferencias
             this.Root = S;
-            this.MarkTransient(T_DATO,OVERRIDE,MSENTENCIA,INMETODO,VISIBILIDAD,B2,B3);   
+            this.MarkTransient(T_DATO,OVERRIDE,INMETODO,VISIBILIDAD,B2,B3);   
             this.RegisterOperators(1, Associativity.Left, or);
             this.RegisterOperators(2, Associativity.Left, and);
             this.RegisterOperators(3, Associativity.Right, not);
@@ -329,7 +336,7 @@ namespace Proyecto2.analizador
             this.RegisterOperators(6, Associativity.Left, por, entre);
             this.RegisterOperators(7, Associativity.Left, elevado);
             this.RegisterOperators(8, Associativity.Left, aumento, decremento);
-            this.MarkPunctuation("(", ")", ",", ";", ":", "[", "]", "{", "}");
+            this.MarkPunctuation("(", ")", ",", ";", ":", "[", "]", "{", "}","=");
 
             #endregion
         }

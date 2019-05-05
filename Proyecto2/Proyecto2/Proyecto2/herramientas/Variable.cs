@@ -12,6 +12,7 @@ namespace Proyecto2.herramientas
         public String nombre;
         public Object dato;
         public TYPE t;
+        public bool Private;
 
         public Variable(int fila, int columna, string nombre, object dato, TYPE t)
         {
@@ -22,13 +23,71 @@ namespace Proyecto2.herramientas
             this.t = t;
         }
 
+        public Variable(int fila, int columna, string nombre, object dato, String type, bool @private)
+        {
+            this.fila = fila;
+            this.columna = columna;
+            this.nombre = nombre;
+            this.dato = dato;
+            addType(type);
+            Private = @private;
+        }
+
         public Variable() {
             this.fila = 0;
             this.columna = 0;
             this.nombre = "";
             this.dato = null;
         }
-        
+
+        public void addType(String type) {
+            switch (type) {
+                case "int":
+                    this.t = TYPE.INT;
+                    break;
+                case "bool":
+                    this.t = TYPE.BOOL;
+                    break;
+                case "string":
+                    this.t = TYPE.STRING;
+                    break;
+                case "double":
+                    this.t = TYPE.DOUBLE;
+                    break;
+                case "char":
+                    this.t = TYPE.CHAR;
+                    break;
+            }
+        }
+
+        public void addVar(Object dato, String tipo) {
+            switch (tipo) {
+                case "num":
+                    this.dato = Int32.Parse(dato.ToString());
+                    this.t = TYPE.INT;
+                    break;
+                case "dec":
+                    this.dato = Double.Parse(dato.ToString());
+                    this.t = TYPE.DOUBLE;
+                    break;
+                case "rtrue":
+                    this.dato = (Boolean) true;
+                    this.t = TYPE.BOOL;
+                    break;
+                case "rfalse":
+                    this.t = TYPE.BOOL;
+                    this.dato =(Boolean)false;
+                    break;
+                case "String":
+                    this.t = TYPE.STRING;
+                    this.dato = (String)dato.ToString().Replace("\"","");
+                    break;
+                case "Char":
+                    this.t = TYPE.CHAR;
+                    this.dato = (Char)Char.Parse(dato.ToString().Replace("'",""));
+                    break;
+            }
+        }
     }
-    public enum TYPE {INT, STRING, DOUBLE, CHAR, BOOL, VOID, FUNCION, CLASS };
+    public enum TYPE {INT, STRING, DOUBLE, CHAR, BOOL, VOID, FUNCION, CLASS, ERROR };
 }

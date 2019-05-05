@@ -17,11 +17,13 @@ namespace Proyecto2
     public partial class Form1 : Form
     {
         ArrayList list_fil;
+        public static RichTextBox console;
         public Form1()
         {
             InitializeComponent();
             list_fil = new ArrayList();
             list_fil.Add(new Contenedor(richTextBox2, tabControl2.SelectedTab));
+            console = richTextBox1;
         }
 
         private void eliminarPestaToolStripMenuItem_Click(object sender, EventArgs e)
@@ -44,10 +46,8 @@ namespace Proyecto2
             bool resultado = Syntax.analizar(richTextBox2.Text);
             if (resultado)
             {
-                richTextBox1.AppendText("Entrada correcta\n");
+               Console.WriteLine("Entrada correcta\n");
             }
-            else
-                richTextBox1.AppendText("Entrada incorrecta\n");
         }
 
         private void crearToolStripMenuItem_Click(object sender, EventArgs e)

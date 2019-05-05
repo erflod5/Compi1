@@ -29,22 +29,70 @@ namespace Proyecto2.herramientas
         }
 
         public bool addVariable(String key, Object data) {
-            if (!tableSyml.ContainsKey(key)) {
-                tableSyml.Add(key, data);
+            if (!tableSyml.ContainsKey(key.ToLower())) {
+                tableSyml.Add(key.ToLower(), data);
                 return true;
             }
             return false;
         }
 
         public bool changeValue(String key, Object data) {
-            if (tableSyml.Contains(key)) {
-                tableSyml[key] = data;
+            if (tableSyml.Contains(key.ToLower())) {
+                tableSyml[key.ToLower()] = data;
             }
             return false;
         }
 
+        public bool addVariable(String key, Variable b, String tipo) {
+            switch (tipo.ToLower()) {
+                case "int":
+                    if (b.dato is Int32) {
+                        return addVariable(key, b);
+                    }
+                    return false;
+                case "double":
+                    if (b.dato is Int32 || b.dato is Double) {
+                        return addVariable(key, b);
+                    }
+                    return false;
+                case "bool":
+                    if (b.dato is Boolean) {
+                        return addVariable(key, b);
+                    }
+                    return false;
+                case "char":
+                    if (b.dato is Char) {
+                        return addVariable(key, b);
+                    }
+                    return false;
+                case "string":
+                    if (b.dato is String) {
+                        return addVariable(key, b);
+                    }
+                    return false;
+                default:
+                    return false;
+            }
+        }
+
         public Object getValue(String key) {
-            return tableSyml[key];
+            if (tableSyml.Contains(key)) {
+                return tableSyml[key.ToLower()];
+            }
+            return getValue(key, anterior);
+        }
+
+        private Object getValue(String key, Entorno h) {
+            if (h != null) {
+                if (h.tableSyml.Contains(key)) {
+                    Object o = h.tableSyml[key];
+                    if (o is Variable && !((Variable)o).Private) {
+                        return o;
+                    }
+                }
+                return getValue(key, h.anterior);
+            }
+            return null;
         }
     }
 }

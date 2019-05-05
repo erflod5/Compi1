@@ -57,6 +57,7 @@
     <Compile Include="Form1.Designer.cs">
       <DependentUpon>Form1.cs</DependentUpon>
     </Compile>
+    <Compile Include="herramientas\Arreglo.cs" />
     <Compile Include="herramientas\Clase.cs" />
     <Compile Include="herramientas\Contenedor.cs" />
     <Compile Include="herramientas\Entorno.cs" />
