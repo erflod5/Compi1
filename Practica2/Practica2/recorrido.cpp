@@ -2688,7 +2688,6 @@ Simbolo Recorrido::recorrer(NodoAst *raiz, Entorno *h){
             NodoAst hijo1 = left.l_hijos.at(0);//variable
             NodoAst hijo2 = left.l_hijos.at(1);//num
             NodoAst hijo3 = left.l_hijos.at(2);//condicion
-//            NodoAst hijo4 = left.l_hijos.at(3);//variable
             NodoAst hijo5 = left.l_hijos.at(4); //aumento - decremento
 
             Simbolo s1 = recorrer(&hijo2,h);

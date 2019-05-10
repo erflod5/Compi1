@@ -1,0 +1,51 @@
+package analizador;
+import java_cup.runtime.Symbol;
+
+%%
+%class Lexer1
+%public
+%line
+%char
+%cup
+%unicode
+%ignorecase
+%8bit
+%full
+
+%init{
+    yyline = 0;
+    yychar = 0;
+%init}
+
+entero = [0-9]+
+decimal = [0-9]+"."[0-9]+
+booleano = true | false
+cadena = [\"]([^\"\n]|(\\\"))*[\"]
+caracter = [']("\\")?([a-zñA-ZÑ]+|[0-9]+)[']
+BLANCOS=[ \r\t]+
+
+
+%%
+
+"+" {return new Symbol(sym.mas,yyline,yychar, yytext());}
+"-" {return new Symbol(sym.menos,yyline,yychar, yytext());}
+"*" {return new Symbol(sym.por,yyline,yychar, yytext());}
+"/" {return new Symbol(sym.div,yyline,yychar, yytext());}
+"," {return new Symbol(sym.coma,yyline,yychar, yytext());}
+";" {return new Symbol(sym.puntocoma,yyline,yychar, yytext());}
+"(" {return new Symbol(sym.abre,yyline,yychar, yytext());}
+")" {return new Symbol(sym.cierra,yyline,yychar, yytext());}
+
+" ﻿" {}
+\n {yychar=0;}
+{BLANCOS} {}
+{entero} {return new Symbol(sym.entero,yyline,yychar,yytext());}
+{decimal} {return new Symbol(sym.decimal,yyline,yychar,yytext());}
+{booleano} {return new Symbol(sym.booleano,yyline,yychar,yytext());}
+{cadena} {return new Symbol(sym.cadena,yyline,yychar,yytext());}
+{caracter} {return new Symbol(sym.caracter,yyline,yychar,yytext());}
+
+
+. {
+
+}

@@ -1,0 +1,44 @@
+package analizador;
+import java_cup.runtime.Symbol;
+
+%%
+%class Lexer
+%public
+%line
+%char
+%cup
+%unicode
+%ignorecase
+%8bit
+%full
+
+%init{
+    yyline = 0;
+    yychar = 0;
+%init}
+
+BLANCOS=[ \r\t]+
+num=[0-9]*
+comentario_linea =("//".*\r\n)|("//".*\n)|("//".*\r)
+comentario_multi = "/*"((.*)|\r\n|\n|\r)*"*/"
+
+%%
+
+"(" {return new Symbol(sym.abre,yyline,yychar, yytext());}
+")" {return new Symbol(sym.cierra,yyline,yychar, yytext());}
+"," {return new Symbol(sym.coma,yyline,yychar, yytext());}
+
+
+
+" ﻿" {}
+
+\n {yychar=0;}
+
+{BLANCOS} {}
+{comentario_linea} {}
+{comentario_multi} {}
+{num} {return new Symbol(sym.num,yyline,yychar,yytext());}
+
+. {
+
+}

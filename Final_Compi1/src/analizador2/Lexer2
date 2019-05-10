@@ -1,0 +1,38 @@
+package analizador2;
+import java_cup.runtime.Symbol;
+
+%%
+%class Lexer2
+%public
+%line
+%char
+%cup
+%unicode
+%ignorecase
+%8bit
+%full
+
+%init{
+    yyline = 0;
+    yychar = 0;
+%init}
+
+BLANCOS=[ \r\t]+
+num = [0-9]
+
+%%
+
+"," {return new Symbol(sym.coma,yyline,yychar, yytext());}
+"+" {return new Symbol(sym.mas,yyline,yychar, yytext());}
+
+" ﻿" {}
+
+\n {yychar=0;}
+
+{BLANCOS} {}
+
+{num} {return new Symbol(sym.num,yyline,yychar,yytext());}
+
+. {
+
+}

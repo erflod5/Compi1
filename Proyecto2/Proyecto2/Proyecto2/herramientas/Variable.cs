@@ -12,6 +12,7 @@ namespace Proyecto2.herramientas
         public String nombre;
         public Object dato;
         public TYPE t;
+        public TYPE taux;
         public bool Private;
 
         public Variable(int fila, int columna, string nombre, object dato, TYPE t)
@@ -57,7 +58,20 @@ namespace Proyecto2.herramientas
                 case "char":
                     this.t = TYPE.CHAR;
                     break;
+                case "void":
+                    this.t = TYPE.VOID;
+                    break;
+                case "funcion":
+                    this.t = TYPE.FUNCION;  
+                    break;
+                default:
+                    this.t = TYPE.CLASS;
+                    break;
             }
+        }
+
+        public bool esnum() {
+            return this.t == TYPE.INT || this.t == TYPE.DOUBLE ? true : false;
         }
 
         public void addVar(Object dato, String tipo) {
@@ -89,5 +103,5 @@ namespace Proyecto2.herramientas
             }
         }
     }
-    public enum TYPE {INT, STRING, DOUBLE, CHAR, BOOL, VOID, FUNCION, CLASS, ERROR };
+    public enum TYPE {INT, STRING, DOUBLE, CHAR, BOOL, VOID, FUNCION, CLASS, CONTINUAR,SALIR, RETURN, ARRAY, ERROR };
 }

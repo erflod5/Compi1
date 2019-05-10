@@ -120,8 +120,8 @@ namespace Proyecto2.analizador
             BLOQUECOMPROBAR = new NonTerminal("BloqueComprobar"), BLOQUECASO = new NonTerminal("BloqueCaso"), ADDFIGURE = new NonTerminal("AddFigure"),
             FIGURE = new NonTerminal("Figure"), TFIGURE = new NonTerminal("TFigure"), B3 = new NonTerminal("B3"), B2 = new NonTerminal("B2"),
             MAIN = new NonTerminal("Main"), L1 = new NonTerminal("L1"), C1 = new NonTerminal("C1"), D1 = new NonTerminal("D1"),
-            IF = new NonTerminal("IF"), ElseIF = new NonTerminal("ELSEIF"), ELSE = new NonTerminal("ELSE")
-            ;
+            IF = new NonTerminal("IF"), ElseIF = new NonTerminal("ELSEIF"), ELSE = new NonTerminal("ELSE"),
+            BARREGLO = new NonTerminal("BArreglo"), T_DATO1 = new NonTerminal("TipoDato");
 
             #endregion
 
@@ -129,14 +129,14 @@ namespace Proyecto2.analizador
             S.Rule = LISTACLASE;
 
             LISTACLASE.Rule = MakePlusRule(LISTACLASE, BLOCKCLASE);
-          
-            BLOCKCLASE.Rule = rclase + identifier + ToTerm("{") + LISTA_BLOQUE + ToTerm("}")
-                    | rclase + identifier + rimportar + LID + ToTerm("{") + LISTA_BLOQUE + ToTerm("}")
-                    | rclase + identifier + ToTerm("{") + ToTerm("}")
-                    | rclase + identifier + rimportar + LID + ToTerm("{") + ToTerm("}");
+
+            BLOCKCLASE.Rule = rclase + identifier + ToTerm("{") + LISTA_BLOQUE + ToTerm("}")  //3
+                    | rclase + identifier + rimportar + LID + ToTerm("{") + LISTA_BLOQUE + ToTerm("}") //5
+                    | rclase + identifier + ToTerm("{") + ToTerm("}") //2
+                    | rclase + identifier + rimportar + LID + ToTerm("{") + ToTerm("}"); //4
 
             LISTA_BLOQUE.Rule = MakePlusRule(LISTA_BLOQUE, BLOQUE);
-                    
+
 
             BLOQUE.Rule = VISIBILIDAD + DECLARACION
                     | DECLARACION
@@ -148,14 +148,14 @@ namespace Proyecto2.analizador
 
             MAIN.Rule = rmain + ToTerm("(") + ToTerm(")") + ToTerm("{") + INMETODO + ToTerm("}");
 
-            METODOS.Rule = identifier + rvoid + OVERRIDE + ToTerm("(") + LPARAMETROS + ToTerm(")") + ToTerm("{") + INMETODO + ToTerm("}")
-                    | identifier + rvoid + OVERRIDE + ToTerm("(") + ToTerm(")") + ToTerm("{") + INMETODO + ToTerm("}")
+            METODOS.Rule = identifier + rvoid + OVERRIDE + ToTerm("(") + LPARAMETROS + ToTerm(")") + ToTerm("{") + INMETODO + ToTerm("}") //4 hijos
+                    | identifier + rvoid + OVERRIDE + ToTerm("(") + ToTerm(")") + ToTerm("{") + INMETODO + ToTerm("}") //3 hijos
 
-                    | identifier + T_DATO + OVERRIDE + ToTerm("(") + ToTerm(")") + ToTerm("{") + INMETODO + ToTerm("}")
-                    | identifier + T_DATO + OVERRIDE + ToTerm("(") + LPARAMETROS + ToTerm(")") + ToTerm("{") + INMETODO + ToTerm("}")
+                    | identifier + T_DATO + OVERRIDE + ToTerm("(") + ToTerm(")") + ToTerm("{") + INMETODO + ToTerm("}") //3 hijos
+                    | identifier + T_DATO + OVERRIDE + ToTerm("(") + LPARAMETROS + ToTerm(")") + ToTerm("{") + INMETODO + ToTerm("}") //4 hijos
 
-                    | identifier + rarray + T_DATO + DIM + OVERRIDE + ToTerm("(") + ToTerm(")") + ToTerm("{") + INMETODO + ToTerm("}")
-                    | identifier + rarray + T_DATO + DIM + OVERRIDE + ToTerm("(") + LPARAMETROS + ToTerm(")") + ToTerm("{") + INMETODO + ToTerm("}");
+                    | identifier + rarray + T_DATO + DIM + OVERRIDE + ToTerm("(") + ToTerm(")") + ToTerm("{") + INMETODO + ToTerm("}") //5 hijos
+                    | identifier + rarray + T_DATO + DIM + OVERRIDE + ToTerm("(") + LPARAMETROS + ToTerm(")") + ToTerm("{") + INMETODO + ToTerm("}"); //6 hijos
 
             OVERRIDE.Rule = roverride
                     | Empty;
@@ -184,7 +184,7 @@ namespace Proyecto2.analizador
                     | rcontinuar + ToTerm(";")
                     | rsalir + ToTerm(";")
                     | rreturn + E + ToTerm(";");
-                
+
 
             BLOQUEIF.Rule = IF
                     | IF + ELSE
@@ -210,8 +210,8 @@ namespace Proyecto2.analizador
 
             BLOQUEHACER.Rule = rhacer + ToTerm("{") + INMETODO + ToTerm("}") + rmientras + ToTerm("(") + E + ToTerm(")") + ToTerm(";");
 
-            BLOQUEFOR.Rule = rfor + ToTerm("(") + T_DATO + identifier + igual + E + ToTerm(";") + E + ToTerm(";") + E + ToTerm(")") + ToTerm("{") + INMETODO + ToTerm("}")
-                    | rfor + ToTerm("(") + identifier + igual + E + ToTerm(";") + E + ToTerm(";") + E + ToTerm(")") + ToTerm("{") + INMETODO + ToTerm("}");
+            BLOQUEFOR.Rule = rfor + ToTerm("(") + T_DATO + identifier + igual + E + ToTerm(";") + E + ToTerm(";") + ASIGNACION + ToTerm(")") + ToTerm("{") + INMETODO + ToTerm("}")
+                    | rfor + ToTerm("(") + identifier + igual + E + ToTerm(";") + E + ToTerm(";") + ASIGNACION + ToTerm(")") + ToTerm("{") + INMETODO + ToTerm("}");
 
             BLOQUECOMPROBAR.Rule = rcomprobar + ToTerm("(") + E + ToTerm(")") + ToTerm("{") + BLOQUECASO + ToTerm("}")
                     | rcomprobar + ToTerm("(") + E + ToTerm(")") + ToTerm("{") + BLOQUECASO + rdefecto + ToTerm(":") + INMETODO + ToTerm("}");
@@ -231,17 +231,25 @@ namespace Proyecto2.analizador
                     | rline + ToTerm("(") + E + ToTerm(",") + E + ToTerm(",") + E + ToTerm(",") + E + ToTerm(",") + E + ToTerm(",") + E + ToTerm(")");
 
             DECLARACION.Rule = T_DATO + LID + ToTerm(";")
+                    | identifier + identifier  + ToTerm(";")
                     | T_DATO + LID + igual + E + ToTerm(";")
                     | T_DATO + rarray + LID + DIM + ToTerm(";")
                     | identifier + identifier + igual + rnew + identifier + ToTerm("(") + ToTerm(")") + ToTerm(";")
                     | T_DATO + rarray + LID + DIM + igual + LDIM + ToTerm(";");
 
 
-            ASIGNACION.Rule = identifier + igual + E + ToTerm(";")
-                    | identifier + igual + rnew + identifier + ToTerm("(") + ToTerm(")") + ToTerm(";")
-                    | identifier + DIM + igual + E + ToTerm(";")
-                    | identifier + aumento + ToTerm(";")
-                    | identifier + decremento + ToTerm(";")
+
+            ASIGNACION.Rule = identifier + igual + E + ToTerm(";") //2 hijos ya
+                    | identifier + igual + rnew + identifier + ToTerm("(") + ToTerm(")") + ToTerm(";") //3 hijos
+                    | identifier + DIM + igual + E + ToTerm(";") //3 hijos
+                    | D1 + DIM + igual + E + ToTerm(";")
+                    | identifier + aumento + ToTerm(";") //2 hijos ya
+                    | identifier + decremento + ToTerm(";") //2 hijos ya
+                    | identifier + aumento
+                    | identifier + decremento
+                    | D1 + igual + E + ToTerm(";") //2 hijos pendiente
+                    | D1 + aumento + ToTerm(";")
+                    | D1 + decremento + ToTerm(";")
                 ;
 
             LDIM.Rule = ToTerm("{") + DIM1 + ToTerm("}")
@@ -272,6 +280,12 @@ namespace Proyecto2.analizador
                     | rbool
                     | rstring
                     | identifier;
+
+            T_DATO1.Rule = rint
+                    | rchar
+                    | rdouble
+                    | rbool
+                    | rstring;
 
             VISIBILIDAD.Rule = rprivado
                     | rpublico;
@@ -309,10 +323,13 @@ namespace Proyecto2.analizador
                     | num
                     | ToTerm("(") + E + ToTerm(")")
                     | D1
-                    | D1 + ToTerm("[") + E + ToTerm("]")
+                    | BARREGLO;
+
+            BARREGLO.Rule = D1 + ToTerm("[") + E + ToTerm("]")
                     | D1 + ToTerm("[") + E + ToTerm("]") + ToTerm("[") + E + ToTerm("]")
-                    | D1 + ToTerm("[") + E + ToTerm("]") + ToTerm("[") + E + ToTerm("]") + ToTerm("[") + E + ToTerm("]")
-                    ;
+                    | D1 + ToTerm("[") + E + ToTerm("]") + ToTerm("[") + E + ToTerm("]") + ToTerm("[") + E + ToTerm("]");
+
+
 
             D1.Rule = MakePlusRule(D1, punto, identifier)
                     | MakePlusRule(D1,punto,FUNCION);

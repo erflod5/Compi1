@@ -1,0 +1,297 @@
+package analizador;
+
+
+import java_cup.runtime.*;
+import java.util.Iterator;
+import final_compi1.*;
+
+
+parser code
+{:
+    /**
+     * Método al que se llama automáticamente ante algún error sintactico.
+     **/
+    public void syntax_error(Symbol s){
+            System.err.println("Error Sintáctico en la Línea " + (s.left) +" Columna "+s.right+ ". No se esperaba este componente: " +s.value+".");
+    }
+    /**
+     * Método al que se llama en el momento en que ya no es posible una recuperación de errores.
+     **/
+    public void unrecovered_syntax_error(Symbol s) throws java.lang.Exception{
+            System.err.println("Error síntactico irrecuperable en la Línea " + (s.left)+ " Columna "+s.right+". Componente " + s.value + " no reconocido.");
+    }
+
+
+:}
+
+terminal String mas,menos,por,div,coma,puntocoma,entero,decimal,booleano,cadena,caracter,abre,cierra,menos1;
+
+non terminal Nodo2 S,LENT,LEXPR,E;
+
+precedence left mas,menos;
+precedence left por,div;
+precedence left menos1;
+
+start with S;
+
+S::= LENT{:
+
+  :}
+;
+
+LENT::=LENT:A puntocoma LEXPR:B{:
+    Principal.salida1.append(B.cadena1);
+    Principal.salida1.append("\n");
+    Principal.salida1.append(B.cadena2);
+    Principal.salida1.append("\n");
+  :}
+  | LEXPR:A{:
+    Principal.salida1.append(A.cadena1);
+    Principal.salida1.append("\n");
+    Principal.salida1.append(A.cadena2 );
+    Principal.salida1.append("\n");
+  :}
+;
+
+LEXPR::=LEXPR:A coma E:B{:
+    Nodo2 nuevo = new Nodo2();
+    nuevo.cadena1 = A.cadena1 + "," + B.cadena1;
+    nuevo.evaluado = true;
+    if(!A.evaluado){
+      if(A.tipo == 1){
+        if(B.tipo == 1){
+          nuevo.dato = (int)A.dato + (int)B.dato;
+          nuevo.tipo = 1;
+        }
+        else if(B.tipo == 2){
+          nuevo.dato = (int)A.dato + (double)B.dato;
+          nuevo.tipo = 2;
+        }
+        else{
+          nuevo.cadena2 = A.dato + "," + B.cadena1;
+          nuevo.dato = "";
+          nuevo.tipo = 5;
+        }
+      }
+      else if(A.tipo == 2){
+        if(B.tipo == 1 || B.tipo == 2){
+          nuevo.dato = (double)A.dato + Double.parseDouble(B.dato.toString());
+          nuevo.tipo = 2;
+        }
+        else{
+          nuevo.cadena2 = A.dato + "," + B.cadena1;
+          nuevo.tipo = 5;
+          nuevo.dato = "";
+        }
+      }
+      else if(B.tipo ==1 || B.tipo ==2){
+        nuevo.cadena2 = A.cadena1;
+        nuevo.tipo = B.tipo;
+        nuevo.dato = B.dato;
+      }
+      else{
+        nuevo.cadena2 = A.cadena1 + B.cadena1;
+        nuevo.tipo = B.tipo;
+        nuevo.dato = B.dato;
+      }
+    }
+    else{
+      if(A.tipo == 1){
+        if(B.tipo == 1){
+          nuevo.dato = (int)A.dato + (int)B.dato;
+          nuevo.tipo = 1;
+        }
+        else if(B.tipo == 2){
+          nuevo.dato = (int)A.dato + (double)B.dato;
+          nuevo.tipo = 2;
+        }
+        else{
+          nuevo.cadena2 = A.cadena2 + "," + A.dato + "," + B.cadena1;
+          nuevo.dato = "";
+          nuevo.tipo = 5;
+        }
+      }
+      else if(A.tipo == 2){
+        if(B.tipo == 1 || B.tipo == 2){
+          nuevo.dato = (double)A.dato + Double.parseDouble(B.dato.toString());
+          nuevo.tipo = 2;
+        }
+        else{
+          nuevo.cadena2 = A.cadena2 + "," + A.dato + "," + B.cadena1;
+          nuevo.tipo = 5;
+          nuevo.dato = "";
+        }
+      }
+      else if(B.tipo == 1 || B.tipo == 2){
+        if(A.cadena2 == null)
+          nuevo.cadena2 = A.cadena1;
+        else
+          nuevo.cadena2 = A.cadena2;
+        nuevo.tipo = B.tipo;
+        nuevo.dato = B.dato;
+      }
+      else{
+        if(A.cadena2 == null)
+          nuevo.cadena2 = A.cadena1 + B.cadena1;
+        else
+          nuevo.cadena2 = A.cadena2 + B.cadena1;
+
+        nuevo.tipo = B.tipo;
+        nuevo.dato = B.dato;
+      }
+    }
+    RESULT = nuevo;
+  :}
+  | E:A{:
+    RESULT = A;
+  :}
+;
+
+E::= E:A mas E:B{:
+    Nodo2 nuevo = new Nodo2();
+    nuevo.tipo = 4;
+    if(A.tipo == 1){
+      if(B.tipo == 1){
+        nuevo.dato = (int)A.dato + (int)B.dato;
+        nuevo.tipo = 1;
+      }
+      else if(B.tipo == 2){
+        nuevo.dato = (int)A.dato + (double)B.dato;
+        nuevo.tipo = 2;
+      }
+    }
+    else if(A.tipo == 2){
+      if(B.tipo == 1 || B.tipo == 2){
+        nuevo.dato = (double)A.dato + Double.parseDouble(B.dato.toString());
+        nuevo.tipo = 2;
+      }
+    }
+    nuevo.cadena1 = A.cadena1 + " " + B.cadena1 + "+";
+    RESULT = nuevo;
+  :}
+  | E:A menos E:B{:
+    Nodo2 nuevo = new Nodo2();
+    nuevo.tipo = 4;
+    if(A.tipo == 1){
+      if(B.tipo == 1){
+        nuevo.dato = (int)A.dato - (int)B.dato;
+        nuevo.tipo = 1;
+      }
+      else if(B.tipo == 2){
+        nuevo.dato = (int)A.dato - (double)B.dato;
+        nuevo.tipo = 2;
+      }
+    }
+    else if(A.tipo == 2){
+      if(B.tipo == 1 || B.tipo == 2){
+        nuevo.dato = (double)A.dato - Double.parseDouble(B.dato.toString());
+        nuevo.tipo = 2;
+      }
+    }
+    nuevo.cadena1 = A.cadena1 + " " + B.cadena1 + "-";
+    RESULT = nuevo;
+    :}
+  |E:A por E:B{:
+    Nodo2 nuevo = new Nodo2();
+    nuevo.tipo = 4;
+    if(A.tipo == 1){
+      if(B.tipo == 1){
+        nuevo.dato = (int)A.dato * (int)B.dato;
+        nuevo.tipo = 1;
+      }
+      else if(B.tipo == 2){
+        nuevo.dato = (int)A.dato * (double)B.dato;
+        nuevo.tipo = 2;
+      }
+    }
+    else if(A.tipo == 2){
+      if(B.tipo == 1 || B.tipo == 2){
+        nuevo.dato = (double)A.dato * Double.parseDouble(B.dato.toString());
+        nuevo.tipo = 2;
+      }
+    }
+    nuevo.cadena1 = A.cadena1 + " " + B.cadena1 + "*";
+    RESULT = nuevo;
+    :}
+  |E:A div E:B{:
+    Nodo2 nuevo = new Nodo2();
+    nuevo.tipo = 4;
+    if(A.tipo == 1){
+      if(B.tipo == 1){
+        nuevo.dato = (int)A.dato / (int)B.dato;
+        nuevo.tipo = 1;
+      }
+      else if(B.tipo == 2){
+        nuevo.dato = (int)A.dato / (double)B.dato;
+        nuevo.tipo = 2;
+      }
+    }
+    else if(A.tipo == 2){
+      if(B.tipo == 1 || B.tipo == 2){
+        nuevo.dato = (double)A.dato / Double.parseDouble(B.dato.toString());
+        nuevo.tipo = 2;
+      }
+    }
+    nuevo.cadena1 = A.cadena1 + " " + B.cadena1 + "/";
+
+    RESULT = nuevo;
+    :}
+  | menos E:A{:
+    Nodo2 nuevo = new Nodo2();
+    nuevo.cadena1 = A.cadena1 + "-";
+    if(nuevo.tipo == 1){
+      nuevo.dato = -(int)nuevo.dato;
+    }
+    else if(nuevo.tipo == 2){
+      nuevo.dato = -(double)nuevo.dato;
+    }
+    RESULT = nuevo;
+    :}
+    %prec menos1
+  | entero:A{:
+    Nodo2 nuevo = new Nodo2();
+    nuevo.tipo = 1;
+    nuevo.dato = Integer.parseInt(A);
+        nuevo.cadena1 = A;
+    RESULT = nuevo;
+    :}
+  | decimal:A{:
+    Nodo2 nuevo = new Nodo2();
+    nuevo.tipo = 2;
+    nuevo.dato = Double.parseDouble(A);
+        nuevo.cadena1 = A;
+    RESULT = nuevo;
+    :}
+  | cadena:A{:
+    Nodo2 nuevo = new Nodo2();
+    nuevo.tipo = 3;
+    nuevo.dato = A;
+        nuevo.cadena1 = A;
+    RESULT = nuevo;
+    :}
+  | caracter:A{:
+    Nodo2 nuevo = new Nodo2();
+    nuevo.tipo = 4;
+    nuevo.dato = A;
+        nuevo.cadena1 = A;
+    RESULT = nuevo;
+    :}
+  | booleano:A{:
+    Nodo2 nuevo = new Nodo2();
+    nuevo.tipo = 5;
+    nuevo.dato = A;
+    nuevo.cadena1 = A;
+    RESULT = nuevo;
+    :}
+  | abre E:A cierra{:
+    Nodo2 nuevo = new Nodo2();
+    nuevo.tipo = A.tipo;
+    nuevo.dato = A.dato;
+    nuevo.cadena2 = A.cadena2;
+    nuevo.cadena1 = "(" + A.cadena1 + ")";
+    RESULT = nuevo;
+    :}
+;
+
+
+/*1: int, 2: double, 3:String, 4: caracter, 5: booleano*/

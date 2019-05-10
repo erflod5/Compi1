@@ -1,0 +1,65 @@
+package analizador2;
+
+import final_compi1.*;
+import java_cup.runtime.*;
+import java.util.Iterator;
+
+
+parser code
+{:
+    /**
+     * Método al que se llama automáticamente ante algún error sintactico.
+     **/
+    public void syntax_error(Symbol s){
+            System.err.println("Error Sintáctico en la Línea " + (s.left) +" Columna "+s.right+ ". No se esperaba este componente: " +s.value+".");
+    }
+    /**
+     * Método al que se llama en el momento en que ya no es posible una recuperación de errores.
+     **/
+    public void unrecovered_syntax_error(Symbol s) throws java.lang.Exception{
+            System.err.println("Error síntactico irrecuperable en la Línea " + (s.left)+ " Columna "+s.right+". Componente " + s.value + " no reconocido.");
+    }
+
+
+:}
+
+terminal String coma,mas,num;
+
+non terminal Nodo S,LEXPR,E;
+
+precedence left mas;
+
+start with S;
+
+S::= LEXPR{: :}
+;
+
+LEXPR::=LEXPR coma E:A{:
+  if(A.dato%2 == 0){
+    System.out.println("Es par");
+  }
+  else{
+    System.out.println("Es impar");
+  }
+  :}
+  | E:A{:
+    if(A.dato%2 == 0){
+      System.out.println("Es par");
+    }
+    else{
+      System.out.println("Es impar");
+    }
+  :}
+;
+
+E::= E:A mas E:B{:
+    Nodo nuevo = new Nodo();
+    nuevo.dato = A.dato + B.dato;
+    RESULT = nuevo;
+  :}
+  | num:A{:
+    Nodo nuevo = new Nodo();
+    nuevo.dato = Integer.parseInt(A);
+    RESULT = nuevo;
+  :}
+;

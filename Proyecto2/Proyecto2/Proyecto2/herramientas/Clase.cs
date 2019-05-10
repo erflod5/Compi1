@@ -10,12 +10,10 @@ namespace Proyecto2.herramientas
 {
     class Clase
     {
-        Entorno principal;
-        ArrayList lista_importar;
+        public Entorno principal;
         
         public Clase() {
             principal = new Entorno();
-            lista_importar = new ArrayList();
         }
 
     }

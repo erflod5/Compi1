@@ -1,0 +1,51 @@
+package analizador;
+
+
+import java_cup.runtime.*;
+import java.util.Iterator;
+import tare4.*;
+
+
+parser code
+{:
+    /**
+     * Método al que se llama automáticamente ante algún error sintactico.
+     **/
+    public void syntax_error(Symbol s){
+            System.err.println("Error Sintáctico en la Línea " + (s.left) +" Columna "+s.right+ ". No se esperaba este componente: " +s.value+".");
+    }
+    /**
+     * Método al que se llama en el momento en que ya no es posible una recuperación de errores.
+     **/
+    public void unrecovered_syntax_error(Symbol s) throws java.lang.Exception{
+            System.err.println("Error síntactico irrecuperable en la Línea " + (s.left)+ " Columna "+s.right+". Componente " + s.value + " no reconocido.");
+    }
+:}
+
+terminal String abre,cierra,coma,igual,id;
+
+non terminal Nodo S,LID;
+
+start with S;
+
+S::= LID:A cierra{:
+      System.out.println("El id: " + A.cadena + " se repite " + A.contador + " veces");
+    :}
+;
+
+LID::=LID:A coma id:B{:
+    if(A.cadena.equals(B)){
+      A.contador += 1;
+    }
+    RESULT = A;
+  :}
+
+  | id:A igual abre id:B{:
+      Nodo nuevo = new Nodo();
+      nuevo.cadena = A;
+      if(nuevo.cadena.equals(B)){
+        nuevo.contador = 1;
+      }
+      RESULT = nuevo;
+  :}
+;

@@ -281,7 +281,7 @@
             // compilarToolStripMenuItem
             // 
             this.compilarToolStripMenuItem.Name = "compilarToolStripMenuItem";
-            this.compilarToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.compilarToolStripMenuItem.Size = new System.Drawing.Size(123, 22);
             this.compilarToolStripMenuItem.Text = "Compilar";
             this.compilarToolStripMenuItem.Click += new System.EventHandler(this.compilarToolStripMenuItem_Click);
             // 
@@ -297,13 +297,13 @@
             // erroresToolStripMenuItem
             // 
             this.erroresToolStripMenuItem.Name = "erroresToolStripMenuItem";
-            this.erroresToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.erroresToolStripMenuItem.Size = new System.Drawing.Size(139, 22);
             this.erroresToolStripMenuItem.Text = "Errores";
             // 
             // generarASTToolStripMenuItem
             // 
             this.generarASTToolStripMenuItem.Name = "generarASTToolStripMenuItem";
-            this.generarASTToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.generarASTToolStripMenuItem.Size = new System.Drawing.Size(139, 22);
             this.generarASTToolStripMenuItem.Text = "Generar AST";
             this.generarASTToolStripMenuItem.Click += new System.EventHandler(this.generarASTToolStripMenuItem_Click);
             // 
@@ -330,7 +330,7 @@
             this.MainMenuStrip = this.menuStrip1;
             this.Margin = new System.Windows.Forms.Padding(2);
             this.Name = "Form1";
-            this.Text = "Form1";
+            this.Text = "Proyecto 2";
             this.panel1.ResumeLayout(false);
             this.tabControl2.ResumeLayout(false);
             this.tabPage4.ResumeLayout(false);
