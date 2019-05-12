@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Proyecto2.analizador;
 
 namespace Proyecto2.herramientas
 {
@@ -10,7 +11,8 @@ namespace Proyecto2.herramientas
     {
         private int i, j, k;
         private Object[] array;
-
+        public TYPE T;
+       
         public Arreglo(int i) {
             this.i = i;
             this.j = this.k = -1;
@@ -31,54 +33,74 @@ namespace Proyecto2.herramientas
             array = new object[i * j * k];
         }
 
-        public void setData(int i, Object data) {
-            if (this.j == -1 && this.k == -1){
-                if (i < this.i)
+        public void setData(int i, Object data, TYPE tipo) {
+            if (tipo == T || (tipo == TYPE.DOUBLE && T == TYPE.INT) || (tipo == TYPE.INT || T == TYPE.DOUBLE)) {
+                if (this.j == -1 && this.k == -1)
                 {
-                    array[i] = data;
-                }
-                else {
-                    /*ERROR DE POSICION*/
-                }
-            }
-            else {
-                //ERROR
-            }
-        }
-
-        public void setData(int i, int j, Object data) {
-            if (this.k == -1)
-            {
-                if (this.j != -1)
-                {
-                    if (i < this.i && j < this.j)
+                    if (i < this.i)
                     {
-                        array[j * this.i  + i] = data;
+                        array[i] = data;
                     }
                     else
                     {
                         /*ERROR DE POSICION*/
+                        Syntax.listaerrores.Add(new Error(0, 0, "Posicion fuera del intervalo"));
                     }
                 }
                 else
                 {
-                    /*ERROR*/
+                    //ERROR
+                    Syntax.listaerrores.Add(new Error(0, 0, "Posicion fuera del intervalo"));
                 }
-            }
-            else {
-                /*error again*/
             }
         }
 
-        public void setData(int i, int j, int k, Object data) {
-            if (this.k != -1 && this.j != -1)
+        public void setData(int i, int j, Object data, TYPE tipo) {
+            if (tipo == T || (tipo == TYPE.DOUBLE && T == TYPE.INT) || (tipo == TYPE.INT || T == TYPE.DOUBLE))
             {
-                if (i < this.i && j < this.j && k < this.k) {
-                    array[k * this.j*this.i + j * this.i + i] = data;
+                if (this.k == -1)
+                {
+                    if (this.j != -1)
+                    {
+                        if (i < this.i && j < this.j)
+                        {
+                            array[j * this.i + i] = data;
+                        }
+                        else
+                        {
+                            /*ERROR DE POSICION*/
+                            Syntax.listaerrores.Add(new Error(0, 0, "Posicion fuera del intervalo"));
+                        }
+                    }
+                    else
+                    {
+                        /*ERROR*/
+                        Syntax.listaerrores.Add(new Error(0, 0, "Posicion fuera del intervalo"));
+                    }
+                }
+                else
+                {
+                    /*error again*/
+                    Syntax.listaerrores.Add(new Error(0, 0, "Posicion fuera del intervalo"));
                 }
             }
-            else {
-                /*ERROR DE DIMENSION EN ARRAY*/
+        }
+
+        public void setData(int i, int j, int k, Object data, TYPE tipo) {
+            if (tipo == T || (tipo == TYPE.DOUBLE && T == TYPE.INT) || (tipo == TYPE.INT || T == TYPE.DOUBLE))
+            {
+                if (this.k != -1 && this.j != -1)
+                {
+                    if (i < this.i && j < this.j && k < this.k)
+                    {
+                        array[k * this.j * this.i + j * this.i + i] = data;
+                    }
+                }
+                else
+                {
+                    /*ERROR DE DIMENSION EN ARRAY*/
+                    Syntax.listaerrores.Add(new Error(0, 0, "Posicion fuera del intervalo"));
+                }
             }
         }
 
@@ -105,6 +127,28 @@ namespace Proyecto2.herramientas
                 return array[k * this.j * this.i + j * this.i + i];
             }
             return null;
+        }
+
+        public void setTipo(String tipo)
+        {
+            switch (tipo.ToLower())
+            {
+                case "int":
+                    this.T = TYPE.INT;
+                    break;
+                case "string":
+                    this.T = TYPE.STRING;
+                    break;
+                case "double":
+                    this.T = TYPE.DOUBLE;
+                    break;
+                case "char":
+                    this.T = TYPE.CHAR;
+                    break;
+                case "bool":
+                    this.T = TYPE.BOOL;
+                    break;
+            }
         }
     }
 }

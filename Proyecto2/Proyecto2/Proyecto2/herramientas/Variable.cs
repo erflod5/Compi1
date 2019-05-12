@@ -11,6 +11,7 @@ namespace Proyecto2.herramientas
         public int fila, columna;
         public String nombre;
         public Object dato;
+        public Object datoaux;
         public TYPE t;
         public TYPE taux;
         public bool Private;
@@ -42,7 +43,7 @@ namespace Proyecto2.herramientas
         }
 
         public void addType(String type) {
-            switch (type) {
+            switch (type.ToLower()) {
                 case "int":
                     this.t = TYPE.INT;
                     break;
@@ -75,7 +76,7 @@ namespace Proyecto2.herramientas
         }
 
         public void addVar(Object dato, String tipo) {
-            switch (tipo) {
+            switch (tipo.ToLower()) {
                 case "num":
                     this.dato = Int32.Parse(dato.ToString());
                     this.t = TYPE.INT;
@@ -92,11 +93,11 @@ namespace Proyecto2.herramientas
                     this.t = TYPE.BOOL;
                     this.dato =(Boolean)false;
                     break;
-                case "String":
+                case "string":
                     this.t = TYPE.STRING;
                     this.dato = (String)dato.ToString().Replace("\"","");
                     break;
-                case "Char":
+                case "char":
                     this.t = TYPE.CHAR;
                     this.dato = (Char)Char.Parse(dato.ToString().Replace("'",""));
                     break;

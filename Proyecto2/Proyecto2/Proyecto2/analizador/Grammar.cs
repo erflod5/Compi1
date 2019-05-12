@@ -130,10 +130,10 @@ namespace Proyecto2.analizador
 
             LISTACLASE.Rule = MakePlusRule(LISTACLASE, BLOCKCLASE);
 
-            BLOCKCLASE.Rule = rclase + identifier + ToTerm("{") + LISTA_BLOQUE + ToTerm("}")  //3
-                    | rclase + identifier + rimportar + LID + ToTerm("{") + LISTA_BLOQUE + ToTerm("}") //5
-                    | rclase + identifier + ToTerm("{") + ToTerm("}") //2
-                    | rclase + identifier + rimportar + LID + ToTerm("{") + ToTerm("}"); //4
+            BLOCKCLASE.Rule = rclase + identifier + ToTerm("{") + LISTA_BLOQUE + ToTerm("}")  //3 ya
+                    | rclase + identifier + rimportar + LID + ToTerm("{") + LISTA_BLOQUE + ToTerm("}") //5 ya
+                    | rclase + identifier + ToTerm("{") + ToTerm("}") //2 ya
+                    | rclase + identifier + rimportar + LID + ToTerm("{") + ToTerm("}"); //4 ya
 
             LISTA_BLOQUE.Rule = MakePlusRule(LISTA_BLOQUE, BLOQUE);
 
@@ -169,21 +169,21 @@ namespace Proyecto2.analizador
             MSENTENCIA.Rule = VISIBILIDAD + DECLARACION
                     | DECLARACION
                     | ASIGNACION
-                    | BLOQUESHOW
-                    | BLOQUEPRINT
-                    | BLOQUEREPETIR
-                    | BLOQUEWHILE
-                    | BLOQUEIF
-                    | BLOQUEHACER
-                    | BLOQUEFOR
-                    | BLOQUECOMPROBAR
-                    | ADDFIGURE
-                    | FIGURE
+                    | BLOQUESHOW //YA
+                    | BLOQUEPRINT //YA
+                    | BLOQUEREPETIR //YA 
+                    | BLOQUEWHILE //YA 
+                    | BLOQUEIF //YA
+                    | BLOQUEHACER //YA 
+                    | BLOQUEFOR //YA 
+                    | BLOQUECOMPROBAR //YA 
+                    | ADDFIGURE//YA 
+                    | FIGURE//YA
                     | FUNCION + ToTerm(";")
                     | D1 + ToTerm(";")
-                    | rcontinuar + ToTerm(";")
-                    | rsalir + ToTerm(";")
-                    | rreturn + E + ToTerm(";");
+                    | rcontinuar + ToTerm(";") //YA
+                    | rsalir + ToTerm(";") //YA
+                    | rreturn + E + ToTerm(";"); //YA
 
 
             BLOQUEIF.Rule = IF
@@ -213,14 +213,13 @@ namespace Proyecto2.analizador
             BLOQUEFOR.Rule = rfor + ToTerm("(") + T_DATO + identifier + igual + E + ToTerm(";") + E + ToTerm(";") + ASIGNACION + ToTerm(")") + ToTerm("{") + INMETODO + ToTerm("}")
                     | rfor + ToTerm("(") + identifier + igual + E + ToTerm(";") + E + ToTerm(";") + ASIGNACION + ToTerm(")") + ToTerm("{") + INMETODO + ToTerm("}");
 
-            BLOQUECOMPROBAR.Rule = rcomprobar + ToTerm("(") + E + ToTerm(")") + ToTerm("{") + BLOQUECASO + ToTerm("}")
-                    | rcomprobar + ToTerm("(") + E + ToTerm(")") + ToTerm("{") + BLOQUECASO + rdefecto + ToTerm(":") + INMETODO + ToTerm("}");
+            BLOQUECOMPROBAR.Rule = rcomprobar + ToTerm("(") + E + ToTerm(")") + ToTerm("{") + BLOQUECASO + ToTerm("}");
 
             BLOQUECASO.Rule = MakePlusRule(BLOQUECASO, C1);
 
-            C1.Rule = rcaso + E + ToTerm(":") + INMETODO;
-
-
+            C1.Rule = rcaso + E + ToTerm(":") + INMETODO
+                    | rdefecto + ToTerm(":") + INMETODO;
+                
             FIGURE.Rule = rfigure + ToTerm("(") + E + ToTerm(")") + ToTerm(";");
 
             ADDFIGURE.Rule = raddfigure + ToTerm("(") + TFIGURE + ToTerm(")") + ToTerm(";");
@@ -235,13 +234,14 @@ namespace Proyecto2.analizador
                     | T_DATO + LID + igual + E + ToTerm(";")
                     | T_DATO + rarray + LID + DIM + ToTerm(";")
                     | identifier + identifier + igual + rnew + identifier + ToTerm("(") + ToTerm(")") + ToTerm(";")
+                    | identifier + identifier + igual + E + ToTerm(";")
                     | T_DATO + rarray + LID + DIM + igual + LDIM + ToTerm(";");
 
 
 
             ASIGNACION.Rule = identifier + igual + E + ToTerm(";") //2 hijos ya
-                    | identifier + igual + rnew + identifier + ToTerm("(") + ToTerm(")") + ToTerm(";") //3 hijos
-                    | identifier + DIM + igual + E + ToTerm(";") //3 hijos
+                    | identifier + igual + rnew + identifier + ToTerm("(") + ToTerm(")") + ToTerm(";") //3 hijos ya
+                    | identifier + DIM + igual + E + ToTerm(";") //3 hijos ya 
                     | D1 + DIM + igual + E + ToTerm(";")
                     | identifier + aumento + ToTerm(";") //2 hijos ya
                     | identifier + decremento + ToTerm(";") //2 hijos ya
@@ -312,8 +312,8 @@ namespace Proyecto2.analizador
                     | E + elevado + E
 
                     | menos + E
-                    | E + aumento
-                    | E + decremento
+                    | D1 + aumento
+                    | D1 + decremento
 
                     | dec
                     | rtrue

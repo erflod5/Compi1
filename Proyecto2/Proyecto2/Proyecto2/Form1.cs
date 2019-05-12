@@ -43,10 +43,35 @@ namespace Proyecto2
 
         private void compilarToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            bool resultado = Syntax.analizar(richTextBox2.Text);
-            if (resultado)
+            try
             {
-               Console.WriteLine("Entrada correcta\n");
+                bool resultado = Syntax.analizar(richTextBox2.Text);
+                if (resultado)
+                {
+                    Console.WriteLine("Entrada correcta\n");
+                    dataGridView1.Rows.Clear();
+                    dataGridView1.Refresh();
+                    addGlobal(Syntax.h.tableSyml);
+                    addGlobal(Syntax.h1.tableSyml);
+                }
+            }
+            catch (Exception ex)
+            {
+                richTextBox1.AppendText(ex.ToString());
+            }
+        }
+
+        private void addGlobal(Hashtable hs) {
+            foreach(DictionaryEntry a in hs)
+            {
+                Variable b = (Variable)a.Value;
+                int index = dataGridView1.Rows.Add();
+                dataGridView1.Rows[index].Cells[0].Value = index;
+                dataGridView1.Rows[index].Cells[1].Value = b.nombre;
+                dataGridView1.Rows[index].Cells[2].Value = b.dato;
+                dataGridView1.Rows[index].Cells[3].Value = b.t;
+                dataGridView1.Rows[index].Cells[4].Value = b.fila;
+                dataGridView1.Rows[index].Cells[5].Value = b.columna;
             }
         }
 

@@ -68,6 +68,7 @@
     <Compile Include="herramientas\Clase.cs" />
     <Compile Include="herramientas\Contenedor.cs" />
     <Compile Include="herramientas\Entorno.cs" />
+    <Compile Include="herramientas\Error.cs" />
     <Compile Include="herramientas\Graficador.cs" />
     <Compile Include="herramientas\Variable.cs" />
     <Compile Include="Program.cs" />

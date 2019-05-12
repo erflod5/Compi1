@@ -4,13 +4,14 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Collections;
+using Proyecto2.analizador;
 
 namespace Proyecto2.herramientas
 {
     class Entorno
     {
         Entorno anterior;
-        Hashtable tableSyml;
+        public Hashtable tableSyml;
 
         public Entorno(Entorno anterior, Hashtable tableSyml)
         {
@@ -33,6 +34,8 @@ namespace Proyecto2.herramientas
                 tableSyml.Add(key.ToLower(), data);
                 return true;
             }
+            Variable b = (Variable)data;
+            Syntax.listaerrores.Add(new Error(b.fila, b.columna, "Ya existe la variable " + key));
             return false;
         }
 
@@ -40,6 +43,8 @@ namespace Proyecto2.herramientas
             if (tableSyml.Contains(key.ToLower())) {
                 tableSyml[key.ToLower()] = data;
             }
+            Variable b = (Variable)data;
+            Syntax.listaerrores.Add(new Error(b.fila, b.columna, "No existe la variable " + key));
             return false;
         }
 
@@ -86,7 +91,7 @@ namespace Proyecto2.herramientas
             if (h != null) {
                 if (h.tableSyml.Contains(key)) {
                     Object o = h.tableSyml[key];
-                    if (o is Variable && !((Variable)o).Private) {
+                    if (o is Variable) {
                         return o;
                     }
                 }
