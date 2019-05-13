@@ -45,14 +45,26 @@ namespace Proyecto2
         {
             try
             {
-                bool resultado = Syntax.analizar(richTextBox2.Text);
+                String texto = "";
+                String textoAux = "";
+                foreach(Contenedor c in list_fil)
+                {
+                    if (c.GetTabPage() == tabControl2.SelectedTab)
+                        textoAux = c.GetRichTextBox().Text;
+                    else
+                        texto += c.GetRichTextBox().Text;
+                }
+                texto = textoAux + texto;
+                bool resultado = Syntax.analizar(texto);
                 if (resultado)
                 {
                     Console.WriteLine("Entrada correcta\n");
                     dataGridView1.Rows.Clear();
                     dataGridView1.Refresh();
-                    addGlobal(Syntax.h.tableSyml);
-                    addGlobal(Syntax.h1.tableSyml);
+                    if(Syntax.h !=null)
+                        addGlobal(Syntax.h.tableSyml);
+                    if(Syntax.h1!=null)
+                        addGlobal(Syntax.h1.tableSyml);
                 }
             }
             catch (Exception ex)
@@ -154,7 +166,51 @@ namespace Proyecto2
 
         private void generarASTToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            String ruta = Path.Combine(Application.StartupPath, "arbol.png");
+            String ruta = Path.Combine(Application.StartupPath, "Image");
+            try
+            {
+                if(Directory.Exists(ruta))
+                    System.IO.Directory.Delete(ruta, true);
+                DirectoryInfo dr = Directory.CreateDirectory(ruta);
+            }
+            catch(Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+            }
+            Syntax.generar();
+            System.Diagnostics.Process.Start(ruta);
+        }
+
+        private void erroresToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            string ruta = Path.Combine(Application.StartupPath, "errores.html");
+            try
+            {
+                if (File.Exists(ruta))
+                    File.Delete(ruta); 
+            }
+            catch
+            {
+
+            }
+            StringBuilder bf = new StringBuilder();
+            bf.Append("<html>\n <head>\n <meta charset=\"utf-8\" />\n <title>Reporte de Tokens</title>\n <meta name=\"viewport\" content=\"initial-scale=1.0; maximum-scale=1.0; width=device-width;\">\n");
+            bf.Append("<link rel=\"stylesheet\" type=\"text/css\" href=\"css/main.css\">\n </head>\n <body>\n <div class=\"table-title\">\n <h3>Reporte de Errores</h3>\n </div>\n");
+            bf.Append("<table class=\"table-fill\">\n <thead>\n <th class=\"text-left\">Fila</th>\n <th class=\"text-left\">Columna</th>\n <th class=\"text-left\">Error</th>	\n");
+            bf.Append("</tr>\n </thead>\n <tbody class=\"table-hover\">");
+            foreach (Error er in Syntax.listaerrores)
+            {
+                bf.Append("<tr> <td class=\"text-left\"> " + er.fila + "</td>");
+                bf.Append("<td class=\"text-left\">" + er.columna + "</td>");
+                bf.Append("<td class=\"text-left\">" + er.error + "</td> </tr>");
+            }
+            bf.Append("</tbody>\n </table>\n </body>\n </html>");
+
+            using (StreamWriter mylogs = File.AppendText(ruta))
+            {
+                mylogs.WriteLine(bf.ToString());
+                mylogs.Close();
+            }
             System.Diagnostics.Process.Start(ruta);
         }
     }

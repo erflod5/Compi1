@@ -40,6 +40,12 @@
             this.richTextBox1 = new System.Windows.Forms.RichTextBox();
             this.tabPage2 = new System.Windows.Forms.TabPage();
             this.dataGridView1 = new System.Windows.Forms.DataGridView();
+            this.Number = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.Id = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.Valor = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.Tipo = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.Fila = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.Columna = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.archivoToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.crearToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.abrirToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -52,12 +58,6 @@
             this.erroresToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.generarASTToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.menuStrip1 = new System.Windows.Forms.MenuStrip();
-            this.Number = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.Id = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.Valor = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.Tipo = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.Fila = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.Columna = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.panel1.SuspendLayout();
             this.tabControl2.SuspendLayout();
             this.tabPage4.SuspendLayout();
@@ -195,6 +195,56 @@
             this.dataGridView1.Size = new System.Drawing.Size(964, 272);
             this.dataGridView1.TabIndex = 0;
             // 
+            // Number
+            // 
+            this.Number.Frozen = true;
+            this.Number.HeaderText = "No.";
+            this.Number.MinimumWidth = 45;
+            this.Number.Name = "Number";
+            this.Number.ReadOnly = true;
+            this.Number.Width = 50;
+            // 
+            // Id
+            // 
+            this.Id.Frozen = true;
+            this.Id.HeaderText = "Id";
+            this.Id.MinimumWidth = 45;
+            this.Id.Name = "Id";
+            this.Id.ReadOnly = true;
+            this.Id.Width = 200;
+            // 
+            // Valor
+            // 
+            this.Valor.Frozen = true;
+            this.Valor.HeaderText = "Valor";
+            this.Valor.Name = "Valor";
+            this.Valor.ReadOnly = true;
+            this.Valor.Width = 200;
+            // 
+            // Tipo
+            // 
+            this.Tipo.Frozen = true;
+            this.Tipo.HeaderText = "Tipo";
+            this.Tipo.Name = "Tipo";
+            this.Tipo.ReadOnly = true;
+            this.Tipo.Width = 165;
+            // 
+            // Fila
+            // 
+            this.Fila.Frozen = true;
+            this.Fila.HeaderText = "Fila";
+            this.Fila.Name = "Fila";
+            this.Fila.ReadOnly = true;
+            this.Fila.Width = 150;
+            // 
+            // Columna
+            // 
+            this.Columna.Frozen = true;
+            this.Columna.HeaderText = "Columna";
+            this.Columna.Name = "Columna";
+            this.Columna.ReadOnly = true;
+            this.Columna.Width = 150;
+            // 
             // archivoToolStripMenuItem
             // 
             this.archivoToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
@@ -269,13 +319,14 @@
             // erroresToolStripMenuItem
             // 
             this.erroresToolStripMenuItem.Name = "erroresToolStripMenuItem";
-            this.erroresToolStripMenuItem.Size = new System.Drawing.Size(139, 22);
+            this.erroresToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             this.erroresToolStripMenuItem.Text = "Errores";
+            this.erroresToolStripMenuItem.Click += new System.EventHandler(this.erroresToolStripMenuItem_Click);
             // 
             // generarASTToolStripMenuItem
             // 
             this.generarASTToolStripMenuItem.Name = "generarASTToolStripMenuItem";
-            this.generarASTToolStripMenuItem.Size = new System.Drawing.Size(139, 22);
+            this.generarASTToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             this.generarASTToolStripMenuItem.Text = "Generar AST";
             this.generarASTToolStripMenuItem.Click += new System.EventHandler(this.generarASTToolStripMenuItem_Click);
             // 
@@ -290,56 +341,6 @@
             this.menuStrip1.Size = new System.Drawing.Size(1006, 24);
             this.menuStrip1.TabIndex = 0;
             this.menuStrip1.Text = "menuStrip1";
-            // 
-            // Number
-            // 
-            this.Number.Frozen = true;
-            this.Number.HeaderText = "No.";
-            this.Number.MinimumWidth = 45;
-            this.Number.Name = "Number";
-            this.Number.ReadOnly = true;
-            this.Number.Width = 50;
-            // 
-            // Id
-            // 
-            this.Id.Frozen = true;
-            this.Id.HeaderText = "Id";
-            this.Id.MinimumWidth = 45;
-            this.Id.Name = "Id";
-            this.Id.ReadOnly = true;
-            this.Id.Width = 200;
-            // 
-            // Valor
-            // 
-            this.Valor.Frozen = true;
-            this.Valor.HeaderText = "Valor";
-            this.Valor.Name = "Valor";
-            this.Valor.ReadOnly = true;
-            this.Valor.Width = 200;
-            // 
-            // Tipo
-            // 
-            this.Tipo.Frozen = true;
-            this.Tipo.HeaderText = "Tipo";
-            this.Tipo.Name = "Tipo";
-            this.Tipo.ReadOnly = true;
-            this.Tipo.Width = 165;
-            // 
-            // Fila
-            // 
-            this.Fila.Frozen = true;
-            this.Fila.HeaderText = "Fila";
-            this.Fila.Name = "Fila";
-            this.Fila.ReadOnly = true;
-            this.Fila.Width = 150;
-            // 
-            // Columna
-            // 
-            this.Columna.Frozen = true;
-            this.Columna.HeaderText = "Columna";
-            this.Columna.Name = "Columna";
-            this.Columna.ReadOnly = true;
-            this.Columna.Width = 150;
             // 
             // Form1
             // 

@@ -55,7 +55,7 @@ namespace Proyecto2.analizador
             {
                 foreach (ParseTreeNode node in raiz.ChildNodes[3].ChildNodes)
                 {
-                    String nombre = node.Token.Text;
+                    String nombre = node.Token.Text.ToLower();
                     if (clases.Contains(nombre))
                     {
                         ParseTreeNode m = (ParseTreeNode)clases[nombre];
@@ -72,7 +72,7 @@ namespace Proyecto2.analizador
                 addGlobal(raiz.ChildNodes[4], h);
                 foreach (ParseTreeNode node in raiz.ChildNodes[3].ChildNodes)
                 {
-                    String nombre = node.Token.Text;
+                    String nombre = node.Token.Text.ToLower();
                     if (clases.Contains(nombre))
                     {
                         ParseTreeNode m = (ParseTreeNode)clases[nombre];
@@ -88,10 +88,9 @@ namespace Proyecto2.analizador
 
         private static void addClass(ParseTreeNode raiz) {
             foreach (ParseTreeNode node in raiz.ChildNodes) {
-                String name = node.ChildNodes[1].Token.Value.ToString();
+                String name = node.ChildNodes[1].Token.Value.ToString().ToLower();
                 if (!clases.ContainsKey(name)) {
                     clases.Add(name, node);
-                    generarImagen(name, node);
                     if (main_node == null) {
                         if (node.ChildNodes.Count == 3)
                         {
@@ -108,12 +107,23 @@ namespace Proyecto2.analizador
                 }
             }
             if (main_node != null) {
-                generarImagen("main", main_node);
                 if (main_node.ChildNodes.Count == 2) {
                     importar(claseActual, h);
                     h1 = new Entorno(h);
                     Recorrido(main_node.ChildNodes[1], h1);
                 }
+            }
+        }
+
+        public static void generar()
+        {
+            foreach(DictionaryEntry dic in clases)
+            {
+                generarImagen(dic.Key.ToString(), (ParseTreeNode)dic.Value);
+            }
+            if (main_node != null)
+            {
+                generarImagen("main", main_node);
             }
         }
 
@@ -1204,7 +1214,7 @@ namespace Proyecto2.analizador
                                                 }
                                             }
                                             else {
-                                                listaerrores.Add(new Error(buscar.fila, buscar.columna, "Regreso nulo"));
+                                                listaerrores.Add(new Error(b.fila, b.columna, "Regreso nulo"));
                                             }
                                         }
                                     }
@@ -1222,41 +1232,130 @@ namespace Proyecto2.analizador
                                                 {
                                                     Arreglo arreglo = (Arreglo)var.dato;
                                                     ParseTreeNode dimension = nodeD.ChildNodes[1];
-                                                    Variable dato = Recorrido(nodeD.ChildNodes[2], h);
-                                                    if (dimension.ChildNodes.Count == 1)
+                                                    if (nodeD.ChildNodes[2].Term.Name == "++")
                                                     {
-                                                        Variable pos1 = Recorrido(dimension.ChildNodes[0], h);
-                                                        if (pos1.t == TYPE.INT)
+                                                        if (dimension.ChildNodes.Count == 1)
                                                         {
-                                                            arreglo.setData((int)pos1.dato, dato.dato, dato.t);
+                                                            Variable pos1 = Recorrido(dimension.ChildNodes[0], h);
+                                                            if (pos1.t == TYPE.INT)
+                                                            {
+                                                                arreglo.setData1((int)pos1.dato, 1);
+                                                            }
+                                                            else
+                                                            {
+                                                                listaerrores.Add(new Error(pos1.fila, pos1.columna, "La posicion debe ser un entero"));
+                                                            }
                                                         }
-                                                        else {
-                                                            listaerrores.Add(new Error(pos1.fila, pos1.columna, "La posicion debe ser un entero"));
+                                                        else if (dimension.ChildNodes.Count == 2)
+                                                        {
+                                                            Variable pos1 = Recorrido(dimension.ChildNodes[0], h);
+                                                            Variable pos2 = Recorrido(dimension.ChildNodes[1], h);
+                                                            if (pos1.t == TYPE.INT && pos2.t == TYPE.INT)
+                                                            {
+                                                                arreglo.setData1((int)pos1.dato, (int)pos2.dato, 1);
+                                                            }
+                                                            else
+                                                            {
+                                                                listaerrores.Add(new Error(pos1.fila, pos1.columna, "La posicion debe ser un entero"));
+                                                            }
+                                                        }
+                                                        else
+                                                        {
+                                                            Variable pos1 = Recorrido(dimension.ChildNodes[0], h);
+                                                            Variable pos2 = Recorrido(dimension.ChildNodes[1], h);
+                                                            Variable pos3 = Recorrido(dimension.ChildNodes[2], h);
+                                                            if (pos1.t == TYPE.INT && pos2.t == TYPE.INT && pos3.t == TYPE.INT)
+                                                            {
+                                                                arreglo.setData1((int)pos1.dato, (int)pos2.dato, (int)pos3.dato, 1);
+                                                            }
+                                                            else
+                                                            {
+                                                                listaerrores.Add(new Error(pos1.fila, pos1.columna, "La posicion debe ser un entero"));
+                                                            }
                                                         }
                                                     }
-                                                    else if (dimension.ChildNodes.Count == 2)
+                                                    else if (nodeD.ChildNodes[2].Term.Name == "--")
                                                     {
-                                                        Variable pos1 = Recorrido(dimension.ChildNodes[0], h);
-                                                        Variable pos2 = Recorrido(dimension.ChildNodes[1], h);
-                                                        if (pos1.t == TYPE.INT && pos2.t == TYPE.INT)
+                                                        if (dimension.ChildNodes.Count == 1)
                                                         {
-                                                            arreglo.setData((int)pos1.dato, (int)pos2.dato, dato.dato, dato.t);
+                                                            Variable pos1 = Recorrido(dimension.ChildNodes[0], h);
+                                                            if (pos1.t == TYPE.INT)
+                                                            {
+                                                                arreglo.setData1((int)pos1.dato, -1);
+                                                            }
+                                                            else
+                                                            {
+                                                                listaerrores.Add(new Error(pos1.fila, pos1.columna, "La posicion debe ser un entero"));
+                                                            }
                                                         }
-                                                        else {
-                                                            listaerrores.Add(new Error(pos1.fila, pos1.columna, "La posicion debe ser un entero"));
+                                                        else if (dimension.ChildNodes.Count == 2)
+                                                        {
+                                                            Variable pos1 = Recorrido(dimension.ChildNodes[0], h);
+                                                            Variable pos2 = Recorrido(dimension.ChildNodes[1], h);
+                                                            if (pos1.t == TYPE.INT && pos2.t == TYPE.INT)
+                                                            {
+                                                                arreglo.setData1((int)pos1.dato, (int)pos2.dato, -1);
+                                                            }
+                                                            else
+                                                            {
+                                                                listaerrores.Add(new Error(pos1.fila, pos1.columna, "La posicion debe ser un entero"));
+                                                            }
+                                                        }
+                                                        else
+                                                        {
+                                                            Variable pos1 = Recorrido(dimension.ChildNodes[0], h);
+                                                            Variable pos2 = Recorrido(dimension.ChildNodes[1], h);
+                                                            Variable pos3 = Recorrido(dimension.ChildNodes[2], h);
+                                                            if (pos1.t == TYPE.INT && pos2.t == TYPE.INT && pos3.t == TYPE.INT)
+                                                            {
+                                                                arreglo.setData1((int)pos1.dato, (int)pos2.dato, (int)pos3.dato, -1);
+                                                            }
+                                                            else
+                                                            {
+                                                                listaerrores.Add(new Error(pos1.fila, pos1.columna, "La posicion debe ser un entero"));
+                                                            }
                                                         }
                                                     }
-                                                    else
-                                                    {
-                                                        Variable pos1 = Recorrido(dimension.ChildNodes[0], h);
-                                                        Variable pos2 = Recorrido(dimension.ChildNodes[1], h);
-                                                        Variable pos3 = Recorrido(dimension.ChildNodes[2], h);
-                                                        if (pos1.t == TYPE.INT && pos2.t == TYPE.INT && pos3.t == TYPE.INT)
+                                                    else {
+                                                        Variable dato = Recorrido(nodeD.ChildNodes[2], h);
+                                                        if (dimension.ChildNodes.Count == 1)
                                                         {
-                                                            arreglo.setData((int)pos1.dato, (int)pos2.dato, (int)pos3.dato, dato.dato, dato.t);
+                                                            Variable pos1 = Recorrido(dimension.ChildNodes[0], h);
+                                                            if (pos1.t == TYPE.INT)
+                                                            {
+                                                                arreglo.setData((int)pos1.dato, dato.dato, dato.t);
+                                                            }
+                                                            else
+                                                            {
+                                                                listaerrores.Add(new Error(pos1.fila, pos1.columna, "La posicion debe ser un entero"));
+                                                            }
                                                         }
-                                                        else {
-                                                            listaerrores.Add(new Error(pos1.fila, pos1.columna, "La posicion debe ser un entero"));
+                                                        else if (dimension.ChildNodes.Count == 2)
+                                                        {
+                                                            Variable pos1 = Recorrido(dimension.ChildNodes[0], h);
+                                                            Variable pos2 = Recorrido(dimension.ChildNodes[1], h);
+                                                            if (pos1.t == TYPE.INT && pos2.t == TYPE.INT)
+                                                            {
+                                                                arreglo.setData((int)pos1.dato, (int)pos2.dato, dato.dato, dato.t);
+                                                            }
+                                                            else
+                                                            {
+                                                                listaerrores.Add(new Error(pos1.fila, pos1.columna, "La posicion debe ser un entero"));
+                                                            }
+                                                        }
+                                                        else
+                                                        {
+                                                            Variable pos1 = Recorrido(dimension.ChildNodes[0], h);
+                                                            Variable pos2 = Recorrido(dimension.ChildNodes[1], h);
+                                                            Variable pos3 = Recorrido(dimension.ChildNodes[2], h);
+                                                            if (pos1.t == TYPE.INT && pos2.t == TYPE.INT && pos3.t == TYPE.INT)
+                                                            {
+                                                                arreglo.setData((int)pos1.dato, (int)pos2.dato, (int)pos3.dato, dato.dato, dato.t);
+                                                            }
+                                                            else
+                                                            {
+                                                                listaerrores.Add(new Error(pos1.fila, pos1.columna, "La posicion debe ser un entero"));
+                                                            }
                                                         }
                                                     }
                                                 }
@@ -1277,42 +1376,131 @@ namespace Proyecto2.analizador
                                                 {
                                                     Arreglo arreglo = (Arreglo)((Variable)buscar).dato;
                                                     ParseTreeNode dimension = nodeD.ChildNodes[1];
-                                                    Variable dato = Recorrido(nodeD.ChildNodes[2], h);
-                                                    if (dimension.ChildNodes.Count == 1)
+                                                    if (nodeD.ChildNodes[2].Term.Name == "++")
                                                     {
-                                                        Variable pos1 = Recorrido(dimension.ChildNodes[0], h);
-                                                        if (pos1.t == TYPE.INT)
+                                                        if (dimension.ChildNodes.Count == 1)
                                                         {
-                                                            arreglo.setData((int)pos1.dato, dato.dato, dato.t);
+                                                            Variable pos1 = Recorrido(dimension.ChildNodes[0], h);
+                                                            if (pos1.t == TYPE.INT)
+                                                            {
+                                                                arreglo.setData1((int)pos1.dato, 1);
+                                                            }
+                                                            else
+                                                            {
+                                                                listaerrores.Add(new Error(pos1.fila, pos1.columna, "La posicion debe ser un entero"));
+                                                            }
                                                         }
-                                                        else {
-                                                            listaerrores.Add(new Error(pos1.fila, pos1.columna, "La posicion debe ser un entero"));
-                                                        }
-                                                    }
-                                                    else if (dimension.ChildNodes.Count == 2)
-                                                    {
-                                                        Variable pos1 = Recorrido(dimension.ChildNodes[0], h);
-                                                        Variable pos2 = Recorrido(dimension.ChildNodes[1], h);
-                                                        if (pos1.t == TYPE.INT && pos2.t == TYPE.INT)
+                                                        else if (dimension.ChildNodes.Count == 2)
                                                         {
-                                                            arreglo.setData((int)pos1.dato, (int)pos2.dato, dato.dato, dato.t);
-                                                        }
-                                                        else {
-                                                            listaerrores.Add(new Error(pos1.fila, pos1.columna, "La posicion debe ser un entero"));
-                                                        }
-                                                    }
-                                                    else
-                                                    {
-                                                        Variable pos1 = Recorrido(dimension.ChildNodes[0], h);
-                                                        Variable pos2 = Recorrido(dimension.ChildNodes[1], h);
-                                                        Variable pos3 = Recorrido(dimension.ChildNodes[2], h);
-                                                        if (pos1.t == TYPE.INT && pos2.t == TYPE.INT && pos3.t == TYPE.INT)
-                                                        {
-                                                            arreglo.setData((int)pos1.dato, (int)pos2.dato, (int)pos3.dato, dato.dato, dato.t);
+                                                            Variable pos1 = Recorrido(dimension.ChildNodes[0], h);
+                                                            Variable pos2 = Recorrido(dimension.ChildNodes[1], h);
+                                                            if (pos1.t == TYPE.INT && pos2.t == TYPE.INT)
+                                                            {
+                                                                arreglo.setData1((int)pos1.dato, (int)pos2.dato, 1);
+                                                            }
+                                                            else
+                                                            {
+                                                                listaerrores.Add(new Error(pos1.fila, pos1.columna, "La posicion debe ser un entero"));
+                                                            }
                                                         }
                                                         else
                                                         {
-                                                            listaerrores.Add(new Error(pos1.fila, pos1.columna, "La posicion debe ser un entero"));
+                                                            Variable pos1 = Recorrido(dimension.ChildNodes[0], h);
+                                                            Variable pos2 = Recorrido(dimension.ChildNodes[1], h);
+                                                            Variable pos3 = Recorrido(dimension.ChildNodes[2], h);
+                                                            if (pos1.t == TYPE.INT && pos2.t == TYPE.INT && pos3.t == TYPE.INT)
+                                                            {
+                                                                arreglo.setData1((int)pos1.dato, (int)pos2.dato, (int)pos3.dato, 1);
+                                                            }
+                                                            else
+                                                            {
+                                                                listaerrores.Add(new Error(pos1.fila, pos1.columna, "La posicion debe ser un entero"));
+                                                            }
+                                                        }
+                                                    }
+                                                    else if (nodeD.ChildNodes[2].Term.Name == "--") {
+                                                        if (dimension.ChildNodes.Count == 1)
+                                                        {
+                                                            Variable pos1 = Recorrido(dimension.ChildNodes[0], h);
+                                                            if (pos1.t == TYPE.INT)
+                                                            {
+                                                                arreglo.setData1((int)pos1.dato, -1);
+                                                            }
+                                                            else
+                                                            {
+                                                                listaerrores.Add(new Error(pos1.fila, pos1.columna, "La posicion debe ser un entero"));
+                                                            }
+                                                        }
+                                                        else if (dimension.ChildNodes.Count == 2)
+                                                        {
+                                                            Variable pos1 = Recorrido(dimension.ChildNodes[0], h);
+                                                            Variable pos2 = Recorrido(dimension.ChildNodes[1], h);
+                                                            if (pos1.t == TYPE.INT && pos2.t == TYPE.INT)
+                                                            {
+                                                                arreglo.setData1((int)pos1.dato, (int)pos2.dato, -1);
+                                                            }
+                                                            else
+                                                            {
+                                                                listaerrores.Add(new Error(pos1.fila, pos1.columna, "La posicion debe ser un entero"));
+                                                            }
+                                                        }
+                                                        else
+                                                        {
+                                                            Variable pos1 = Recorrido(dimension.ChildNodes[0], h);
+                                                            Variable pos2 = Recorrido(dimension.ChildNodes[1], h);
+                                                            Variable pos3 = Recorrido(dimension.ChildNodes[2], h);
+                                                            if (pos1.t == TYPE.INT && pos2.t == TYPE.INT && pos3.t == TYPE.INT)
+                                                            {
+                                                                arreglo.setData1((int)pos1.dato, (int)pos2.dato, (int)pos3.dato, -1);
+                                                            }
+                                                            else
+                                                            {
+                                                                listaerrores.Add(new Error(pos1.fila, pos1.columna, "La posicion debe ser un entero"));
+                                                            }
+                                                        }
+
+                                                    }
+                                                    else
+                                                    {
+                                                        Variable dato = Recorrido(nodeD.ChildNodes[2], h);
+                                                        if (dimension.ChildNodes.Count == 1)
+                                                        {
+                                                            Variable pos1 = Recorrido(dimension.ChildNodes[0], h);
+                                                            if (pos1.t == TYPE.INT)
+                                                            {
+                                                                arreglo.setData((int)pos1.dato, dato.dato, dato.t);
+                                                            }
+                                                            else
+                                                            {
+                                                                listaerrores.Add(new Error(pos1.fila, pos1.columna, "La posicion debe ser un entero"));
+                                                            }
+                                                        }
+                                                        else if (dimension.ChildNodes.Count == 2)
+                                                        {
+                                                            Variable pos1 = Recorrido(dimension.ChildNodes[0], h);
+                                                            Variable pos2 = Recorrido(dimension.ChildNodes[1], h);
+                                                            if (pos1.t == TYPE.INT && pos2.t == TYPE.INT)
+                                                            {
+                                                                arreglo.setData((int)pos1.dato, (int)pos2.dato, dato.dato, dato.t);
+                                                            }
+                                                            else
+                                                            {
+                                                                listaerrores.Add(new Error(pos1.fila, pos1.columna, "La posicion debe ser un entero"));
+                                                            }
+                                                        }
+                                                        else
+                                                        {
+                                                            Variable pos1 = Recorrido(dimension.ChildNodes[0], h);
+                                                            Variable pos2 = Recorrido(dimension.ChildNodes[1], h);
+                                                            Variable pos3 = Recorrido(dimension.ChildNodes[2], h);
+                                                            if (pos1.t == TYPE.INT && pos2.t == TYPE.INT && pos3.t == TYPE.INT)
+                                                            {
+                                                                arreglo.setData((int)pos1.dato, (int)pos2.dato, (int)pos3.dato, dato.dato, dato.t);
+                                                            }
+                                                            else
+                                                            {
+                                                                listaerrores.Add(new Error(pos1.fila, pos1.columna, "La posicion debe ser un entero"));
+                                                            }
                                                         }
                                                     }
                                                 }
@@ -1326,7 +1514,7 @@ namespace Proyecto2.analizador
                                                 }
                                             }
                                             else {
-                                                            listaerrores.Add(new Error(b.fila, b.columna, "Regreso nulo"));
+                                                listaerrores.Add(new Error(b.fila, b.columna, "Regreso nulo"));
                                             }
                                         }
                                     }
@@ -4119,6 +4307,90 @@ namespace Proyecto2.analizador
                                         }
                                         break;
                                     }
+                                case "BArreglo": {
+                                        ParseTreeNode expr = raiz.ChildNodes[0];
+                                        if (raiz.ChildNodes[1].Term.Name == "++")
+                                        {
+                                            if (expr.ChildNodes[0].ChildNodes.Count == 1)
+                                            {
+                                                Variable buscar = (Variable)h.getValue(expr.ChildNodes[0].ChildNodes[0].Token.Text);
+                                                if (buscar != null)
+                                                {
+                                                    Arreglo arreglo = (Arreglo)buscar.dato;
+                                                    if (expr.ChildNodes.Count == 2)
+                                                    {
+                                                        Variable pos0 = Recorrido(expr.ChildNodes[1], h);
+                                                        b.t = arreglo.T;
+                                                        b.dato = arreglo.getData((int)pos0.dato);
+                                                        arreglo.setData1((int)pos0.dato, 1);
+                                                    }
+                                                    else if (expr.ChildNodes.Count == 3)
+                                                    {
+                                                        Variable pos0 = Recorrido(expr.ChildNodes[1], h);
+                                                        Variable pos1 = Recorrido(expr.ChildNodes[2], h);
+                                                        b.t = arreglo.T;
+                                                        b.dato = arreglo.getData((int)pos1.dato, (int)pos0.dato);
+                                                        arreglo.setData1((int)pos0.dato,(int)pos1.dato, 1);
+
+                                                    }
+                                                    else
+                                                    {
+                                                        Variable pos0 = Recorrido(expr.ChildNodes[1], h);
+                                                        Variable pos1 = Recorrido(expr.ChildNodes[2], h);
+                                                        Variable pos2 = Recorrido(expr.ChildNodes[3], h);
+                                                        b.t = arreglo.T;
+                                                        b.dato = arreglo.getData((int)pos2.dato, (int)pos1.dato, (int)pos0.dato);
+                                                        arreglo.setData1((int)pos0.dato,(int)pos1.dato,(int)pos2.dato, 1);
+                                                    }
+                                                }
+                                            }
+                                            else
+                                            {
+
+                                            }
+                                        }
+                                        else {
+                                            if (expr.ChildNodes[0].ChildNodes.Count == 1)
+                                            {
+                                                Variable buscar = (Variable)h.getValue(expr.ChildNodes[0].ChildNodes[0].Token.Text);
+                                                if (buscar != null)
+                                                {
+                                                    Arreglo arreglo = (Arreglo)buscar.dato;
+                                                    if (expr.ChildNodes.Count == 2)
+                                                    {
+                                                        Variable pos0 = Recorrido(expr.ChildNodes[1], h);
+                                                        b.t = arreglo.T;
+                                                        b.dato = arreglo.getData((int)pos0.dato);
+                                                        arreglo.setData1((int)pos0.dato,-1);
+
+                                                    }
+                                                    else if (expr.ChildNodes.Count == 3)
+                                                    {
+                                                        Variable pos0 = Recorrido(expr.ChildNodes[1], h);
+                                                        Variable pos1 = Recorrido(expr.ChildNodes[2], h);
+                                                        b.t = arreglo.T;
+                                                        b.dato = arreglo.getData((int)pos1.dato, (int)pos0.dato);
+                                                        arreglo.setData1((int)pos0.dato, (int)pos1.dato, -1);
+                                                    }
+                                                    else
+                                                    {
+                                                        Variable pos0 = Recorrido(expr.ChildNodes[1], h);
+                                                        Variable pos1 = Recorrido(expr.ChildNodes[2], h);
+                                                        Variable pos2 = Recorrido(expr.ChildNodes[3], h);
+                                                        b.t = arreglo.T;
+                                                        b.dato = arreglo.getData((int)pos2.dato, (int)pos1.dato, (int)pos0.dato);
+                                                        arreglo.setData1((int)pos0.dato, (int)pos1.dato, (int)pos2.dato, -1);
+
+                                                    }
+                                                }
+                                            }
+                                            else
+                                            {
+
+                                            }
+                                        }
+                                        break;
+                                    }
                             }
                         }
                         else if (n == 1)
@@ -4191,7 +4463,41 @@ namespace Proyecto2.analizador
                                 }
                                 else
                                 {
-
+                                    ParseTreeNode d1 = expr.ChildNodes[0];
+                                    Variable clase = (Variable)h.getValue(d1.ChildNodes[0].Token.Text.ToLower());
+                                    if (clase != null && clase.dato is Clase)
+                                    {
+                                        Clase c = (Clase)clase.dato;
+                                        Variable buscar = (Variable)c.principal.getValue(d1.ChildNodes[1].Token.Text);
+                                        if(buscar!= null && buscar.dato is Arreglo)
+                                        {
+                                            Arreglo arreglo = (Arreglo)buscar.dato;
+                                            if (expr.ChildNodes.Count == 2)
+                                            {
+                                                Variable pos0 = Recorrido(expr.ChildNodes[1], h);
+                                                b.t = arreglo.T;
+                                                b.dato = arreglo.getData((int)pos0.dato);
+                                            }
+                                            else if (expr.ChildNodes.Count == 3)
+                                            {
+                                                Variable pos0 = Recorrido(expr.ChildNodes[1], h);
+                                                Variable pos1 = Recorrido(expr.ChildNodes[2], h);
+                                                b.t = arreglo.T;
+                                                b.dato = arreglo.getData((int)pos1.dato, (int)pos0.dato);
+                                            }
+                                            else
+                                            {
+                                                Variable pos0 = Recorrido(expr.ChildNodes[1], h);
+                                                Variable pos1 = Recorrido(expr.ChildNodes[2], h);
+                                                Variable pos2 = Recorrido(expr.ChildNodes[3], h);
+                                                b.t = arreglo.T;
+                                                b.dato = arreglo.getData((int)pos2.dato, (int)pos1.dato, (int)pos0.dato);
+                                            }
+                                        }
+                                    }
+                                    else {
+                                        listaerrores.Add(new Error(b.fila, b.columna, "No se encontro la clase "));
+                                    }
                                 }
                             }
                             else if (child == 2) {
@@ -4220,7 +4526,11 @@ namespace Proyecto2.analizador
                                     }
                                 }
                                 else {
-                                    /*FUNCIONES GET*/
+                                    /*FUNCIONES GET DE OTRAS CLASES!!!*/
+                                    Variable get = Recorrido(expr, h);
+                                    b.dato = get.dato;
+                                    b.t = get.t;
+                                    return b;
                                 }
                             }
                         }
@@ -4851,7 +5161,7 @@ namespace Proyecto2.analizador
                                         ParseTreeNode param2 = raiz.ChildNodes[1].ChildNodes[1];
                                         if (param1.ChildNodes.Count == param2.ChildNodes.Count)
                                         {
-                                            Entorno h1 = new Entorno(h);
+                                            Entorno h1 = new Entorno(c.principal);
                                             for (int i = 0; i < param1.ChildNodes.Count; i++)
                                             {
                                                 ParseTreeNode l1 = param1.ChildNodes[i];
@@ -4918,7 +5228,7 @@ namespace Proyecto2.analizador
                                         ParseTreeNode param2 = raiz.ChildNodes[1];
                                         if (param1.ChildNodes.Count == param2.ChildNodes.Count)
                                         {
-                                            Entorno h1 = new Entorno(h);
+                                            Entorno h1 = new Entorno(c.principal);
                                             for (int i = 0; i < param1.ChildNodes.Count; i++)
                                             {
                                                 ParseTreeNode l1 = param1.ChildNodes[i];

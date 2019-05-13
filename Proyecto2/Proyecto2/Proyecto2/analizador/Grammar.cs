@@ -243,6 +243,12 @@ namespace Proyecto2.analizador
                     | identifier + igual + rnew + identifier + ToTerm("(") + ToTerm(")") + ToTerm(";") //3 hijos ya
                     | identifier + DIM + igual + E + ToTerm(";") //3 hijos ya 
                     | D1 + DIM + igual + E + ToTerm(";")
+                    | D1 + DIM + aumento + ToTerm(";")
+                    | D1 + DIM + decremento + ToTerm(";")
+
+                    | identifier + DIM + aumento + ToTerm(";")
+                    | identifier + DIM + decremento + ToTerm(";")
+
                     | identifier + aumento + ToTerm(";") //2 hijos ya
                     | identifier + decremento + ToTerm(";") //2 hijos ya
                     | identifier + aumento
@@ -323,7 +329,9 @@ namespace Proyecto2.analizador
                     | num
                     | ToTerm("(") + E + ToTerm(")")
                     | D1
-                    | BARREGLO;
+                    | BARREGLO
+                    | BARREGLO + aumento
+                    | BARREGLO + decremento;
 
             BARREGLO.Rule = D1 + ToTerm("[") + E + ToTerm("]")
                     | D1 + ToTerm("[") + E + ToTerm("]") + ToTerm("[") + E + ToTerm("]")

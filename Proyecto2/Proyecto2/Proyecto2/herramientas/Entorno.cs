@@ -81,7 +81,7 @@ namespace Proyecto2.herramientas
         }
 
         public Object getValue(String key) {
-            if (tableSyml.Contains(key)) {
+            if (tableSyml.Contains(key.ToLower())) {
                 return tableSyml[key.ToLower()];
             }
             return getValue(key, anterior);
@@ -89,8 +89,8 @@ namespace Proyecto2.herramientas
 
         private Object getValue(String key, Entorno h) {
             if (h != null) {
-                if (h.tableSyml.Contains(key)) {
-                    Object o = h.tableSyml[key];
+                if (h.tableSyml.Contains(key.ToLower())) {
+                    Object o = h.tableSyml[key.ToLower()];
                     if (o is Variable) {
                         return o;
                     }
