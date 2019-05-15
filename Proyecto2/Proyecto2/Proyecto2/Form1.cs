@@ -45,31 +45,38 @@ namespace Proyecto2
         {
             try
             {
-                String texto = "";
-                String textoAux = "";
-                foreach(Contenedor c in list_fil)
+                try
                 {
-                    if (c.GetTabPage() == tabControl2.SelectedTab)
-                        textoAux = c.GetRichTextBox().Text;
-                    else
-                        texto += c.GetRichTextBox().Text;
+                    String texto = "";
+                    String textoAux = "";
+                    foreach (Contenedor c in list_fil)
+                    {
+                        if (c.GetTabPage() == tabControl2.SelectedTab)
+                            textoAux = c.GetRichTextBox().Text;
+                        else
+                            texto += c.GetRichTextBox().Text;
+                    }
+                    texto = textoAux + texto;
+                    bool resultado = Syntax.analizar(texto);
+                    if (resultado)
+                    {
+                        Console.WriteLine("Entrada correcta\n");
+                        dataGridView1.Rows.Clear();
+                        dataGridView1.Refresh();
+                        if (Syntax.h != null)
+                            addGlobal(Syntax.h.tableSyml);
+                        if (Syntax.h1 != null)
+                            addGlobal(Syntax.h1.tableSyml);
+                    }
                 }
-                texto = textoAux + texto;
-                bool resultado = Syntax.analizar(texto);
-                if (resultado)
+                catch (Exception ex)
                 {
-                    Console.WriteLine("Entrada correcta\n");
-                    dataGridView1.Rows.Clear();
-                    dataGridView1.Refresh();
-                    if(Syntax.h !=null)
-                        addGlobal(Syntax.h.tableSyml);
-                    if(Syntax.h1!=null)
-                        addGlobal(Syntax.h1.tableSyml);
+                    richTextBox1.AppendText(ex.ToString());
                 }
             }
-            catch (Exception ex)
+            catch(System.StackOverflowException ex)
             {
-                richTextBox1.AppendText(ex.ToString());
+                Console.Write(ex.ToString());
             }
         }
 
@@ -97,6 +104,7 @@ namespace Proyecto2
             rtb.BackColor = Color.Black;
             rtb.ForeColor = richTextBox2.ForeColor;
             rtb.Font = richTextBox2.Font;
+            rtb.AcceptsTab = true;
             tp.Controls.Add(rtb);
             list_fil.Add(new Contenedor(rtb, tp));
         }

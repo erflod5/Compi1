@@ -1507,10 +1507,10 @@ namespace Proyecto2.analizador
                                                 else
                                                 {
                                                     Variable var = (Variable)buscar;
-                                                    ParseTreeNode nodo = (ParseTreeNode)clases[nodeD.ChildNodes[2].Token.Text];
+                                                    ParseTreeNode nodo = (ParseTreeNode)clases[nodeD.ChildNodes[2].Token.Text.ToLower()];
                                                     Clase clase = new Clase();
                                                     importar(nodo, clase.principal);
-                                                    h.changeValue(var.nombre, clase);
+                                                    h.addVariable(var.nombre, new Variable(nodeD.Span.Location.Line, nodeD.Span.Location.Column, var.nombre, clase, "clase", var.Private));
                                                 }
                                             }
                                             else {
@@ -4401,6 +4401,9 @@ namespace Proyecto2.analizador
                             {
                                 b.addVar(expr.Token.Text, expr.Token.Terminal.Name);
                             }
+                            else if (expr.Term.Name == "E") {
+                                b = Recorrido(expr, h);
+                            }
                             else if (child == 1)
                             {
                                 ParseTreeNode node = expr.ChildNodes[0];
@@ -4418,19 +4421,253 @@ namespace Proyecto2.analizador
                                 }
                                 else if (node.Term.Name == "Funcion")
                                 {
-                                    Variable dato = Recorrido(node,h);
-                                    if (dato.t == TYPE.RETURN)
+                                    /*AQUI EMPIEZA LA MASACRE*/
+                                    String nombre = "$" + node.ChildNodes[0].Token.Text;
+                                    Variable metodo = (Variable)h.getValue(nombre);
+                                    Variable dato = null;
+                                    if (metodo != null)
+                                    {
+                                        ParseTreeNode nodo = (ParseTreeNode)metodo.dato;
+                                        Entorno nuevo = new Entorno(h);
+                                        if (node.ChildNodes.Count == 1)
+                                        {
+                                            if (nodo.ChildNodes.Count == 3)
+                                            {
+                                                Variable retorno = Recorrido(nodo.ChildNodes[2], nuevo);
+                                                TYPE tipo = getType(nodo.ChildNodes[1].Token.Text);
+                                                if (retorno.t == TYPE.CONTINUAR || retorno.t == TYPE.SALIR)
+                                                {
+                                                    /*ERROR EN IF CONTINUAR*/
+                                                    listaerrores.Add(new Error(retorno.fila, retorno.columna, "Error en ambiente If"));
+                                                }
+                                                else if (retorno.t == TYPE.RETURN)
+                                                {
+                                                    if (tipo == TYPE.VOID)
+                                                    {
+                                                        /*ERROR EL TIPO VOID NO RETORNA NADA*/
+                                                        listaerrores.Add(new Error(retorno.fila, retorno.columna, "El tipo void no debe retornar nada"));
+                                                    }
+                                                    else if (retorno.taux == tipo)
+                                                    {
+                                                        /*RETORRNO CORRECTO*/
+                                                        b.dato = retorno.dato;
+                                                        b.taux = retorno.taux;
+                                                        b.t = retorno.t;
+                                                        dato = retorno;
+                                                    }
+                                                    else
+                                                    {
+                                                        /*RETORNO INCORRECTO*/
+                                                        listaerrores.Add(new Error(retorno.fila, retorno.columna, "Tipo de dato de retorno no es correcto"));
+                                                    }
+                                                }
+                                                else
+                                                {
+                                                    if (tipo != TYPE.VOID)
+                                                    {
+                                                        /*ERROR NO RETORNA NADA*/
+                                                        listaerrores.Add(new Error(retorno.fila, retorno.columna, "No se ha retornado nada"));
+                                                    }
+                                                }
+                                            }
+                                            else if (nodo.ChildNodes.Count == 5)
+                                            {
+                                                Variable retorno = Recorrido(nodo.ChildNodes[4], nuevo);
+                                                TYPE tipo = getType(nodo.ChildNodes[1].Token.Text);
+                                                TYPE tipoaux = getType(nodo.ChildNodes[2].Token.Text);
+                                                if (retorno.t == TYPE.CONTINUAR || retorno.t == TYPE.SALIR)
+                                                {
+                                                    /*ERROR SALIR EN EL ENTORNO INCORRECTO*/
+                                                    listaerrores.Add(new Error(retorno.fila, retorno.columna, "Error en ambiente If"));
+
+                                                }
+                                                else if (retorno.t == TYPE.RETURN)
+                                                {
+                                                    if (tipoaux == retorno.taux)
+                                                    {
+                                                        Arreglo arreglo = (Arreglo)retorno.dato;
+                                                        if (arreglo.T == tipoaux)
+                                                        {
+                                                            b.dato = retorno.dato;
+                                                            b.taux = retorno.taux;
+                                                            b.t = retorno.t;
+                                                            dato = retorno;
+                                                        }
+                                                        else
+                                                        { /*NO SON DEL MISMO TIPO*/
+                                                            listaerrores.Add(new Error(retorno.fila, retorno.columna, "Tipo de retorno diferente"));
+                                                        }
+
+                                                    }
+                                                }
+                                                else
+                                                {
+                                                    /*DEBE RETORNAR ALGO*/
+                                                    listaerrores.Add(new Error(retorno.fila, retorno.columna, "No se ha retornado nada"));
+                                                }
+                                            }
+                                            else
+                                            {
+                                                listaerrores.Add(new Error(b.fila, b.columna, "El metodo no contiene parametros"));
+                                            }
+                                        }
+                                        else
+                                        {
+                                            if (nodo.ChildNodes.Count == 4)
+                                            {
+                                                ParseTreeNode param1 = nodo.ChildNodes[2];
+                                                ParseTreeNode param2 = node.ChildNodes[1];
+                                                if (param1.ChildNodes.Count == param2.ChildNodes.Count)
+                                                {
+                                                    Entorno h1 = new Entorno(h);
+                                                    for (int i = 0; i < param1.ChildNodes.Count; i++)
+                                                    {
+                                                        ParseTreeNode l1 = param1.ChildNodes[i];
+                                                        Variable dato1 = Recorrido(param2.ChildNodes[i], h);
+                                                        if (comprobar(l1.ChildNodes[0].Token.Text.ToLower(), dato1.t))
+                                                        {
+                                                            if (l1.ChildNodes.Count == 2)
+                                                                h1.addVariable(l1.ChildNodes[1].Token.Text, new Variable(dato1.columna, dato1.fila, l1.ChildNodes[1].Token.Text, dato1.dato, dato1.t));
+                                                            else
+                                                                h1.addVariable(l1.ChildNodes[2].Token.Text, new Variable(dato1.columna, dato1.fila, l1.ChildNodes[2].Token.Text, dato1.dato, dato1.t));
+                                                        }
+                                                        else
+                                                        {
+                                                            //ERROR DE TIPO DE PARAMETROS
+                                                            listaerrores.Add(new Error(dato1.fila, dato1.columna, "Tipo de parametro incorrecto"));
+                                                            return b;
+                                                        }
+                                                    }
+                                                    Variable retorno = Recorrido(nodo.ChildNodes[3], h1);
+                                                    if (retorno.t == TYPE.CONTINUAR || retorno.t == TYPE.SALIR)
+                                                    {
+                                                        /*ERROR EN IF CONTINUAR*/
+                                                        listaerrores.Add(new Error(retorno.fila, retorno.columna, "Error en ambiente If"));
+                                                    }
+                                                    else if (retorno.t == TYPE.RETURN)
+                                                    {
+                                                        TYPE tipo = getType(nodo.ChildNodes[1].Token.Text.ToLower());
+                                                        if (tipo == TYPE.VOID)
+                                                        {
+                                                            /*ERROR EL TIPO VOID NO RETORNA NADA*/
+                                                            listaerrores.Add(new Error(retorno.fila, retorno.columna, "Tipo Void no debe retornar algo"));
+                                                        }
+                                                        else if (retorno.taux == tipo)
+                                                        {
+                                                            /*RETORRNO CORRECTO*/
+                                                            b.dato = retorno.dato;
+                                                            b.taux = retorno.taux;
+                                                            b.t = retorno.t;
+                                                            dato = retorno;
+                                                        }
+                                                        else
+                                                        {
+                                                            /*RETORNO INCORRECTO*/
+                                                            listaerrores.Add(new Error(retorno.fila, retorno.columna, "Dato de retorno incorrecto"));
+
+                                                        }
+                                                    }
+                                                    else
+                                                    {
+                                                        listaerrores.Add(new Error(retorno.fila, retorno.columna, "No se ha retornado nada"));
+
+                                                    }
+                                                }
+                                                else
+                                                {
+                                                    listaerrores.Add(new Error(b.fila, b.columna, "Cantidad de parametros incorrecta"));
+                                                }
+                                            }
+                                            else if (nodo.ChildNodes.Count == 6)
+                                            {
+                                                ParseTreeNode param1 = nodo.ChildNodes[4];
+                                                ParseTreeNode param2 = node.ChildNodes[1];
+                                                if (param1.ChildNodes.Count == param2.ChildNodes.Count)
+                                                {
+                                                    Entorno h1 = new Entorno(h);
+                                                    for (int i = 0; i < param1.ChildNodes.Count; i++)
+                                                    {
+                                                        ParseTreeNode l1 = param1.ChildNodes[i];
+                                                        Variable dato1 = Recorrido(param2.ChildNodes[i], h);
+                                                        if (comprobar(l1.ChildNodes[0].Token.Text.ToLower(), dato1.t))
+                                                        {
+                                                            if (l1.ChildNodes.Count == 2)
+                                                                h1.addVariable(l1.ChildNodes[1].Token.Text, new Variable(dato1.columna, dato1.fila, l1.ChildNodes[1].Token.Text, dato1.dato, dato1.t));
+                                                            else
+                                                                h1.addVariable(l1.ChildNodes[2].Token.Text, new Variable(dato1.columna, dato1.fila, l1.ChildNodes[2].Token.Text, dato1.dato, dato1.t));
+                                                        }
+                                                        else
+                                                        {
+                                                            /*ERROR DE COMPARACION DE TIPOS DE PARAMETRO*/
+                                                            listaerrores.Add(new Error(dato1.fila, dato1.columna, "Tipos de datos de parametros diferentes"));
+                                                            return b;
+                                                        }
+                                                    }
+                                                    Variable retorno = Recorrido(nodo.ChildNodes[5], h1);
+                                                    if (retorno.t == TYPE.CONTINUAR || retorno.t == TYPE.SALIR)
+                                                    {
+                                                        /*error de entornos*/
+                                                        listaerrores.Add(new Error(retorno.fila, retorno.columna, "Error en ambiente If"));
+                                                    }
+                                                    else if (retorno.t == TYPE.RETURN)
+                                                    {
+                                                        TYPE tipo = getType(nodo.ChildNodes[1].Token.Text);
+                                                        TYPE tipoaux = getType(nodo.ChildNodes[2].Token.Text);
+                                                        if (tipoaux == retorno.taux)
+                                                        {
+                                                            Arreglo arreglo = (Arreglo)retorno.dato;
+                                                            if (arreglo.T == tipoaux)
+                                                            {
+                                                                b.dato = retorno.dato;
+                                                                b.t = retorno.t;
+                                                                b.taux = retorno.taux;
+                                                                dato = retorno;
+                                                            }
+                                                            else
+                                                            {
+                                                                /*ERROR DE TIPOS*/
+                                                                listaerrores.Add(new Error(retorno.fila, retorno.columna, "Tipo de retorno diferente"));
+                                                            }
+                                                        }
+                                                    }
+                                                    else
+                                                    {
+                                                        /*ERROR DEBE RETORNAR ALGO*/
+                                                        listaerrores.Add(new Error(retorno.fila, retorno.columna, "No se ha retornado nada"));
+
+                                                    }
+                                                }
+                                                else
+                                                {
+                                                    /*ERROR DE PARAMETROS*/
+                                                    listaerrores.Add(new Error(b.fila, b.columna, "Cantidad de parametros incorrecta"));
+
+                                                }
+                                            }
+                                            else
+                                            {
+                                                /*ERROR DE PARAMETROS*/
+                                            }
+                                        }
+                                    }
+                                    else
+                                    {
+                                        listaerrores.Add(new Error(b.fila, b.columna, "No se encontro el metodo: " + nombre));
+                                    }
+                                    /*AQUI TERMINA LA MASACRE*/
+                                    if (dato != null && dato.t == TYPE.RETURN)
                                     {
                                         b.dato = dato.dato;
                                         b.t = dato.taux;
                                     }
-                                    else {
+                                    else
+                                    {
                                         b.dato = 0;
                                         b.t = TYPE.ERROR;
                                     }
                                 }
                             }
-                            else if(expr.Term.Name=="BArreglo")
+                            else if (expr.Term.Name == "BArreglo")
                             {
                                 if (expr.ChildNodes[0].ChildNodes.Count == 1)
                                 {
@@ -4469,7 +4706,7 @@ namespace Proyecto2.analizador
                                     {
                                         Clase c = (Clase)clase.dato;
                                         Variable buscar = (Variable)c.principal.getValue(d1.ChildNodes[1].Token.Text);
-                                        if(buscar!= null && buscar.dato is Arreglo)
+                                        if (buscar != null && buscar.dato is Arreglo)
                                         {
                                             Arreglo arreglo = (Arreglo)buscar.dato;
                                             if (expr.ChildNodes.Count == 2)
@@ -4495,12 +4732,14 @@ namespace Proyecto2.analizador
                                             }
                                         }
                                     }
-                                    else {
+                                    else
+                                    {
                                         listaerrores.Add(new Error(b.fila, b.columna, "No se encontro la clase "));
                                     }
                                 }
                             }
-                            else if (child == 2) {
+                            else if (child == 2)
+                            {
                                 if (expr.ChildNodes[1].ChildNodes.Count == 0)
                                 {
                                     //pos 0 es la clase y pos1 es la variable
@@ -4511,7 +4750,8 @@ namespace Proyecto2.analizador
                                     {
                                         Clase c = (Clase)v.dato;
                                         Variable dato = (Variable)c.principal.getValue(nombrevar);
-                                        if (dato != null && dato.dato != null) {
+                                        if (dato != null && dato.dato != null)
+                                        {
                                             b.dato = dato.dato;
                                             b.t = dato.t;
                                         }
@@ -4521,11 +4761,13 @@ namespace Proyecto2.analizador
                                             b.dato = 0;
                                         }
                                     }
-                                    else {
+                                    else
+                                    {
                                         /*NO SE ENCONTRO LA CLASE*/
                                     }
                                 }
-                                else {
+                                else
+                                {
                                     /*FUNCIONES GET DE OTRAS CLASES!!!*/
                                     Variable get = Recorrido(expr, h);
                                     b.dato = get.dato;
@@ -4722,6 +4964,7 @@ namespace Proyecto2.analizador
                                     else
                                     {
                                         /*DEBE RETORNAR ALGO*/
+                                        if(tipo != TYPE.VOID)
                                         listaerrores.Add(new Error(retorno.fila, retorno.columna, "No se ha retornado nada"));
                                     }
                                 }
@@ -4757,6 +5000,7 @@ namespace Proyecto2.analizador
                                             }
                                         }
                                         Variable retorno = Recorrido(nodo.ChildNodes[3], h1);
+                                        TYPE tipo = getType(nodo.ChildNodes[1].Token.Text.ToLower());
                                         if (retorno.t == TYPE.CONTINUAR || retorno.t == TYPE.SALIR)
                                         {
                                             /*ERROR EN IF CONTINUAR*/
@@ -4764,7 +5008,6 @@ namespace Proyecto2.analizador
                                         }
                                         else if (retorno.t == TYPE.RETURN)
                                         {
-                                            TYPE tipo = getType(nodo.ChildNodes[1].Token.Text.ToLower());
                                             if (tipo == TYPE.VOID)
                                             {
                                                 /*ERROR EL TIPO VOID NO RETORNA NADA*/
@@ -4786,8 +5029,8 @@ namespace Proyecto2.analizador
                                         }
                                         else
                                         {
-                                            listaerrores.Add(new Error(retorno.fila, retorno.columna, "No se ha retornado nada"));
-
+                                            if(tipo != TYPE.VOID)
+                                                listaerrores.Add(new Error(retorno.fila, retorno.columna, "No se ha retornado nada"));
                                         }
                                     }
                                     else {
@@ -4887,10 +5130,10 @@ namespace Proyecto2.analizador
                                     Variable n6 = Recorrido(raiz.ChildNodes[6], h);
                                     if (n1.t == TYPE.STRING && n2.t == TYPE.BOOL && n3.esnum() && n4.esnum() && n5.esnum() && n6.esnum())
                                     {
-                                        int num3 = Int32.Parse(n3.dato.ToString());
-                                        int num4 = Int32.Parse(n4.dato.ToString());
-                                        int num5 = Int32.Parse(n5.dato.ToString());
-                                        int num6 = Int32.Parse(n6.dato.ToString());
+                                        int num3 = Convert.ToInt32(Double.Parse(n3.dato.ToString()));
+                                        int num4 = Convert.ToInt32(Double.Parse(n4.dato.ToString()));
+                                        int num5 = Convert.ToInt32(Double.Parse(n5.dato.ToString()));
+                                        int num6 = Convert.ToInt32(Double.Parse(n6.dato.ToString()));
                                         Rectangle rec = new Rectangle(num3 - num6 / 2, num4 - num5 / 2, num6, num5);
                                         if ((bool)n2.dato)
                                         {
@@ -4919,8 +5162,9 @@ namespace Proyecto2.analizador
                                     if (n1.t == TYPE.STRING && n2.esnum() && n3.esnum() && n4.esnum() && n5.esnum() && n6.esnum())
                                     {
                                         Pen pen = new Pen(getcolor(n1.dato.ToString()), float.Parse(n6.dato.ToString()));
-                                        Point[] p = { new Point(Int32.Parse(n2.dato.ToString()), Int32.Parse(n3.dato.ToString())),
-                                        new Point(Int32.Parse(n4.dato.ToString()), Int32.Parse(n5.dato.ToString()))};
+
+                                        Point[] p = { new Point(Convert.ToInt32(Double.Parse(n2.dato.ToString())), Convert.ToInt32(Double.Parse(n3.dato.ToString()))),
+                                        new Point(Convert.ToInt32(Double.Parse(n4.dato.ToString())), Convert.ToInt32(Double.Parse(n5.dato.ToString())) )};
                                         images.Add(new Figure(pen, p, 2));
                                     }
                                     else {
@@ -4937,9 +5181,9 @@ namespace Proyecto2.analizador
                                     Variable n5 = Recorrido(raiz.ChildNodes[5], h);
                                     if (n1.t == TYPE.STRING && n2.esnum() && n3.t == TYPE.BOOL && n4.esnum() && n5.esnum())
                                     {
-                                        int radio = Int32.Parse(n2.dato.ToString());
-                                        int x = Int32.Parse(n4.dato.ToString());
-                                        int y = Int32.Parse(n5.dato.ToString());
+                                        int radio = Convert.ToInt32(Double.Parse(n2.dato.ToString()));
+                                        int x = Convert.ToInt32(Double.Parse(n4.dato.ToString()));
+                                        int y = Convert.ToInt32(Double.Parse(n5.dato.ToString()));
                                         Rectangle rec = new Rectangle(x - radio, y - radio, radio * 2, radio * 2);
                                         if ((bool)n3.dato)
                                         {
@@ -4968,9 +5212,9 @@ namespace Proyecto2.analizador
                                     Variable n7 = Recorrido(raiz.ChildNodes[7], h);
                                     Variable n8 = Recorrido(raiz.ChildNodes[8], h);
                                     if (n1.t == TYPE.STRING && n2.t == TYPE.BOOL && n3.esnum() && n4.esnum() && n5.esnum() && n6.esnum() && n7.esnum() && n8.esnum()) {
-                                        Point[] a = { new Point(Int32.Parse(n3.dato.ToString()), Int32.Parse(n4.dato.ToString())),
-                                        new Point(Int32.Parse(n5.dato.ToString()), Int32.Parse(n6.dato.ToString())),
-                                        new Point(Int32.Parse(n7.dato.ToString()), Int32.Parse(n8.dato.ToString()))};
+                                        Point[] a = { new Point(Convert.ToInt32(Double.Parse(n3.dato.ToString())), Convert.ToInt32(Double.Parse(n4.dato.ToString()))),
+                                        new Point(Convert.ToInt32(Double.Parse(n5.dato.ToString())), Convert.ToInt32(Double.Parse(n6.dato.ToString()))),
+                                        new Point(Convert.ToInt32(Double.Parse(n7.dato.ToString())), Convert.ToInt32(Double.Parse(n8.dato.ToString())) )};
                                         if ((bool)n2.dato)
                                         {
                                             Brush brus = new SolidBrush(getcolor(n1.dato.ToString()));

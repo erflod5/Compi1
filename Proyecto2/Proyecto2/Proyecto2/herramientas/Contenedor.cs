@@ -11,12 +11,20 @@ namespace Proyecto2.herramientas
     {
         private RichTextBox rtb;
         private TabPage tp;
+        public Label lb;
         private String nombre;
 
         public Contenedor(RichTextBox rtb, TabPage tp)
         {
             this.rtb = rtb;
             this.tp = tp;
+        }
+
+        public Contenedor(RichTextBox rtb, TabPage tp, Label lb)
+        {
+            this.rtb = rtb;
+            this.tp = tp;
+            this.lb = lb;
         }
 
         public void SetRichTextBox(RichTextBox rtb) {

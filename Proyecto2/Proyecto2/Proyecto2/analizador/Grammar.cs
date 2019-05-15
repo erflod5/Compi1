@@ -17,6 +17,7 @@ namespace Proyecto2.analizador
             RegexBasedTerminal rtrue = new RegexBasedTerminal("rtrue", "true|verdadero");
             RegexBasedTerminal rfalse = new RegexBasedTerminal("rfalse", "false|falso");
             CommentTerminal com_linea = new CommentTerminal("comentariolinea", ">>", "\n", "\r\n");
+            CommentTerminal comentarioBloque = new CommentTerminal("comentarioBloque", "<-", "->");
             CommentTerminal com_multi = new CommentTerminal("comentariomulti", "<-", "->");
 
             StringLiteral StringLiteral = TerminalFactory.CreateCSharpString("String");
@@ -24,6 +25,7 @@ namespace Proyecto2.analizador
             IdentifierTerminal identifier = new IdentifierTerminal("Identifier");
 
             NonGrammarTerminals.Add(com_linea);
+            NonGrammarTerminals.Add(comentarioBloque);
             NonGrammarTerminals.Add(com_multi);
             #endregion
 
